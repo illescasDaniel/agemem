@@ -6,6 +6,8 @@ from pathlib import Path
 
 import yaml
 
+CONFIG_VERSION = 1
+
 PROVIDERS = ("jev", "qsiv", "ollaya", "cascade")
 
 
@@ -26,6 +28,9 @@ def load_user_config():
         raise ValueError("Invalid YAML in agemem user configuration") from None
     if not isinstance(data, dict):
         raise ValueError("Agemem user configuration must be a YAML mapping")
+    version = data.get("version", CONFIG_VERSION)
+    if type(version) is not int or version != CONFIG_VERSION:
+        raise ValueError("Unsupported config.yaml version; this release supports version: 1. Use a compatible Agemem release or migrate the configuration")
     if data.get("default_provider", "jev") not in PROVIDERS:
         raise ValueError("Unsupported default_provider in agemem user configuration")
     providers = data.get("providers", {})
@@ -64,11 +69,15 @@ def provider_options(project):
             "jev_api_key": key}
 
 
-def initialize_user_config():
+def initialize_user_config(default_provider="jev", api_key=None):
+    if default_provider not in PROVIDERS:
+        raise ValueError("Unsupported default provider")
     path = config_path()
     path.parent.mkdir(parents=True, exist_ok=True)
     data_root = Path(os.environ.get("XDG_DATA_HOME", str(Path.home() / ".local/share")))
-    template = """# Provider selection is global; projects can explicitly override it.
+    template = """# Configuration schema version (independent of the Agemem package version).
+version: 1
+# Provider selection is global; projects can explicitly override it.
 default_provider: jev
 providers:
   jev:
@@ -79,6 +88,9 @@ providers:
     model_directory: MODEL_DIRECTORY
     # python: ~/.local/share/agemem/runtimes/qsiv/bin/python
 """
+    template = template.replace("default_provider: jev", "default_provider: " + default_provider)
+    if api_key is not None:
+        template = template.replace("api_key: null", "api_key: " + yaml.safe_dump(api_key, default_style='"').strip())
     template = template.replace("MODEL_DIRECTORY", yaml.safe_dump(str(data_root / "agemem/models/qsiv"), default_style='"').strip())
     try:
         descriptor = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)

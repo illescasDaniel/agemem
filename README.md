@@ -6,24 +6,51 @@ The answering agent receives current context, selected durable notes and source 
 
 ## Install and use
 
+Requires Git and [uv](https://docs.astral.sh/uv/). From your project directory:
+
 ```bash
-cd /path/to/agemem
-uv venv
-uv pip install --python .venv/bin/python -e .
-.venv/bin/agemem config init
-# Set providers.jev.api_key in the private user config.yaml.
-.venv/bin/agemem --project /path/to/project init
-.venv/bin/agemem --project /path/to/project index
-.venv/bin/agemem --project /path/to/project remember 'We chose PostgreSQL because settlement writes need transactions.'
-.venv/bin/agemem --project /path/to/project recall 'Why PostgreSQL?'
+uvx --python 3.12 agemem@0.1.0 project init
 ```
 
-First indexing downloads the local BGE embedding model. `index` snapshots selected Git-tracked text files and the bank. Run it again after relevant changes. `capture` archives explicit original text; `remember` runs the internal note engine’s screens and persistence. Edit `memory/*.md` to maintain current focus, progress and decisions; existing bank files are preserved by initialization.
+Or paste this prompt into your coding agent:
 
-See [global YAML configuration and provider setup](docs/CONFIGURATION.md), [installation and MCP setup](docs/INSTALLATION.md), [local backends](docs/LOCAL_BACKENDS.md).
+> Integrate Agemem 0.1.0 into this project using the linked installation and
+> agent-integration guides. Inspect the environment and existing setup first.
+> Ask which clients to configure (Claude Code only, or also Cursor/Codex if
+> detected), whether to use local GPU QSIV or hosted Jev, and any installation
+> constraints. Explain QSIV's hardware and download requirements. Have me supply
+> a Jev key privately through configuration or the environment, never in chat.
+> Run `uvx --python 3.12 agemem@0.1.0 project init --model <jev|qsiv> --mcp <selected clients> --no-input`
+> with the agreed choices; `claude` means Claude Code. Preserve existing settings
+> and guidance, resolve conflicts with me, and add the suggested memory workflow
+> to the appropriate agent instructions. Agree on validation, run provider
+> diagnostics and an MCP handshake/tool-list/recall smoke test, and ask before
+> tests that incur hosted API charges. Report what passed, any skipped checks,
+> and required client restart or approval steps.
 
-See [agent workflow and an optional AGENTS.md section](docs/AGENT_INTEGRATION.md).
-No skill or agent instructions are installed automatically.
+Choose Codex, Cursor or Claude Code when prompted. This creates missing user and
+project configuration, indexes the project, and registers its MCP server.
+Existing settings and memory are preserved; matching MCP entries are left alone.
+First indexing downloads the local embedding model. Codex registration requires
+its CLI on PATH; no Node.js/npm is needed.
+
+On first interactive setup, choose hosted Jev or local QSIV if a compatible
+NVIDIA GPU is detected. Jev prompts for an API key with hidden input; QSIV
+installs its model and GPU runtime. Existing provider settings are preserved.
+Restart or reload your client and enable the server.
+See the [installation guide](docs/INSTALLATION.md) for configuration, individual
+commands, client options and troubleshooting.
+
+This command targets the planned PyPI release; until 0.1.0 is published, use
+[installation from source](docs/INSTALLATION.md#development-installation).
+
+Add the [suggested project-memory instructions](docs/AGENT_INTEGRATION.md) to your
+agent's project guidance. Installation does not install the original memory-bank
+skill or edit agent files. The agent should recall before work, capture original
+evidence, remember durable facts and keep `memory/*.md` current.
+
+See [configuration](docs/CONFIGURATION.md), [installation and MCP setup](docs/INSTALLATION.md),
+and [local backends](docs/LOCAL_BACKENDS.md).
 
 ## Retrieval and storage
 

@@ -8,7 +8,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from agemem.config import config_path, doctor, initialize_user_config, provider_options
+from agemem.config import config_path, doctor, initialize_user_config, provider_options, load_user_config
 from agemem.project import configuration, initialize
 
 
@@ -29,10 +29,20 @@ class ConfigurationTests(unittest.TestCase):
     def test_private_template_preserves_existing_config(self):
         result = initialize_user_config()
         self.assertTrue(result["created"])
+        self.assertEqual(load_user_config()["version"], 1)
         self.assertEqual(stat.S_IMODE(config_path().stat().st_mode), 0o600)
         self.write_user("default_provider: qsiv\n")
         self.assertFalse(initialize_user_config()["created"])
         self.assertEqual(provider_options({})["decision_backend"], "qsiv")
+
+    def test_schema_version_validation_and_legacy_compatibility(self):
+        for version in ("2", "0", "true", "1.0", '"1"', "null"):
+            self.write_user("version: " + version + "\n")
+            with self.assertRaisesRegex(ValueError, "Unsupported config.yaml version"):
+                load_user_config()
+        for content in ("version: 1\n", "default_provider: jev\n"):
+            self.write_user(content)
+            self.assertEqual(provider_options({})["decision_backend"], "jev")
 
     def test_new_projects_follow_global_and_legacy_provider_remains(self):
         self.write_user("default_provider: qsiv\nproviders:\n  qsiv:\n    model_directory: /tmp/example-model\n    runtime: reference\n")

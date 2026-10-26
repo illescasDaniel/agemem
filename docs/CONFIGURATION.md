@@ -11,6 +11,7 @@ agemem config init
 This creates a private file (mode `0600`) and preserves an existing file:
 
 ```yaml
+version: 1
 default_provider: jev
 providers:
   jev:
@@ -20,6 +21,13 @@ providers:
     model_directory: ~/.local/share/agemem/models/qsiv
     # python: ~/.local/share/agemem/runtimes/qsiv/bin/python
 ```
+
+`version` is the configuration schema version, independent of the package version.
+This release accepts integer `1`; unversioned configurations are treated as schema 1
+for compatibility. Unsupported versions fail before provider settings are used.
+Future releases must migrate older schemas explicitly or reject them rather than
+silently reinterpret settings. `config init` never rewrites an existing file;
+add `version: 1` to an existing configuration when convenient.
 
 Set `providers.jev.api_key` in this private YAML file for hosted Jev.
 Environment overrides remain supported: `AGEMEM_JEV_API_KEY`, then

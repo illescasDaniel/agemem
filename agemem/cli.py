@@ -14,6 +14,15 @@ def main():
     parser.add_argument("--project", type=Path, default=Path.cwd(), help="Project checkout to use")
     parser.add_argument("--offline", action="store_true", help="Never use hosted decisions or download embedding weights")
     sub = parser.add_subparsers(dest="command", required=True)
+    p = sub.add_parser("project", help="Set up a project and its MCP connection")
+    project_init = p.add_subparsers(dest="project_command", required=True).add_parser("init", help="Ensure user config, project files, index and MCP registration")
+    clients = project_init.add_mutually_exclusive_group()
+    clients.add_argument("--client", choices=["codex", "cursor", "claude-code"], help="Register one client")
+    clients.add_argument("--mcp", nargs="+", choices=["codex", "cursor", "claude", "claude-code"], help="Register selected clients; claude means Claude Code")
+    project_init.add_argument("--model", choices=["jev", "qsiv"], help="Select the decision provider without prompting")
+    project_init.add_argument("--no-input", action="store_true", help="Never prompt; fail when required setup choices are missing")
+    project_init.add_argument("--retrieval", choices=["hybrid", "bm25", "raw-rag"], default="hybrid")
+    project_init.add_argument("--embedder", default="BAAI/bge-small-en-v1.5")
     p = sub.add_parser("config", help="Manage user configuration")
     p.add_subparsers(dest="config_command", required=True).add_parser("init", help="Create a private YAML template without overwriting existing settings")
     p = sub.add_parser("provider", help="Set up optional local providers")
@@ -42,10 +51,19 @@ def main():
     p.add_argument("--history", action="store_true", help="Also search older file snapshots on this branch")
     sub.add_parser("maintain", help="Screen pending notes and run jev-mem consolidation")
     sub.add_parser("mcp", help="Run the project's MCP server over stdio")
+    p = sub.add_parser("mcp-install", help="Register this project with a coding client")
+    p.add_argument("--client", choices=["codex", "cursor", "claude-code"], help="Prompt when omitted")
+    p.add_argument("--dry-run", action="store_true", help="Preview registration without changing client configuration")
     args = parser.parse_args()
     try:
-        if args.command == "config":
+        if args.command == "project":
+            from .setup import initialize_project
+            result = initialize_project(args.project, args.client, args.retrieval, args.embedder, args.offline, model=args.model, clients=args.mcp, no_input=args.no_input)
+        elif args.command == "config":
             result = initialize_user_config()
+        elif args.command == "mcp-install":
+            from .mcp_install import install
+            result = install(args.project, args.client, args.dry_run, args.offline)
         elif args.command == "provider":
             from .providers import setup_qsiv
             options = provider_options({})
