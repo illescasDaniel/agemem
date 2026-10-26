@@ -10,6 +10,7 @@ from agemem.deciders import QSIVWorker
 from agemem.notes.decider import DeciderUnavailable
 
 
+@unittest.skipIf(os.name == "nt", "POSIX executable shim for the Linux-only QSIV runtime")
 class WorkerTests(unittest.TestCase):
     def launcher(self, folder, body):
         path = Path(folder) / 'python'

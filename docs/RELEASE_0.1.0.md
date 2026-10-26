@@ -26,8 +26,8 @@ project/branch scopes and existing note databases.
 
 ## Release gates, in order
 
-1. Choose the project's own license and add a root LICENSE. Third-party licenses
-   do not license the original project code. Confirm required notices are bundled.
+1. MIT selected; root LICENSE and distribution license metadata added. Required
+   third-party notices are bundled separately.
 2. Review tracked source and history for private paths, credentials, captured
    project content and redistribution rights for evaluation data. Replace remaining
    machine-specific examples with portable paths.
@@ -64,3 +64,10 @@ sandboxed attempt timed out. All 52 runtime unit tests passed.
 This is a BM25/hash offline contract check, not retrieval-quality validation,
 a model-download test, or a fresh hosted Jev/GPU inference run. Those provider
 checks and the remaining release gates above are still separate work.
+
+## Publishing automation
+
+See [CI and publishing](PUBLISHING.md) for the cross-platform test matrix,
+installed-wheel MCP smoke test, protected environment and manual trusted-publisher
+release procedure. The changelog and both package version declarations target
+0.1.0. No hosted or GPU quality claim is implied by the offline CI checks.

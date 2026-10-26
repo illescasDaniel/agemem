@@ -48,7 +48,7 @@ def initialize(directory, retrieval="hybrid", embedder="BAAI/bge-small-en-v1.5")
     folder = inside(root, root / ".agemem")
     folder.mkdir(exist_ok=True)
     created = []
-    config = folder / "config.json"
+    config = inside(root, folder / "config.json")
     if not config.exists():
         project_defaults = {key: value for key, value in DEFAULTS.items() if key not in ("decision_backend", "qsiv_directory", "qsiv_runtime")}
         config.write_text(json.dumps({**project_defaults, "project_id": uuid.uuid4().hex, "retrieval": retrieval,

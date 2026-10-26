@@ -9,6 +9,7 @@ import tempfile
 import tomllib
 
 from . import __version__
+from .project import inside
 
 CLIENTS = ("codex", "cursor", "claude-code")
 
@@ -59,7 +60,7 @@ def install(project, client=None, dry_run=False, offline=False):
             if completed.returncode:
                 raise ValueError("Codex registration failed; check codex mcp configuration and permissions")
     else:
-        path = project / (".cursor/mcp.json" if client == "cursor" else ".mcp.json")
+        path = inside(project, project / (".cursor/mcp.json" if client == "cursor" else ".mcp.json"))
         result["path"] = str(path)
         result["scope"] = "project"
         if path.exists():

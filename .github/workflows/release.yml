@@ -1,0 +1,70 @@
+name: Release
+# Manual only. Configure the PyPI trusted publisher and protected pypi environment first.
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing release tag matching the package version, e.g. v0.1.0
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pypi-release
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: pypi
+    permissions:
+      id-token: write
+      contents: write
+    env:
+      UV_PYTHON: '3.12'
+      TAG: ${{ inputs.tag }}
+    steps:
+      - name: Validate tag input
+        shell: bash
+        run: |
+          [[ "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo 'Expected vX.Y.Z'; exit 1; }
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: refs/tags/${{ inputs.tag }}
+          fetch-depth: 0
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+      - name: Validate release metadata and changelog before publishing
+        run: uv run --no-project --python 3.12 python scripts/check_release.py "$TAG"
+      - name: Require the tagged commit to be on main
+        run: git merge-base --is-ancestor HEAD origin/main
+      - run: uv venv
+      - run: uv pip install -e .
+      - run: uv run --no-sync python -m unittest discover -s tests_live -q
+        env:
+          AGEMEM_CONFIG: ${{ runner.temp }}/agemem-ci-config.yaml
+      - run: uv pip check
+      - run: uv build
+      - run: uvx --from twine twine check --strict dist/*
+      - name: Smoke-test the actual built wheel
+        run: |
+          uv venv --python 3.12 "$RUNNER_TEMP/agemem-smoke"
+          uv pip install --python "$RUNNER_TEMP/agemem-smoke/bin/python" dist/*.whl
+          uv pip check --python "$RUNNER_TEMP/agemem-smoke/bin/python"
+          "$RUNNER_TEMP/agemem-smoke/bin/python" -I scripts/smoke_install.py
+      - name: Extract release notes before the irreversible upload
+        run: uv run --no-project --python 3.12 python scripts/release_notes.py "$TAG" > "$RUNNER_TEMP/release-notes.md"
+      - name: Publish to PyPI using OIDC
+        uses: pypa/gh-action-pypi-publish@7245906fb61fa33a13554f9d5fb856fe61758086 # release/v1 (2026-10-26)
+      - name: Create the GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" dist/* --clobber
+            gh release edit "$TAG" --notes-file "$RUNNER_TEMP/release-notes.md"
+          else
+            gh release create "$TAG" dist/* --title "$TAG" --notes-file "$RUNNER_TEMP/release-notes.md" --verify-tag
+          fi

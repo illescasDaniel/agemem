@@ -2,6 +2,7 @@ import json
 import os
 from pathlib import Path
 import subprocess
+import sys
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -16,7 +17,7 @@ class ProjectSetupTests(unittest.TestCase):
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name) / "project"
         self.root.mkdir()
-        environment = patch.dict(os.environ, {"AGEMEM_CONFIG": str(Path(self.temp.name) / "config.yaml")}, clear=True)
+        environment = patch.dict(os.environ, {"AGEMEM_CONFIG": str(Path(self.temp.name) / "config.yaml"), "PATH": os.environ.get("PATH", "")}, clear=True)
         environment.start()
         self.addCleanup(environment.stop)
         subprocess.run(["git", "init", "-q", str(self.root)], check=True)
@@ -51,8 +52,8 @@ class ProjectSetupTests(unittest.TestCase):
         self.assertFalse((self.root / ".agemem").exists())
 
     def test_cli_single_command(self):
-        executable = Path(__file__).resolve().parents[1] / ".venv/bin/agemem"
-        completed = subprocess.run([str(executable), "--offline", "project", "init", "--client", "claude-code", "--retrieval", "bm25", "--embedder", "hash"], cwd=self.root, capture_output=True, text=True)
+        command = [sys.executable, "-m", "agemem.cli"]
+        completed = subprocess.run([*command, "--offline", "project", "init", "--client", "claude-code", "--retrieval", "bm25", "--embedder", "hash"], cwd=self.root, capture_output=True, text=True)
         self.assertEqual(completed.returncode, 0, completed.stderr)
         result = json.loads(completed.stdout)
         self.assertEqual(result["project"], str(self.root))
@@ -64,7 +65,8 @@ class ProjectSetupTests(unittest.TestCase):
         with patch("sys.stdin.isatty", return_value=True), patch("agemem.setup.platform.system", return_value="Darwin"), patch("agemem.setup.getpass.getpass", return_value='secret: "quoted"'):
             result = initialize_project(self.root, "cursor", "bm25", "hash")
         self.assertEqual(load_user_config()["providers"]["jev"]["api_key"], 'secret: "quoted"')
-        self.assertEqual(stat.S_IMODE(config_path().stat().st_mode), 0o600)
+        if os.name != "nt":
+            self.assertEqual(stat.S_IMODE(config_path().stat().st_mode), 0o600)
         self.assertNotIn("secret", json.dumps(result))
         self.assertFalse(any("Configure the selected" in step for step in result["next_steps"]))
 
@@ -148,9 +150,28 @@ class ProjectSetupTests(unittest.TestCase):
         self.assertFalse(config_path().exists())
 
     def test_explicit_cli_multiple_clients(self):
-        executable = Path(__file__).resolve().parents[1] / ".venv/bin/agemem"
+        command = [sys.executable, "-m", "agemem.cli"]
         with patch.dict(os.environ, {"JEV_API_KEY": "env-secret"}):
-            completed = subprocess.run([str(executable), "project", "init", "--model", "jev", "--mcp", "cursor", "claude", "--no-input", "--retrieval", "bm25", "--embedder", "hash"], cwd=self.root, capture_output=True, text=True)
+            completed = subprocess.run([*command, "project", "init", "--model", "jev", "--mcp", "cursor", "claude", "--no-input", "--retrieval", "bm25", "--embedder", "hash"], cwd=self.root, capture_output=True, text=True)
         self.assertEqual(completed.returncode, 0, completed.stderr)
         self.assertEqual(len(json.loads(completed.stdout)["mcp"]), 2)
         self.assertNotIn("env-secret", completed.stdout + completed.stderr)
+
+
+    @unittest.skipIf(os.name == "nt", "POSIX symlink contract")
+    def test_dangling_config_symlink_cannot_write_outside_project(self):
+        from agemem.project import initialize
+        with tempfile.TemporaryDirectory() as outside:
+            folder = self.root / ".agemem"
+            folder.mkdir()
+            target = Path(outside) / "config.json"
+            (folder / "config.json").symlink_to(target)
+            with self.assertRaisesRegex(ValueError, "escapes"):
+                initialize(self.root, "bm25", "hash")
+            self.assertFalse(target.exists())
+
+    def test_explicit_qsiv_rejects_reference_runtime_before_downloads(self):
+        config_path().write_text("version: 1\ndefault_provider: qsiv\nproviders:\n  qsiv:\n    runtime: reference\n")
+        with patch("agemem.providers.setup_qsiv") as setup, self.assertRaisesRegex(ValueError, "fp8 only"):
+            configure_provider(model="qsiv", no_input=True)
+        setup.assert_not_called()

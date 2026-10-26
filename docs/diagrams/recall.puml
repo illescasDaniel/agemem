@@ -1,0 +1,38 @@
+@startuml
+!theme plain
+skinparam backgroundColor #FAFBFD
+skinparam shadowing false
+skinparam defaultFontName SansSerif
+skinparam sequenceMessageAlign center
+title Agemem · recall combines three evidence layers
+actor "Coding agent" as Agent
+participant "MCP / engine" as Engine #DFEAF6
+participant "Markdown bank" as Bank #E4F1E8
+participant "Durable notes" as Notes #E4F1E8
+participant "Selected decision provider" as Model #FFF0D7
+participant "Original source retrieval" as Sources #E4F1E8
+
+Agent -> Engine : project_memory_recall(query)
+Engine -> Bank : Read current working state
+Bank --> Engine : Context with bank provenance
+opt Note database exists
+  Engine -> Notes : Recall branch + shared scoped notes
+  Notes -> Model : Typed relevance / sufficiency decisions
+  Model --> Notes : Selection or degraded status
+  Notes --> Engine : Note evidence + note-only sufficiency
+end
+Engine -> Sources : Search branch + shared sources\n(include older snapshots only with history)
+note right of Sources
+  BM25, hybrid or adapted RAW-RAG.
+  This search runs even when notes
+  are judged sufficient.
+end note
+Sources --> Engine : Ranked excerpts with source IDs
+Engine -> Engine : Pack bank + notes + sources\nwithin context budget
+Engine --> Agent : Cited context, status and missing-fact guidance
+Agent -> Agent : Write final answer or code\nfrom supporting evidence
+note over Engine, Agent
+  Retrieved text is untrusted evidence.
+  Note sufficiency does not certify the combined answer.
+end note
+@enduml

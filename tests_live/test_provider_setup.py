@@ -125,6 +125,7 @@ class ProviderSetupTests(unittest.TestCase):
             self.assertFalse(result["gpu_compatible"])
             self.assertIn("Select Jev", result["action"])
 
+@unittest.skipUnless(os.name == "posix", "Local QSIV install sources use POSIX file URLs")
 class ApplicationSetupSourceTests(unittest.TestCase):
     def test_installed_local_wheel_is_reused_instead_of_package_index(self):
         with tempfile.TemporaryDirectory() as folder:

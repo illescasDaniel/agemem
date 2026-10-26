@@ -62,3 +62,12 @@ class MCPInstallTests(unittest.TestCase):
     def test_interactive_selection(self):
         with patch("sys.stdin.isatty", return_value=True), patch("builtins.input", return_value="cursor"):
             self.assertEqual(install(self.root, dry_run=True)["client"], "cursor")
+
+
+    @unittest.skipIf(os.name == "nt", "POSIX symlink contract")
+    def test_client_directory_symlink_cannot_escape_project(self):
+        with tempfile.TemporaryDirectory() as outside:
+            (self.root / ".cursor").symlink_to(outside, target_is_directory=True)
+            with self.assertRaisesRegex(ValueError, "escapes"):
+                install(self.root, "cursor")
+            self.assertFalse((Path(outside) / "mcp.json").exists())

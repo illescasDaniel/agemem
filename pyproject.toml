@@ -2,8 +2,11 @@
 name = "agemem"
 version = "0.1.0"
 readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE", "THIRD_PARTY.md", "agemem/LICENSE.raw-rag", "agemem/notes/LICENSE.jevmem"]
+authors = [{name = "Daniel Illescas Romero", email = "illescas.daniel@protonmail.com"}]
 description = "Project memory: git-tracked working state, jev-mem decisions, and original evidence"
-requires-python = ">=3.12"
+requires-python = ">=3.12,<3.15"
 dependencies = ["PyYAML>=6,<7", "numpy>=2.4,<3", "fastembed>=0.8.1,<1", "mcp>=2,<3", "typesafe-sdk>=0.7.2,<1"]
 
 # Optional QSIV GPU dependencies are installed into a separate environment by
@@ -11,6 +14,11 @@ dependencies = ["PyYAML>=6,<7", "numpy>=2.4,<3", "fastembed>=0.8.1,<1", "mcp>=2,
 [project.optional-dependencies]
 raw = ["tiktoken>=0.8,<1"]
 compatibility = ["jevmem==0.4.0"] # Only for upstream database compatibility tests.
+
+[project.urls]
+Repository = "https://github.com/illescasDaniel/agemem"
+Documentation = "https://github.com/illescasDaniel/agemem/blob/main/docs/INSTALLATION.md"
+Issues = "https://github.com/illescasDaniel/agemem/issues"
 
 [project.scripts]
 agemem = "agemem.cli:main"
@@ -23,4 +31,4 @@ build-backend = "hatchling.build"
 packages = ["agemem"]
 
 [tool.hatch.build.targets.sdist]
-include = ["/agemem", "/pyproject.toml", "/README.md", "/THIRD_PARTY.md"]
+include = ["/agemem", "/pyproject.toml", "/README.md", "/THIRD_PARTY.md", "/LICENSE", "/CHANGELOG.md", "/docs", "/tests_live", "/scripts/release_notes.py", "/scripts/check_release.py", "/scripts/smoke_install.py"]

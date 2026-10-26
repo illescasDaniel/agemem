@@ -2,8 +2,8 @@
 
 ## Install from PyPI
 
-Requires Python 3.12+ and Git. The commands below target the planned 0.1.0 PyPI
-release; until it is published, use the development installation below.
+Requires Python 3.12–3.14 and Git. Python 3.15 is currently excluded because
+ONNX Runtime (required by FastEmbed) has no matching wheels. Use the development installation below when working from source.
 
 With [uv](https://docs.astral.sh/uv/), run the CLI and MCP server using `uvx`:
 
@@ -130,6 +130,12 @@ Hash embeddings are only for testing. Re-running setup refreshes the index;
 if a later step fails, completed steps remain and you can fix the issue and rerun.
 Use the individual commands below when you only want one setup step. The
 `mcp-install --dry-run` option previews registration without changing client files.
+
+### Setup flow
+
+![Project initialization flow](diagrams/project-init.svg)
+
+[Editable PlantUML source and rendering instructions](diagrams/README.md).
 
 ## Configure and initialize a project
 

@@ -1,0 +1,46 @@
+@startuml
+!theme plain
+skinparam backgroundColor #FAFBFD
+skinparam shadowing false
+skinparam defaultFontName SansSerif
+skinparam ArrowColor #52677D
+skinparam componentStyle rectangle
+top to bottom direction
+title Agemem · project memory architecture
+
+actor "Coding agent\nCodex / Cursor / Claude Code" as Agent
+component "MCP server\nFive explicit memory tools" as MCP #DFEAF6
+component "Memory engine\nScopes · filters · budgets · citations" as Engine #DFEAF6
+package "Project checkout" {
+  folder "memory/*.md\nReadable working state" as Bank #E4F1E8
+  database ".agemem/local/notes.sqlite\nScreened durable notes" as Notes #E4F1E8
+  database ".agemem/local/sources.sqlite\nOriginal evidence + vectors" as Sources #E4F1E8
+  file ".agemem/config.json\nProject settings" as ProjectConfig
+}
+file "Private config.yaml\nSchema version · provider · credentials" as UserConfig
+component "Typed decision adapter\nJev / QSIV / ollaya / cascade" as Decisions #FFF0D7
+cloud "Hosted Jev" as Jev #FFF0D7
+component "Local GPU QSIV\nIsolated Python runtime" as QSIV #FFF0D7
+component "Source retrieval\nBM25 / hybrid / adapted RAW-RAG" as Retrieval #DFEAF6
+
+Agent --> MCP : recall / capture / remember\nindex / maintain
+MCP --> Engine
+Engine --> Bank : read current context
+Engine --> Notes : write / select / consolidate
+Engine --> Sources : archive / snapshot
+Engine --> Retrieval : retrieve original evidence
+Retrieval --> Sources
+Engine --> Decisions : screen and select memories
+Decisions --> Jev : hosted choice
+Decisions --> QSIV : local choice
+UserConfig ..> Engine : global defaults
+ProjectConfig ..> Engine : project overrides
+note bottom of Agent
+  The coding agent writes the final answer.
+  Capture and bank updates are explicit.
+end note
+note bottom of Decisions
+  Decision models do not write the final answer.
+  Cascade can deliberately fall back to hosted Jev.
+end note
+@enduml

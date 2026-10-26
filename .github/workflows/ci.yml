@@ -1,0 +1,53 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: tests (${{ matrix.os }}, Python ${{ matrix.python }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        # 3.15 lacks ONNX Runtime wheels required by FastEmbed.
+        python: ['3.12', '3.14']
+    env:
+      UV_PYTHON: ${{ matrix.python }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+      - run: uv venv
+      - run: uv pip install -e .
+      - run: uv run --no-sync python -m unittest discover -s tests_live -q
+        env:
+          AGEMEM_CONFIG: ${{ runner.temp }}/agemem-ci-config.yaml
+      - run: uv pip check
+
+  install-smoke:
+    name: built distributions and isolated install
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      UV_PYTHON: '3.12'
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+      - run: uv build
+      - run: uvx --from twine twine check --strict dist/*
+      - name: Install built wheel away from the checkout and exercise CLI and MCP
+        run: |
+          uv venv --python 3.12 "$RUNNER_TEMP/agemem-smoke"
+          uv pip install --python "$RUNNER_TEMP/agemem-smoke/bin/python" dist/*.whl
+          uv pip check --python "$RUNNER_TEMP/agemem-smoke/bin/python"
+          "$RUNNER_TEMP/agemem-smoke/bin/python" -I scripts/smoke_install.py

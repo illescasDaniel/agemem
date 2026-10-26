@@ -1,0 +1,50 @@
+@startuml
+!theme plain
+skinparam backgroundColor #FAFBFD
+skinparam shadowing false
+skinparam defaultFontName SansSerif
+skinparam activityBackgroundColor #DFEAF6
+skinparam activityBorderColor #52677D
+title Agemem · project init
+start
+:Resolve project directory;
+:Select MCP client(s) from flags\nor interactive prompt;
+:Validate existing configuration\nand explicit model conflicts;
+if (Explicit --model?) then (yes)
+  if (QSIV?) then (yes)
+    :Require online setup and supported GPU;\ninstall/reuse runtime and model;
+  else (Jev)
+    :Require API key in private config\nor environment;
+  endif
+else (no)
+  if (New config + interactive + online?) then (yes)
+    :Check supported platform and NVIDIA GPU;
+    if (Compatible GPU and user chooses QSIV?) then (yes)
+      :Install isolated runtime\nand download QSIV model;
+    else (Jev)
+      :Reuse environment key or\nprompt with hidden input;\nallow configuration later;
+    endif
+  else (no)
+    :Reuse existing settings or\nprepare default template;
+  endif
+endif
+:Create missing private config.yaml (0600);\npreserve an existing file;
+:Create missing project config\nand Markdown memory bank;
+:Refresh source index;\nfirst hybrid index may download embeddings;
+repeat
+  :Check selected client's agemem entry;
+  if (Launcher already matches?) then (yes)
+    :Leave entry untouched;
+  else (no)
+    :Register version-pinned uvx launcher\nwith absolute project path;
+  endif
+repeat while (More selected clients?) is (yes) not (no)
+:Report setup results and next steps;\nreload client and add agent guidance;
+stop
+note right
+  Existing project settings and memory survive reruns.
+  Failures stop setup; completed steps remain.
+  Indexing makes no hosted decision calls.
+  --no-input rejects missing required choices.
+end note
+@enduml

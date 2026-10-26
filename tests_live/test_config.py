@@ -17,7 +17,7 @@ class ConfigurationTests(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory()
         self.root = Path(self.temp.name)
         self.environment = patch.dict(os.environ, {"XDG_CONFIG_HOME": str(self.root / "config"),
-                                                  "XDG_DATA_HOME": str(self.root / "data")}, clear=True)
+                                                  "XDG_DATA_HOME": str(self.root / "data"), "PATH": os.environ.get("PATH", "")}, clear=True)
         self.environment.start()
         self.addCleanup(self.environment.stop)
         self.addCleanup(self.temp.cleanup)
@@ -30,7 +30,8 @@ class ConfigurationTests(unittest.TestCase):
         result = initialize_user_config()
         self.assertTrue(result["created"])
         self.assertEqual(load_user_config()["version"], 1)
-        self.assertEqual(stat.S_IMODE(config_path().stat().st_mode), 0o600)
+        if os.name != "nt":
+            self.assertEqual(stat.S_IMODE(config_path().stat().st_mode), 0o600)
         self.write_user("default_provider: qsiv\n")
         self.assertFalse(initialize_user_config()["created"])
         self.assertEqual(provider_options({})["decision_backend"], "qsiv")
@@ -72,7 +73,7 @@ class ConfigurationTests(unittest.TestCase):
         runtime.touch()
         self.assertEqual(provider_options({})["qsiv_python"], str(runtime))
         with patch.dict(os.environ, {"AGEMEM_QSIV_PYTHON": "/other/python"}):
-            self.assertEqual(provider_options({})["qsiv_python"], "/other/python")
+            self.assertEqual(provider_options({})["qsiv_python"], str(Path("/other/python")))
 
     def test_yaml_validation_and_errors_do_not_include_credentials(self):
         for content in ("[]", "default_provider: unknown", "providers: []", "providers:\n  jev: secret", "api_key: [private-secret"):
@@ -103,7 +104,7 @@ class ConfigurationTests(unittest.TestCase):
         self.write_user("default_provider: qsiv\nproviders:\n  qsiv:\n    model_directory: " + str(self.root) + "\n    python: /custom/executable\n    runtime: reference\n")
         with patch("agemem.providers.qsiv_doctor", return_value={"ready": True}) as probe:
             self.assertTrue(doctor(self.root)["ok"])
-        self.assertEqual(probe.call_args.kwargs["runtime_python"], "/custom/executable")
+        self.assertEqual(probe.call_args.kwargs["runtime_python"], str(Path("/custom/executable")))
         self.assertEqual(probe.call_args.kwargs["runtime"], "reference")
 
     def test_qsiv_default_paths_match_setup_and_doctor_uses_native_python(self):

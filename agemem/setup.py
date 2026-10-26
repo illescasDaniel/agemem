@@ -28,6 +28,8 @@ def configure_provider(offline=False, model=None, no_input=False):
             if not options.get("jev_api_key"):
                 raise ValueError("Non-interactive Jev setup requires an API key in private config or AGEMEM_JEV_API_KEY, TYPESAFE_API_KEY or JEV_API_KEY")
         else:
+            if options["qsiv_runtime"] != "fp8":
+                raise ValueError("Automatic QSIV setup supports runtime fp8 only")
             if offline:
                 raise ValueError("QSIV setup needs downloads; omit --offline and rerun")
             from .providers import setup_qsiv

@@ -6,6 +6,10 @@ agents use; retrieval algorithms, storage libraries and decision models are
 implementation choices. This is an experimental implementation, not yet a
 versioned compatibility commitment or a published release.
 
+![Agent, memory engine, storage and providers](diagrams/architecture.svg)
+
+The [PlantUML sources](diagrams/README.md) are editable and rendered locally.
+
 Current public tools are `project_memory_recall`, `project_memory_remember`,
 `project_memory_capture`, `project_memory_index` and `project_memory_maintain`.
 Capture/remember calls are explicit; the server does not automatically record
@@ -56,3 +60,7 @@ No upstream checkout is required. Per-source windows
 provide exact source IDs; this is a deliberate change from conversation windows.
 Dependency/model licenses and hosted service terms remain separate.
 See THIRD_PARTY.md. Publishing remains separate work.
+
+## Recall evidence flow
+
+![Recall combines bank, notes and original sources](diagrams/recall.svg)
