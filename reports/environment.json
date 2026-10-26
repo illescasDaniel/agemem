@@ -1,0 +1,20 @@
+{
+  "python": "3.12.13",
+  "platform": "Linux x86_64",
+  "packages": {
+    "fastembed": "0.9.1",
+    "numpy": "2.5.4",
+    "onnxruntime": "1.31.0",
+    "openai": "3.37.0",
+    "typesafe-sdk": "0.7.5",
+    "jevmem": "0.4.0",
+    "tiktoken": "0.14.0",
+    "rich": "15.0.0",
+    "PyYAML": "6.0.3",
+    "tqdm": "4.70.1"
+  },
+  "node": "24.15.0",
+  "npm": "11.13.0",
+  "hardware": "CPU retrieval (threads=2); no GPU required",
+  "temporary_environment": true
+}

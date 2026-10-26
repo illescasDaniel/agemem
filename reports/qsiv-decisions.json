@@ -1,0 +1,251 @@
+{
+  "backend": "qsiv",
+  "runtime": "fp8",
+  "scope": "20 synthetic typed decisions, author-labeled; not held out or a coding effectiveness benchmark",
+  "model_load_seconds": 4.076992694000182,
+  "rows": [
+    {
+      "case": "durable",
+      "question_key": "decision",
+      "prediction": true,
+      "p": 0.9927750626500709,
+      "expected": [
+        true,
+        0.5
+      ],
+      "correct": true,
+      "request_seconds": 9.064425654999468
+    },
+    {
+      "case": "durable",
+      "question_key": "status",
+      "prediction": false,
+      "p": 0.2716540601720571,
+      "expected": [
+        false,
+        0.85
+      ],
+      "correct": true,
+      "request_seconds": 9.064425654999468
+    },
+    {
+      "case": "durable",
+      "question_key": "injection",
+      "prediction": false,
+      "p": 0.10543212257508357,
+      "expected": [
+        false,
+        0.5
+      ],
+      "correct": true,
+      "request_seconds": 9.064425654999468
+    },
+    {
+      "case": "work-status",
+      "question_key": "status",
+      "prediction": false,
+      "p": 0.8411346245710525,
+      "expected": [
+        true,
+        0.85
+      ],
+      "correct": false,
+      "request_seconds": 1.1661811220001255
+    },
+    {
+      "case": "work-status",
+      "question_key": "injection",
+      "prediction": false,
+      "p": 0.03586661317860198,
+      "expected": [
+        false,
+        0.5
+      ],
+      "correct": true,
+      "request_seconds": 1.1661811220001255
+    },
+    {
+      "case": "injection",
+      "question_key": "injection",
+      "prediction": true,
+      "p": 0.9546297965970291,
+      "expected": [
+        true,
+        0.5
+      ],
+      "correct": true,
+      "request_seconds": 0.9842771539997557
+    },
+    {
+      "case": "relevance",
+      "question_key": "item_0",
+      "prediction": true,
+      "p": 0.8697533851192251,
+      "expected": [
+        true,
+        0.3
+      ],
+      "correct": true,
+      "request_seconds": 7.66676526900028
+    },
+    {
+      "case": "relevance",
+      "question_key": "item_1",
+      "prediction": false,
+      "p": 0.010230813936392275,
+      "expected": [
+        false,
+        0.3
+      ],
+      "correct": true,
+      "request_seconds": 7.66676526900028
+    },
+    {
+      "case": "missing-evidence",
+      "question_key": "evidence_sufficient",
+      "prediction": false,
+      "p": 0.1317525627160439,
+      "expected": [
+        false,
+        0.3
+      ],
+      "correct": true,
+      "request_seconds": 0.06751433900080883
+    },
+    {
+      "case": "missing-evidence",
+      "question_key": "missing_evidence",
+      "prediction": false,
+      "p": 0.35353643891898257,
+      "expected": [
+        true,
+        0.7
+      ],
+      "correct": false,
+      "request_seconds": 0.06751433900080883
+    },
+    {
+      "case": "replacement",
+      "question_key": "pair_0_same_question",
+      "prediction": true,
+      "p": 0.5922794933391425,
+      "expected": [
+        true,
+        0.5
+      ],
+      "correct": true,
+      "request_seconds": 1.0891342710001481
+    },
+    {
+      "case": "replacement",
+      "question_key": "pair_0_different_answer",
+      "prediction": true,
+      "p": 0.7750159750502206,
+      "expected": [
+        true,
+        0.5
+      ],
+      "correct": true,
+      "request_seconds": 1.0891342710001481
+    },
+    {
+      "case": "replacement",
+      "question_key": "pair_0_outdated",
+      "prediction": true,
+      "p": 0.9384670143674375,
+      "expected": [
+        true,
+        0.5
+      ],
+      "correct": true,
+      "request_seconds": 1.0891342710001481
+    },
+    {
+      "case": "replacement",
+      "question_key": "pair_0_new_reports_change",
+      "prediction": true,
+      "p": 0.970461664480518,
+      "expected": [
+        true,
+        0.5
+      ],
+      "correct": true,
+      "request_seconds": 1.0891342710001481
+    },
+    {
+      "case": "replacement",
+      "question_key": "pair_0_candidate_reports_change",
+      "prediction": true,
+      "p": 0.9051081420921061,
+      "expected": [
+        false,
+        0.5
+      ],
+      "correct": false,
+      "request_seconds": 1.0891342710001481
+    },
+    {
+      "case": "replacement",
+      "question_key": "pair_0_new_covers",
+      "prediction": false,
+      "p": 0.20686789500426417,
+      "expected": [
+        false,
+        0.5
+      ],
+      "correct": true,
+      "request_seconds": 1.0891342710001481
+    },
+    {
+      "case": "replacement",
+      "question_key": "pair_0_candidate_covers",
+      "prediction": false,
+      "p": 0.25412949323822914,
+      "expected": [
+        false,
+        0.5
+      ],
+      "correct": true,
+      "request_seconds": 1.0891342710001481
+    },
+    {
+      "case": "replacement",
+      "question_key": "pair_0_link_usefulness",
+      "prediction": true,
+      "p": 0.7524070154282604,
+      "expected": [
+        true,
+        0.5
+      ],
+      "correct": true,
+      "request_seconds": 1.0891342710001481
+    },
+    {
+      "case": "replacement",
+      "question_key": "pair_0_pattern",
+      "prediction": false,
+      "p": 0.3857331117761683,
+      "expected": [
+        false,
+        0.5
+      ],
+      "correct": true,
+      "request_seconds": 1.0891342710001481
+    },
+    {
+      "case": "choice",
+      "question_key": "route",
+      "prediction": "coder",
+      "p": null,
+      "expected": "coder",
+      "correct": true,
+      "request_seconds": 0.7003390699992451
+    }
+  ],
+  "correct": 17,
+  "total": 20,
+  "physical_calls": 8,
+  "input_tokens": null,
+  "seconds_including_load": 24.817134100000658,
+  "input_tokens_note": "Native QSIV decide() does not expose token usage"
+}

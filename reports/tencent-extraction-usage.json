@@ -1,0 +1,33 @@
+{
+  "max_calls": 4,
+  "max_reserved_usd": 0.02,
+  "reserved_usd": 0.0036072,
+  "estimated_actual_usd": 0.0011815999999999999,
+  "calls": [
+    {
+      "status": "completed",
+      "reserved_usd": 0.0036072,
+      "usage": {
+        "completion_tokens": 339,
+        "prompt_tokens": 1598,
+        "total_tokens": 1937,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": 0,
+          "audio_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": 0,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": 0,
+          "cache_write_tokens": null,
+          "cached_tokens": 0,
+          "image_tokens": null,
+          "text_tokens": null
+        }
+      },
+      "estimated_usd": 0.0011815999999999999
+    }
+  ],
+  "model": "gpt-4.1-mini-2025-04-14"
+}

@@ -1,0 +1,16 @@
+{
+  "status": "passed",
+  "gpu": "RTX 4070 Laptop GPU",
+  "compute_capability": "8.9",
+  "memory_total_mib": 8188,
+  "runtime": "QSIV FP8",
+  "qsiv_revision": "f1ee842daf758c0ab535cf7d281c85439d6e4b25",
+  "torch": "2.13.0+cu130",
+  "triton": "3.7.1",
+  "transformers": "5.14.1",
+  "peak_allocated_gpu_bytes": 1548228096,
+  "seconds_including_load": 15.235380516999612,
+  "correct": 2,
+  "total": 2,
+  "limitations": "Two short synthetic decisions. Runtime warns optimized for Blackwell. Not a 65k context or concurrency test."
+}

@@ -1,0 +1,333 @@
+{
+  "backend": "cascade",
+  "fixture_sha256": "f500187c57c30854ed73a02831ab701ac8c64a88eeba88d10af97a032bd20e73",
+  "scope": "Author-created executable-oracle coding-memory selection fixtures; not independently human-labeled or end-to-end coding",
+  "load_seconds": 4.178119278999475,
+  "rows": [
+    {
+      "id": "cal-null",
+      "split": "calibration",
+      "kind": "current",
+      "expected": {
+        "choice": "a",
+        "accept": true
+      },
+      "choice": "a",
+      "accept": true,
+      "p": 0.9577493870837847,
+      "native_confidence": 0.9154987741675693,
+      "choice_confidence": 0.89,
+      "correct": true,
+      "code_correct": true,
+      "provenance_correct": true,
+      "seconds": 0.856051099999604
+    },
+    {
+      "id": "cal-prefix",
+      "split": "calibration",
+      "kind": "stale",
+      "expected": {
+        "choice": "b",
+        "accept": false
+      },
+      "choice": "b",
+      "accept": false,
+      "p": 0.02,
+      "native_confidence": null,
+      "choice_confidence": 0.97,
+      "correct": true,
+      "code_correct": true,
+      "provenance_correct": true,
+      "seconds": 0.1773607989998709
+    },
+    {
+      "id": "cal-copy",
+      "split": "calibration",
+      "kind": "branch",
+      "expected": {
+        "choice": "a",
+        "accept": false
+      },
+      "choice": "a",
+      "accept": false,
+      "p": 0.03,
+      "native_confidence": null,
+      "choice_confidence": 0.95,
+      "correct": true,
+      "code_correct": true,
+      "provenance_correct": true,
+      "seconds": 0.23914076700020814
+    },
+    {
+      "id": "cal-missing",
+      "split": "calibration",
+      "kind": "missing",
+      "expected": {
+        "choice": "abstain",
+        "accept": false
+      },
+      "choice": "abstain",
+      "accept": false,
+      "p": 0.02,
+      "native_confidence": null,
+      "choice_confidence": 0.96,
+      "correct": true,
+      "code_correct": false,
+      "provenance_correct": false,
+      "seconds": 0.23173673700057407
+    },
+    {
+      "id": "cal-inject",
+      "split": "calibration",
+      "kind": "injection",
+      "expected": {
+        "choice": "a",
+        "accept": false
+      },
+      "choice": "a",
+      "accept": false,
+      "p": 0.02,
+      "native_confidence": null,
+      "choice_confidence": 0.89,
+      "correct": true,
+      "code_correct": true,
+      "provenance_correct": true,
+      "seconds": 0.1629639800003133
+    },
+    {
+      "id": "cal-conflict",
+      "split": "calibration",
+      "kind": "conflict",
+      "expected": {
+        "choice": "abstain",
+        "accept": false
+      },
+      "choice": "b",
+      "accept": false,
+      "p": 0.05,
+      "native_confidence": null,
+      "choice_confidence": 0.41,
+      "correct": false,
+      "code_correct": false,
+      "provenance_correct": false,
+      "seconds": 0.14434464199985086
+    },
+    {
+      "id": "test-suffix",
+      "split": "final",
+      "kind": "stale",
+      "expected": {
+        "choice": "a",
+        "accept": true
+      },
+      "choice": "a",
+      "accept": true,
+      "p": 0.73,
+      "native_confidence": null,
+      "choice_confidence": 0.9583587037251231,
+      "correct": true,
+      "code_correct": true,
+      "provenance_correct": true,
+      "seconds": 0.12792811599956622
+    },
+    {
+      "id": "test-zero",
+      "split": "final",
+      "kind": "branch",
+      "expected": {
+        "choice": "b",
+        "accept": false
+      },
+      "choice": "b",
+      "accept": false,
+      "p": 0.02,
+      "native_confidence": null,
+      "choice_confidence": 0.92,
+      "correct": true,
+      "code_correct": true,
+      "provenance_correct": true,
+      "seconds": 0.14705924299960316
+    },
+    {
+      "id": "test-project",
+      "split": "final",
+      "kind": "project",
+      "expected": {
+        "choice": "a",
+        "accept": false
+      },
+      "choice": "a",
+      "accept": false,
+      "p": 0.03,
+      "native_confidence": null,
+      "choice_confidence": 0.88,
+      "correct": true,
+      "code_correct": true,
+      "provenance_correct": true,
+      "seconds": 0.14521143599995412
+    },
+    {
+      "id": "test-inject",
+      "split": "final",
+      "kind": "injection",
+      "expected": {
+        "choice": "b",
+        "accept": true
+      },
+      "choice": "b",
+      "accept": true,
+      "p": 0.8,
+      "native_confidence": null,
+      "choice_confidence": 0.989230070331604,
+      "correct": true,
+      "code_correct": true,
+      "provenance_correct": true,
+      "seconds": 0.1948621589999675
+    },
+    {
+      "id": "test-conflict",
+      "split": "final",
+      "kind": "conflict",
+      "expected": {
+        "choice": "abstain",
+        "accept": false
+      },
+      "choice": "abstain",
+      "accept": false,
+      "p": 0.1,
+      "native_confidence": null,
+      "choice_confidence": 0.29,
+      "correct": true,
+      "code_correct": false,
+      "provenance_correct": false,
+      "seconds": 0.14775056500002393
+    },
+    {
+      "id": "test-missing",
+      "split": "final",
+      "kind": "missing",
+      "expected": {
+        "choice": "abstain",
+        "accept": false
+      },
+      "choice": "abstain",
+      "accept": false,
+      "p": 0.02,
+      "native_confidence": null,
+      "choice_confidence": 0.99,
+      "correct": true,
+      "code_correct": false,
+      "provenance_correct": false,
+      "seconds": 0.15932821599926683
+    },
+    {
+      "id": "test-dedupe",
+      "split": "final",
+      "kind": "stale",
+      "expected": {
+        "choice": "a",
+        "accept": true
+      },
+      "choice": "a",
+      "accept": false,
+      "p": 0.68,
+      "native_confidence": null,
+      "choice_confidence": 0.99,
+      "correct": true,
+      "code_correct": true,
+      "provenance_correct": true,
+      "seconds": 0.15779148300043744
+    },
+    {
+      "id": "test-copy",
+      "split": "final",
+      "kind": "branch",
+      "expected": {
+        "choice": "b",
+        "accept": false
+      },
+      "choice": "b",
+      "accept": false,
+      "p": 0.03,
+      "native_confidence": null,
+      "choice_confidence": 0.97,
+      "correct": true,
+      "code_correct": true,
+      "provenance_correct": true,
+      "seconds": 0.1430935620001037
+    },
+    {
+      "id": "test-empty",
+      "split": "final",
+      "kind": "project",
+      "expected": {
+        "choice": "a",
+        "accept": false
+      },
+      "choice": "a",
+      "accept": false,
+      "p": 0.03,
+      "native_confidence": null,
+      "choice_confidence": 0.91,
+      "correct": true,
+      "code_correct": true,
+      "provenance_correct": true,
+      "seconds": 0.14479603100062377
+    },
+    {
+      "id": "test-range",
+      "split": "final",
+      "kind": "injection",
+      "expected": {
+        "choice": "b",
+        "accept": true
+      },
+      "choice": "b",
+      "accept": true,
+      "p": 0.83,
+      "native_confidence": null,
+      "choice_confidence": 0.97,
+      "correct": true,
+      "code_correct": true,
+      "provenance_correct": true,
+      "seconds": 0.17296882499977073
+    }
+  ],
+  "summary": {
+    "calibration": {
+      "total": 6,
+      "correct": 5,
+      "errors": 0,
+      "code_correct": 4,
+      "answered": 5,
+      "provenance_correct": 4,
+      "harmful_acceptances": 0,
+      "harmful_opportunities": 5,
+      "abstentions": 1,
+      "correct_abstentions": 1,
+      "required_abstentions": 2,
+      "warm_median_seconds": 0.1773607989998709
+    },
+    "final": {
+      "total": 10,
+      "correct": 10,
+      "errors": 0,
+      "code_correct": 8,
+      "answered": 8,
+      "provenance_correct": 8,
+      "harmful_acceptances": 0,
+      "harmful_opportunities": 6,
+      "abstentions": 2,
+      "correct_abstentions": 2,
+      "required_abstentions": 2,
+      "warm_median_seconds": 0.14740490399981354
+    }
+  },
+  "physical_calls": 32,
+  "hosted_calls": 16,
+  "hosted_input_tokens": 9045,
+  "fallback_questions": 29,
+  "kept_questions": 3,
+  "total_seconds": 7.542883296999207,
+  "first_request_seconds": 0.856051099999604
+}

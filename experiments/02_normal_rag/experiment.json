@@ -1,0 +1,11 @@
+{
+  "name": "02_normal_rag",
+  "methods": [
+    "bm25",
+    "dense",
+    "hybrid",
+    "dense-rerank"
+  ],
+  "budget_units": 1800,
+  "output": "reports/normal-rag.json"
+}

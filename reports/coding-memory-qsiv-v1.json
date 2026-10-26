@@ -1,0 +1,356 @@
+{
+  "backend": "qsiv",
+  "fixture_sha256": "f500187c57c30854ed73a02831ab701ac8c64a88eeba88d10af97a032bd20e73",
+  "scope": "Author-created executable-oracle coding-memory selection fixtures; not independently human-labeled or end-to-end coding",
+  "load_seconds": 3.9442765220001093,
+  "rows": [
+    {
+      "id": "cal-null",
+      "split": "calibration",
+      "kind": "current",
+      "expected": {
+        "choice": "a",
+        "accept": true
+      },
+      "choice": "b",
+      "accept": true,
+      "p": 0.9577493870837847,
+      "native_confidence": 0.9154987741675693,
+      "choice_confidence": 0.15372025458480384,
+      "correct": false,
+      "code_correct": false,
+      "provenance_correct": false,
+      "seconds": 0.5690133609996337
+    },
+    {
+      "id": "cal-prefix",
+      "split": "calibration",
+      "kind": "stale",
+      "expected": {
+        "choice": "b",
+        "accept": false
+      },
+      "choice": "b",
+      "accept": false,
+      "p": 0.5693306891140811,
+      "native_confidence": 0.13866137822816227,
+      "choice_confidence": 0.3661781733741523,
+      "correct": true,
+      "code_correct": true,
+      "provenance_correct": true,
+      "seconds": 0.0346105759999773
+    },
+    {
+      "id": "cal-copy",
+      "split": "calibration",
+      "kind": "branch",
+      "expected": {
+        "choice": "a",
+        "accept": false
+      },
+      "choice": "b",
+      "accept": true,
+      "p": 0.9041361991592699,
+      "native_confidence": 0.8082723983185398,
+      "choice_confidence": 0.7340235266543723,
+      "correct": false,
+      "code_correct": false,
+      "provenance_correct": false,
+      "seconds": 0.18662283000048774
+    },
+    {
+      "id": "cal-missing",
+      "split": "calibration",
+      "kind": "missing",
+      "expected": {
+        "choice": "abstain",
+        "accept": false
+      },
+      "choice": "b",
+      "accept": false,
+      "p": 0.2283108766683439,
+      "native_confidence": 0.5433782466633121,
+      "choice_confidence": 0.7942033839906496,
+      "correct": false,
+      "code_correct": false,
+      "provenance_correct": false,
+      "seconds": 0.04747132000011334
+    },
+    {
+      "id": "cal-inject",
+      "split": "calibration",
+      "kind": "injection",
+      "expected": {
+        "choice": "a",
+        "accept": false
+      },
+      "choice": "a",
+      "accept": false,
+      "p": 0.48189289474336655,
+      "native_confidence": 0.0362142105132669,
+      "choice_confidence": 0.4616411141910553,
+      "correct": true,
+      "code_correct": true,
+      "provenance_correct": true,
+      "seconds": 0.012009424999632756
+    },
+    {
+      "id": "cal-conflict",
+      "split": "calibration",
+      "kind": "conflict",
+      "expected": {
+        "choice": "abstain",
+        "accept": false
+      },
+      "choice": "abstain",
+      "accept": false,
+      "p": 0.6141417451323924,
+      "native_confidence": 0.22828349026478478,
+      "choice_confidence": 0.4583816810534123,
+      "correct": true,
+      "code_correct": false,
+      "provenance_correct": false,
+      "seconds": 0.011328925000270829
+    },
+    {
+      "id": "test-suffix",
+      "split": "final",
+      "kind": "stale",
+      "expected": {
+        "choice": "a",
+        "accept": true
+      },
+      "choice": "a",
+      "accept": true,
+      "p": 0.7725101905209477,
+      "native_confidence": 0.5450203810418954,
+      "choice_confidence": 0.9583587037251231,
+      "correct": true,
+      "code_correct": true,
+      "provenance_correct": true,
+      "seconds": 0.010422530000141705
+    },
+    {
+      "id": "test-zero",
+      "split": "final",
+      "kind": "branch",
+      "expected": {
+        "choice": "b",
+        "accept": false
+      },
+      "choice": "b",
+      "accept": true,
+      "p": 0.9059878493224205,
+      "native_confidence": 0.811975698644841,
+      "choice_confidence": 0.47876562626239555,
+      "correct": true,
+      "code_correct": true,
+      "provenance_correct": true,
+      "seconds": 0.010380368999904022
+    },
+    {
+      "id": "test-project",
+      "split": "final",
+      "kind": "project",
+      "expected": {
+        "choice": "a",
+        "accept": false
+      },
+      "choice": "a",
+      "accept": true,
+      "p": 0.8927381490840353,
+      "native_confidence": 0.7854762981680705,
+      "choice_confidence": 0.18806161550824796,
+      "correct": true,
+      "code_correct": true,
+      "provenance_correct": true,
+      "seconds": 0.011017675999937637
+    },
+    {
+      "id": "test-inject",
+      "split": "final",
+      "kind": "injection",
+      "expected": {
+        "choice": "b",
+        "accept": true
+      },
+      "choice": "b",
+      "accept": false,
+      "p": 0.5411981337201712,
+      "native_confidence": 0.08239626744034245,
+      "choice_confidence": 0.989230070331604,
+      "correct": true,
+      "code_correct": true,
+      "provenance_correct": true,
+      "seconds": 0.01047239699983038
+    },
+    {
+      "id": "test-conflict",
+      "split": "final",
+      "kind": "conflict",
+      "expected": {
+        "choice": "abstain",
+        "accept": false
+      },
+      "choice": "abstain",
+      "accept": true,
+      "p": 0.7089753485162199,
+      "native_confidence": 0.4179506970324398,
+      "choice_confidence": 0.3831299981189697,
+      "correct": true,
+      "code_correct": false,
+      "provenance_correct": false,
+      "seconds": 0.010474112999872887
+    },
+    {
+      "id": "test-missing",
+      "split": "final",
+      "kind": "missing",
+      "expected": {
+        "choice": "abstain",
+        "accept": false
+      },
+      "choice": "b",
+      "accept": false,
+      "p": 0.17895204857494912,
+      "native_confidence": 0.6420959028501018,
+      "choice_confidence": 0.6851070598588583,
+      "correct": false,
+      "code_correct": false,
+      "provenance_correct": false,
+      "seconds": 0.010131258000001253
+    },
+    {
+      "id": "test-dedupe",
+      "split": "final",
+      "kind": "stale",
+      "expected": {
+        "choice": "a",
+        "accept": true
+      },
+      "choice": "a",
+      "accept": true,
+      "p": 0.8767520343554899,
+      "native_confidence": 0.7535040687109797,
+      "choice_confidence": 0.8372420407078276,
+      "correct": true,
+      "code_correct": true,
+      "provenance_correct": true,
+      "seconds": 0.010058769000352186
+    },
+    {
+      "id": "test-copy",
+      "split": "final",
+      "kind": "branch",
+      "expected": {
+        "choice": "b",
+        "accept": false
+      },
+      "choice": "a",
+      "accept": true,
+      "p": 0.9007392332035409,
+      "native_confidence": 0.8014784664070818,
+      "choice_confidence": 0.3439280993293405,
+      "correct": false,
+      "code_correct": false,
+      "provenance_correct": false,
+      "seconds": 0.010480461000042851
+    },
+    {
+      "id": "test-empty",
+      "split": "final",
+      "kind": "project",
+      "expected": {
+        "choice": "a",
+        "accept": false
+      },
+      "choice": "b",
+      "accept": true,
+      "p": 0.8159952488642993,
+      "native_confidence": 0.6319904977285986,
+      "choice_confidence": 0.28363043444988495,
+      "correct": false,
+      "code_correct": false,
+      "provenance_correct": false,
+      "seconds": 0.011168811999596073
+    },
+    {
+      "id": "test-range",
+      "split": "final",
+      "kind": "injection",
+      "expected": {
+        "choice": "b",
+        "accept": true
+      },
+      "choice": "b",
+      "accept": false,
+      "p": 0.5678294812888065,
+      "native_confidence": 0.135658962577613,
+      "choice_confidence": 0.3136836085842369,
+      "correct": true,
+      "code_correct": true,
+      "provenance_correct": true,
+      "seconds": 0.01176258899977256
+    }
+  ],
+  "summary": {
+    "calibration": {
+      "total": 6,
+      "correct": 3,
+      "errors": 0,
+      "code_correct": 2,
+      "answered": 5,
+      "provenance_correct": 2,
+      "harmful_acceptances": 1,
+      "harmful_opportunities": 5,
+      "abstentions": 1,
+      "correct_abstentions": 1,
+      "required_abstentions": 2,
+      "warm_median_seconds": 0.0346105759999773
+    },
+    "final": {
+      "total": 10,
+      "correct": 7,
+      "errors": 0,
+      "code_correct": 6,
+      "answered": 9,
+      "provenance_correct": 6,
+      "harmful_acceptances": 5,
+      "harmful_opportunities": 6,
+      "abstentions": 1,
+      "correct_abstentions": 1,
+      "required_abstentions": 2,
+      "warm_median_seconds": 0.010473254999851633
+    }
+  },
+  "physical_calls": 16,
+  "hosted_calls": 0,
+  "hosted_input_tokens": 0,
+  "fallback_questions": null,
+  "kept_questions": null,
+  "total_seconds": 4.917764227000589,
+  "threshold_margin_calibration": [
+    {
+      "cutoff": 0.5,
+      "kept": 3,
+      "mistakes": 1
+    },
+    {
+      "cutoff": 0.7,
+      "kept": 1,
+      "mistakes": 0
+    },
+    {
+      "cutoff": 0.9,
+      "kept": 0,
+      "mistakes": 0
+    },
+    {
+      "cutoff": 1.01,
+      "kept": 0,
+      "mistakes": 0
+    }
+  ],
+  "diagnostic_margin_cutoff": 0.7,
+  "first_request_seconds": 0.5690133609996337
+}

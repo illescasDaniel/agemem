@@ -1,0 +1,51 @@
+{
+  "python": "3.12.13 (main, Jun 23 2026, 15:18:55) [Clang 22.1.3 ]",
+  "executable": "/home/daniel/Projects/Code/Python/agemem/.venv-qsiv/bin/python",
+  "prefix": "/home/daniel/Projects/Code/Python/agemem/.venv-qsiv",
+  "model_directory": "/home/daniel/Projects/Code/Python/agemem/.cache/qsiv/model",
+  "model_revision": "f1ee842daf758c0ab535cf7d281c85439d6e4b25",
+  "origin": "Copied existing pinned /tmp artifact into durable project cache; checked FP8 against pinned upstream SHA256",
+  "metadata_patch": "requirements/qsiv-numpy.patch; runtime Python sources unchanged",
+  "packages": {
+    "torch": "2.11.0",
+    "triton": "3.6.0",
+    "transformers": "5.14.1",
+    "numpy": "2.5.4",
+    "safetensors": "0.8.0",
+    "qsiv": "1.0.0",
+    "jevmem": "0.4.0"
+  },
+  "cuda_available": true,
+  "gpu": "NVIDIA GeForce RTX 4070 Laptop GPU",
+  "cuda": "13.0",
+  "checksums": {
+    "qsiv_fp8.safetensors": "c44a08dafe091b0ed565a8efe511600b81e8f427feee56fc14c1d30d9466b9fc",
+    "calibration.json": "d8446ba14c4abd81e3353e46f79ca35dfb5c31f4b393d8098125366269e9ce6e",
+    "config.json": "69f9ab041cf7ac3270ed7b6ec526d1adcf0b2ee49042299dd5c8caf5007e1c09",
+    "pyproject.toml": "21deb86a3465715c7435e545ef3adfe4f62566a49510cf42b54fed94bb25c91d"
+  },
+  "runtime_checksums": {
+    "qsiv/__init__.py": "2c6c28d33c804af6e8ab081dc42f6b8074b2c1568a9ed0edc33b588197402817",
+    "qsiv/constants.py": "5231d7f8279bbef06d2581c4e4b4e01977db31d204b7acb56d26b1213c75b2d5",
+    "qsiv/model/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "qsiv/model/batch.py": "3194233acc2632e72dbdd3838fa934b5b98853bd7dfe3e2ed18d706ffe5c31ec",
+    "qsiv/model/fp8.py": "e040269ae9d9e337c9f59bef9a835bd5f1724f06c2ed3619cf97b3d69fc993a1",
+    "qsiv/model/model.py": "455cec599c7ce568bd3ab87c77bb50b79792030089216e6b1259cdbefbc8ae3b",
+    "qsiv/reference.py": "cca798c68c2355656d01de18bfb1fac308b947f9d52e614db3af75cd0b289ef2",
+    "qsiv/render.py": "ad499d483b38b9ce7e7896ad4993b87a2cc7f3180568baf1cd221817c366ffd5",
+    "qsiv/runtime/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "qsiv/runtime/artifact.py": "fd00602c4a32e99064b6d625612234c0ed2bb7bf393f192df347a885514f81f5",
+    "qsiv/runtime/calibration.py": "6f518b1d03db7bbf0054c18f6c0168bce48be29d51042efc46b68016c201a19a",
+    "qsiv/runtime/engine.py": "77b6e791d6faafef9ca4bb20d3b135a1dfeee3a4ee5db1d50425d0e6a34bc638",
+    "qsiv/runtime/kernels_gemm.py": "a0a4aeb2f2fab2df5782a32dadf433be4a191954c08ca1b1be127e9cd810a786",
+    "qsiv/runtime/kernels_norm.py": "0660d660429d797e278f64228f483267f44bc96153a5d55aa6df44889951a6b4",
+    "qsiv/runtime/kernels_qsiv.py": "11b4c90e0dd78ebedcb6d47568c4487711482a390fbf14910ce6910d86f3cd88",
+    "qsiv/runtime/service.py": "89f221988b90a52a8467f5e91b860e176723927b7629bc264b38f2a181238cfd"
+  },
+  "validation": [
+    "93-package uv pip check passed",
+    "offline live write/recall passed",
+    "20 live + 8 inherited tests passed",
+    "MCP handshake/list/recall passed"
+  ]
+}

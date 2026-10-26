@@ -1,0 +1,358 @@
+{
+  "reviewer": "this assistant; not independent or blinded",
+  "rubric": "docs/EVALUATION.md",
+  "entries": [
+    {
+      "run": "reader-pilot",
+      "method": "bank",
+      "question_id": "controlled-handoff",
+      "main_answer_correct": true,
+      "output_truncated": false,
+      "note": "Main answer is supported by supplied context."
+    },
+    {
+      "run": "reader-pilot",
+      "method": "bank",
+      "question_id": "controlled-rename-chain",
+      "main_answer_correct": false,
+      "output_truncated": false,
+      "note": "Appropriately says unknown from its state-only context; does not solve the answerable history task."
+    },
+    {
+      "run": "reader-pilot",
+      "method": "bank",
+      "question_id": "controlled-unknown",
+      "main_answer_correct": true,
+      "output_truncated": false,
+      "note": "Main answer is supported by supplied context."
+    },
+    {
+      "run": "reader-pilot",
+      "method": "bank-jev-raw",
+      "question_id": "controlled-handoff",
+      "main_answer_correct": true,
+      "output_truncated": false,
+      "note": "Main answer is supported by supplied context."
+    },
+    {
+      "run": "reader-pilot",
+      "method": "bank-jev-raw",
+      "question_id": "controlled-rename-chain",
+      "main_answer_correct": true,
+      "output_truncated": false,
+      "note": "Main answer is supported by supplied context."
+    },
+    {
+      "run": "reader-pilot",
+      "method": "bank-jev-raw",
+      "question_id": "controlled-unknown",
+      "main_answer_correct": true,
+      "output_truncated": false,
+      "note": "Main answer is supported by supplied context."
+    },
+    {
+      "run": "reader-pilot",
+      "method": "bm25",
+      "question_id": "controlled-handoff",
+      "main_answer_correct": true,
+      "output_truncated": false,
+      "note": "Main answer is supported by supplied context."
+    },
+    {
+      "run": "reader-pilot",
+      "method": "bm25",
+      "question_id": "controlled-rename-chain",
+      "main_answer_correct": true,
+      "output_truncated": false,
+      "note": "Main answer is supported by supplied context."
+    },
+    {
+      "run": "reader-pilot",
+      "method": "bm25",
+      "question_id": "controlled-unknown",
+      "main_answer_correct": true,
+      "output_truncated": false,
+      "note": "Main answer is supported by supplied context."
+    },
+    {
+      "run": "reader-pilot",
+      "method": "hybrid",
+      "question_id": "controlled-handoff",
+      "main_answer_correct": true,
+      "output_truncated": false,
+      "note": "Main answer is supported by supplied context."
+    },
+    {
+      "run": "reader-pilot",
+      "method": "hybrid",
+      "question_id": "controlled-rename-chain",
+      "main_answer_correct": true,
+      "output_truncated": false,
+      "note": "Main answer is supported by supplied context."
+    },
+    {
+      "run": "reader-pilot",
+      "method": "hybrid",
+      "question_id": "controlled-unknown",
+      "main_answer_correct": true,
+      "output_truncated": false,
+      "note": "Main answer is supported by supplied context."
+    },
+    {
+      "run": "reader-pilot",
+      "method": "jevmem",
+      "question_id": "controlled-handoff",
+      "main_answer_correct": false,
+      "output_truncated": false,
+      "note": "Invents a migration blocker from unrelated settlement/deployment facts. Corrected run still does this despite sufficient=false."
+    },
+    {
+      "run": "reader-pilot",
+      "method": "jevmem",
+      "question_id": "controlled-rename-chain",
+      "main_answer_correct": true,
+      "output_truncated": false,
+      "note": "Correct causal sentence but missing alias evidence and citations; this is not a fully grounded multi-hop answer."
+    },
+    {
+      "run": "reader-pilot",
+      "method": "jevmem",
+      "question_id": "controlled-unknown",
+      "main_answer_correct": true,
+      "output_truncated": false,
+      "note": "Main answer is supported by supplied context."
+    },
+    {
+      "run": "reader-pilot",
+      "method": "raw-upstream",
+      "question_id": "controlled-handoff",
+      "main_answer_correct": true,
+      "output_truncated": false,
+      "note": "Main answer is supported by supplied context."
+    },
+    {
+      "run": "reader-pilot",
+      "method": "raw-upstream",
+      "question_id": "controlled-rename-chain",
+      "main_answer_correct": true,
+      "output_truncated": false,
+      "note": "Main answer is supported by supplied context."
+    },
+    {
+      "run": "reader-pilot",
+      "method": "raw-upstream",
+      "question_id": "controlled-unknown",
+      "main_answer_correct": true,
+      "output_truncated": false,
+      "note": "Main answer is supported by supplied context."
+    },
+    {
+      "run": "reader-with-signals",
+      "method": "bank",
+      "question_id": "controlled-handoff",
+      "main_answer_correct": true,
+      "output_truncated": false,
+      "note": "Main answer is supported by supplied context."
+    },
+    {
+      "run": "reader-with-signals",
+      "method": "bank",
+      "question_id": "controlled-rename-chain",
+      "main_answer_correct": false,
+      "output_truncated": false,
+      "note": "Appropriately says unknown from its state-only context; does not solve the answerable history task."
+    },
+    {
+      "run": "reader-with-signals",
+      "method": "bank",
+      "question_id": "controlled-unknown",
+      "main_answer_correct": true,
+      "output_truncated": false,
+      "note": "Main answer is supported by supplied context."
+    },
+    {
+      "run": "reader-with-signals",
+      "method": "bank-jev-raw",
+      "question_id": "controlled-handoff",
+      "main_answer_correct": true,
+      "output_truncated": false,
+      "note": "Main answer is supported by supplied context."
+    },
+    {
+      "run": "reader-with-signals",
+      "method": "bank-jev-raw",
+      "question_id": "controlled-rename-chain",
+      "main_answer_correct": true,
+      "output_truncated": false,
+      "note": "Main answer is supported by supplied context."
+    },
+    {
+      "run": "reader-with-signals",
+      "method": "bank-jev-raw",
+      "question_id": "controlled-unknown",
+      "main_answer_correct": true,
+      "output_truncated": false,
+      "note": "Main answer is supported by supplied context."
+    },
+    {
+      "run": "reader-with-signals",
+      "method": "bm25",
+      "question_id": "controlled-handoff",
+      "main_answer_correct": true,
+      "output_truncated": false,
+      "note": "Main answer is supported by supplied context."
+    },
+    {
+      "run": "reader-with-signals",
+      "method": "bm25",
+      "question_id": "controlled-rename-chain",
+      "main_answer_correct": true,
+      "output_truncated": false,
+      "note": "Main answer is supported by supplied context."
+    },
+    {
+      "run": "reader-with-signals",
+      "method": "bm25",
+      "question_id": "controlled-unknown",
+      "main_answer_correct": true,
+      "output_truncated": false,
+      "note": "Main answer is supported by supplied context."
+    },
+    {
+      "run": "reader-with-signals",
+      "method": "hybrid",
+      "question_id": "controlled-handoff",
+      "main_answer_correct": true,
+      "output_truncated": false,
+      "note": "Main answer is supported by supplied context."
+    },
+    {
+      "run": "reader-with-signals",
+      "method": "hybrid",
+      "question_id": "controlled-rename-chain",
+      "main_answer_correct": true,
+      "output_truncated": false,
+      "note": "Main answer is supported by supplied context."
+    },
+    {
+      "run": "reader-with-signals",
+      "method": "hybrid",
+      "question_id": "controlled-unknown",
+      "main_answer_correct": true,
+      "output_truncated": false,
+      "note": "Main answer is supported by supplied context."
+    },
+    {
+      "run": "reader-with-signals",
+      "method": "jevmem",
+      "question_id": "controlled-handoff",
+      "main_answer_correct": false,
+      "output_truncated": false,
+      "note": "Invents a migration blocker from unrelated settlement/deployment facts. Corrected run still does this despite sufficient=false."
+    },
+    {
+      "run": "reader-with-signals",
+      "method": "jevmem",
+      "question_id": "controlled-rename-chain",
+      "main_answer_correct": true,
+      "output_truncated": false,
+      "note": "Correct causal sentence but missing alias evidence and citations; this is not a fully grounded multi-hop answer."
+    },
+    {
+      "run": "reader-with-signals",
+      "method": "jevmem",
+      "question_id": "controlled-unknown",
+      "main_answer_correct": true,
+      "output_truncated": false,
+      "note": "Main answer is supported by supplied context."
+    },
+    {
+      "run": "reader-with-signals",
+      "method": "raw-upstream",
+      "question_id": "controlled-handoff",
+      "main_answer_correct": true,
+      "output_truncated": false,
+      "note": "Main answer is supported by supplied context."
+    },
+    {
+      "run": "reader-with-signals",
+      "method": "raw-upstream",
+      "question_id": "controlled-rename-chain",
+      "main_answer_correct": true,
+      "output_truncated": false,
+      "note": "Main answer is supported by supplied context."
+    },
+    {
+      "run": "reader-with-signals",
+      "method": "raw-upstream",
+      "question_id": "controlled-unknown",
+      "main_answer_correct": true,
+      "output_truncated": false,
+      "note": "Main answer is supported by supplied context."
+    },
+    {
+      "run": "srxy-reader-pilot",
+      "method": "bank",
+      "question_id": "srxy-next-step",
+      "main_answer_correct": true,
+      "output_truncated": false,
+      "note": "Core answer is correct. Source annotations are not exhaustive; current state can repeat a decision fact."
+    },
+    {
+      "run": "srxy-reader-pilot",
+      "method": "bank",
+      "question_id": "srxy-url-decode",
+      "main_answer_correct": true,
+      "output_truncated": true,
+      "note": "Core answer is correct. Source annotations are not exhaustive; current state can repeat a decision fact."
+    },
+    {
+      "run": "srxy-reader-pilot",
+      "method": "bm25",
+      "question_id": "srxy-next-step",
+      "main_answer_correct": true,
+      "output_truncated": true,
+      "note": "Core answer is correct. Source annotations are not exhaustive; current state can repeat a decision fact. Adds unsupported after-release scheduling for follow-up work."
+    },
+    {
+      "run": "srxy-reader-pilot",
+      "method": "bm25",
+      "question_id": "srxy-url-decode",
+      "main_answer_correct": true,
+      "output_truncated": true,
+      "note": "Core answer is correct. Source annotations are not exhaustive; current state can repeat a decision fact."
+    },
+    {
+      "run": "srxy-reader-pilot",
+      "method": "hybrid",
+      "question_id": "srxy-next-step",
+      "main_answer_correct": true,
+      "output_truncated": false,
+      "note": "Core answer is correct. Source annotations are not exhaustive; current state can repeat a decision fact."
+    },
+    {
+      "run": "srxy-reader-pilot",
+      "method": "hybrid",
+      "question_id": "srxy-url-decode",
+      "main_answer_correct": true,
+      "output_truncated": true,
+      "note": "Core answer is correct. Source annotations are not exhaustive; current state can repeat a decision fact."
+    },
+    {
+      "run": "srxy-reader-pilot",
+      "method": "raw-upstream",
+      "question_id": "srxy-next-step",
+      "main_answer_correct": true,
+      "output_truncated": false,
+      "note": "Core answer is correct. Source annotations are not exhaustive; current state can repeat a decision fact. Adds unsupported after-release scheduling for follow-up work."
+    },
+    {
+      "run": "srxy-reader-final-packet",
+      "method": "raw-upstream",
+      "question_id": "srxy-url-decode",
+      "main_answer_correct": true,
+      "output_truncated": true,
+      "note": "Core answer is correct. Source annotations are not exhaustive; current state can repeat a decision fact."
+    }
+  ]
+}

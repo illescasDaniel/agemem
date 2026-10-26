@@ -1,0 +1,9 @@
+{
+  "name": "01_memory_bank",
+  "methods": [
+    "bank",
+    "bank-search"
+  ],
+  "budget_units": 1800,
+  "output": "reports/bank.json"
+}

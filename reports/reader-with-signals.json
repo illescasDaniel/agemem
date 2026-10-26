@@ -1,0 +1,502 @@
+{
+  "model": "gpt-4.1-mini-2025-04-14",
+  "max_usd": 0.015,
+  "list_prices_per_million": {
+    "input": 0.4,
+    "output": 1.6
+  },
+  "pricing_date": "2026-10-26",
+  "dataset_sha256": "9da7e11f73415d480bab7ad28766267bd7f2b9e06e6d4c1c66dd94da52ab64b0",
+  "grading": "ungraded; human rubric in docs/EVALUATION.md",
+  "sufficiency_signal_included": true,
+  "reserved_usd": 0.010114,
+  "estimated_actual_usd": 0.0033524000000000006,
+  "answers": [
+    {
+      "method": "bank",
+      "question_id": "controlled-handoff",
+      "answer": "The Atlas migration is currently blocked by a staging webhook signature mismatch. The next session should focus on reproducing the issue using the recorded staging payload to diagnose and resolve the mismatch [handoff | controlled/handoff].",
+      "finish_reason": "stop",
+      "usage": {
+        "completion_tokens": 42,
+        "prompt_tokens": 153,
+        "total_tokens": 195,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": 0,
+          "audio_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": 0,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": 0,
+          "cache_write_tokens": null,
+          "cached_tokens": 0,
+          "image_tokens": null,
+          "text_tokens": null
+        }
+      },
+      "estimated_usd": 0.0001284,
+      "human_grade": null
+    },
+    {
+      "method": "bank",
+      "question_id": "controlled-rename-chain",
+      "answer": "The provided evidence does not contain information explaining why tally must serialize its settlement jobs. Therefore, the reason for serializing settlement jobs in tally is unknown based on the supplied evidence.",
+      "finish_reason": "stop",
+      "usage": {
+        "completion_tokens": 35,
+        "prompt_tokens": 147,
+        "total_tokens": 182,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": 0,
+          "audio_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": 0,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": 0,
+          "cache_write_tokens": null,
+          "cached_tokens": 0,
+          "image_tokens": null,
+          "text_tokens": null
+        }
+      },
+      "estimated_usd": 0.00011480000000000001,
+      "human_grade": null
+    },
+    {
+      "method": "bank",
+      "question_id": "controlled-unknown",
+      "answer": "Unknown. The provided evidence does not include Atlas's incident pager phone number.",
+      "finish_reason": "stop",
+      "usage": {
+        "completion_tokens": 15,
+        "prompt_tokens": 148,
+        "total_tokens": 163,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": 0,
+          "audio_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": 0,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": 0,
+          "cache_write_tokens": null,
+          "cached_tokens": 0,
+          "image_tokens": null,
+          "text_tokens": null
+        }
+      },
+      "estimated_usd": 8.32e-05,
+      "human_grade": null
+    },
+    {
+      "method": "bank-jev-raw",
+      "question_id": "controlled-handoff",
+      "answer": "The Atlas migration is currently blocked by a staging webhook signature mismatch. The next session should focus on reproducing this issue using the recorded staging payload to diagnose and resolve the mismatch [controlled/handoff].",
+      "finish_reason": "stop",
+      "usage": {
+        "completion_tokens": 39,
+        "prompt_tokens": 528,
+        "total_tokens": 567,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": 0,
+          "audio_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": 0,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": 0,
+          "cache_write_tokens": null,
+          "cached_tokens": 0,
+          "image_tokens": null,
+          "text_tokens": null
+        }
+      },
+      "estimated_usd": 0.00027360000000000004,
+      "human_grade": null
+    },
+    {
+      "method": "bank-jev-raw",
+      "question_id": "controlled-rename-chain",
+      "answer": "Tally must serialize its settlement jobs because the upstream settlement API rejects concurrent writes. This requirement was originally stated for the ledger worker, which was renamed to tally on October 12, 2026, without changing service responsibilities. Therefore, tally inherits the need to serialize settlement jobs to avoid concurrent writes being rejected by the upstream API [controlled/cause, controlled/alias].",
+      "finish_reason": "stop",
+      "usage": {
+        "completion_tokens": 74,
+        "prompt_tokens": 433,
+        "total_tokens": 507,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": 0,
+          "audio_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": 0,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": 0,
+          "cache_write_tokens": null,
+          "cached_tokens": 0,
+          "image_tokens": null,
+          "text_tokens": null
+        }
+      },
+      "estimated_usd": 0.00029160000000000004,
+      "human_grade": null
+    },
+    {
+      "method": "bank-jev-raw",
+      "question_id": "controlled-unknown",
+      "answer": "The evidence does not contain any information about Atlas's incident pager phone number. Therefore, the incident pager phone number for Atlas is unknown based on the provided data.",
+      "finish_reason": "stop",
+      "usage": {
+        "completion_tokens": 32,
+        "prompt_tokens": 411,
+        "total_tokens": 443,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": 0,
+          "audio_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": 0,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": 0,
+          "cache_write_tokens": null,
+          "cached_tokens": 0,
+          "image_tokens": null,
+          "text_tokens": null
+        }
+      },
+      "estimated_usd": 0.0002156,
+      "human_grade": null
+    },
+    {
+      "method": "bm25",
+      "question_id": "controlled-handoff",
+      "answer": "The Atlas migration is currently blocked by a staging webhook signature mismatch. The next session should focus on reproducing the issue using the recorded staging payload to diagnose and resolve the mismatch [handoff].",
+      "finish_reason": "stop",
+      "usage": {
+        "completion_tokens": 38,
+        "prompt_tokens": 277,
+        "total_tokens": 315,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": 0,
+          "audio_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": 0,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": 0,
+          "cache_write_tokens": null,
+          "cached_tokens": 0,
+          "image_tokens": null,
+          "text_tokens": null
+        }
+      },
+      "estimated_usd": 0.00017160000000000002,
+      "human_grade": null
+    },
+    {
+      "method": "bm25",
+      "question_id": "controlled-rename-chain",
+      "answer": "Tally must serialize its settlement jobs because the upstream settlement API rejects concurrent writes. This requirement was previously applicable to the ledger worker, which was renamed to tally on October 12, with no change in service responsibilities. Therefore, the serialization requirement remains the same for tally as it was for ledger [cause, alias].",
+      "finish_reason": "stop",
+      "usage": {
+        "completion_tokens": 63,
+        "prompt_tokens": 167,
+        "total_tokens": 230,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": 0,
+          "audio_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": 0,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": 0,
+          "cache_write_tokens": null,
+          "cached_tokens": 0,
+          "image_tokens": null,
+          "text_tokens": null
+        }
+      },
+      "estimated_usd": 0.00016760000000000004,
+      "human_grade": null
+    },
+    {
+      "method": "bm25",
+      "question_id": "controlled-unknown",
+      "answer": "The evidence provided does not include any information about Atlas's incident pager phone number. Therefore, the incident pager phone number for Atlas is unknown based on the supplied evidence.",
+      "finish_reason": "stop",
+      "usage": {
+        "completion_tokens": 33,
+        "prompt_tokens": 272,
+        "total_tokens": 305,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": 0,
+          "audio_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": 0,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": 0,
+          "cache_write_tokens": null,
+          "cached_tokens": 0,
+          "image_tokens": null,
+          "text_tokens": null
+        }
+      },
+      "estimated_usd": 0.00016160000000000002,
+      "human_grade": null
+    },
+    {
+      "method": "hybrid",
+      "question_id": "controlled-handoff",
+      "answer": "The Atlas migration is currently blocked by a staging webhook signature mismatch. The next session should focus on reproducing the issue using the recorded staging payload to diagnose and resolve the mismatch [handoff].",
+      "finish_reason": "stop",
+      "usage": {
+        "completion_tokens": 38,
+        "prompt_tokens": 300,
+        "total_tokens": 338,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": 0,
+          "audio_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": 0,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": 0,
+          "cache_write_tokens": null,
+          "cached_tokens": 0,
+          "image_tokens": null,
+          "text_tokens": null
+        }
+      },
+      "estimated_usd": 0.0001808,
+      "human_grade": null
+    },
+    {
+      "method": "hybrid",
+      "question_id": "controlled-rename-chain",
+      "answer": "Tally must serialize its settlement jobs because the upstream settlement API rejects concurrent writes. This requirement was previously associated with the ledger worker, which was renamed to tally on October 12 without a change in service responsibilities, so the serialization need remains the same [cause], [alias].",
+      "finish_reason": "stop",
+      "usage": {
+        "completion_tokens": 55,
+        "prompt_tokens": 294,
+        "total_tokens": 349,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": 0,
+          "audio_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": 0,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": 0,
+          "cache_write_tokens": null,
+          "cached_tokens": 0,
+          "image_tokens": null,
+          "text_tokens": null
+        }
+      },
+      "estimated_usd": 0.0002056,
+      "human_grade": null
+    },
+    {
+      "method": "hybrid",
+      "question_id": "controlled-unknown",
+      "answer": "The provided evidence does not include any information about Atlas's incident pager phone number. Therefore, the incident pager phone number for Atlas is unknown based on the supplied evidence.",
+      "finish_reason": "stop",
+      "usage": {
+        "completion_tokens": 33,
+        "prompt_tokens": 295,
+        "total_tokens": 328,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": 0,
+          "audio_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": 0,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": 0,
+          "cache_write_tokens": null,
+          "cached_tokens": 0,
+          "image_tokens": null,
+          "text_tokens": null
+        }
+      },
+      "estimated_usd": 0.0001708,
+      "human_grade": null
+    },
+    {
+      "method": "jevmem",
+      "question_id": "controlled-handoff",
+      "answer": "The Atlas migration is blocked because the ledger worker (now renamed to tally) must serialize settlement jobs due to the upstream settlement API rejecting concurrent writes. This serialization requirement likely complicates migration processes that involve concurrent operations. The next session should address how to handle or coordinate these serialized settlement jobs during migration to avoid conflicts with the upstream API. \n\nThis is supported by:\n- The ledger worker's serialization requirement due to the upstream API's constraints [cause].\n- The renaming of the ledger worker to tally without change in responsibilities [alias].\n- The migration deployment process change from Fabric to Ansible on October 10, which may affect how migrations are run [deploy-new, deploy-old].\n\nTherefore, the next session should focus on managing serialized settlement jobs during migration to unblock the process.",
+      "finish_reason": "stop",
+      "usage": {
+        "completion_tokens": 155,
+        "prompt_tokens": 233,
+        "total_tokens": 388,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": 0,
+          "audio_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": 0,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": 0,
+          "cache_write_tokens": null,
+          "cached_tokens": 0,
+          "image_tokens": null,
+          "text_tokens": null
+        }
+      },
+      "estimated_usd": 0.0003412,
+      "human_grade": null
+    },
+    {
+      "method": "jevmem",
+      "question_id": "controlled-rename-chain",
+      "answer": "Tally must serialize its settlement jobs because the upstream settlement API rejects concurrent writes.",
+      "finish_reason": "stop",
+      "usage": {
+        "completion_tokens": 16,
+        "prompt_tokens": 138,
+        "total_tokens": 154,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": 0,
+          "audio_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": 0,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": 0,
+          "cache_write_tokens": null,
+          "cached_tokens": 0,
+          "image_tokens": null,
+          "text_tokens": null
+        }
+      },
+      "estimated_usd": 8.080000000000001e-05,
+      "human_grade": null
+    },
+    {
+      "method": "jevmem",
+      "question_id": "controlled-unknown",
+      "answer": "Unknown. There is no evidence provided that includes Atlas's incident pager phone number as of 2026-10-26.",
+      "finish_reason": "stop",
+      "usage": {
+        "completion_tokens": 25,
+        "prompt_tokens": 116,
+        "total_tokens": 141,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": 0,
+          "audio_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": 0,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": 0,
+          "cache_write_tokens": null,
+          "cached_tokens": 0,
+          "image_tokens": null,
+          "text_tokens": null
+        }
+      },
+      "estimated_usd": 8.64e-05,
+      "human_grade": null
+    },
+    {
+      "method": "raw-upstream",
+      "question_id": "controlled-handoff",
+      "answer": "The Atlas migration is currently blocked by a staging webhook signature mismatch. The next session should focus on reproducing this issue using the recorded staging payload to diagnose and resolve the mismatch [cause,deploy-old,handoff].",
+      "finish_reason": "stop",
+      "usage": {
+        "completion_tokens": 42,
+        "prompt_tokens": 384,
+        "total_tokens": 426,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": 0,
+          "audio_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": 0,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": 0,
+          "cache_write_tokens": null,
+          "cached_tokens": 0,
+          "image_tokens": null,
+          "text_tokens": null
+        }
+      },
+      "estimated_usd": 0.0002208,
+      "human_grade": null
+    },
+    {
+      "method": "raw-upstream",
+      "question_id": "controlled-rename-chain",
+      "answer": "Tally must serialize its settlement jobs because the upstream settlement API rejects concurrent writes. This requirement originates from when the ledger worker handled these jobs, and after October 12, 2026, the ledger worker was renamed to tally without changing its responsibilities, so the serialization requirement remains the same. (source: cause, alias)",
+      "finish_reason": "stop",
+      "usage": {
+        "completion_tokens": 65,
+        "prompt_tokens": 378,
+        "total_tokens": 443,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": 0,
+          "audio_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": 0,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": 0,
+          "cache_write_tokens": null,
+          "cached_tokens": 0,
+          "image_tokens": null,
+          "text_tokens": null
+        }
+      },
+      "estimated_usd": 0.0002552,
+      "human_grade": null
+    },
+    {
+      "method": "raw-upstream",
+      "question_id": "controlled-unknown",
+      "answer": "The evidence does not contain any information about Atlas's incident pager phone number. Therefore, the incident pager phone number for Atlas is unknown based on the provided data.",
+      "finish_reason": "stop",
+      "usage": {
+        "completion_tokens": 32,
+        "prompt_tokens": 379,
+        "total_tokens": 411,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": 0,
+          "audio_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": 0,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": 0,
+          "cache_write_tokens": null,
+          "cached_tokens": 0,
+          "image_tokens": null,
+          "text_tokens": null
+        }
+      },
+      "estimated_usd": 0.00020280000000000002,
+      "human_grade": null
+    }
+  ]
+}

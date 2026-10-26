@@ -1,0 +1,206 @@
+{
+  "model": "gpt-4.1-mini-2025-04-14",
+  "max_usd": 0.01,
+  "list_prices_per_million": {
+    "input": 0.4,
+    "output": 1.6
+  },
+  "pricing_date": "2026-10-26",
+  "dataset_sha256": "9da7e11f73415d480bab7ad28766267bd7f2b9e06e6d4c1c66dd94da52ab64b0",
+  "grading": "ungraded; human rubric in docs/EVALUATION.md",
+  "sufficiency_signal_included": true,
+  "reserved_usd": 0.008855600000000002,
+  "estimated_actual_usd": 0.007978800000000001,
+  "answers": [
+    {
+      "method": "bank",
+      "question_id": "srxy-next-step",
+      "answer": "The next release validation step for srxy 1.8.0 as of 2026-10-26 is to review the current feature branch directly on native Windows and macOS platforms. This review should include checking ignore-editor states and native folder-picker behavior before proceeding toward a normal v1.8.0 release. This step follows the completion and push of CLI interrupt and GUI launch/picker fixes and the KDE Browse URL decoding regression fix. The Unlimited OCR feature (draft PR #38) is deferred beyond v1.8.0 and should remain untouched for this release. The Qt fallback backend repair and native picker QA are tracked as follow-ups and not part of the immediate release validation. Daniel has authorized committing and pushing the relevant task files after full checks, so the focus is now on native platform review and QA before the release (evidence: srxy@72bab1dbdc64/memory/activeContext.md#section-3 and #section-4).",
+      "finish_reason": "stop",
+      "usage": {
+        "completion_tokens": 197,
+        "prompt_tokens": 2058,
+        "total_tokens": 2255,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": 0,
+          "audio_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": 0,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": 0,
+          "cache_write_tokens": null,
+          "cached_tokens": 0,
+          "image_tokens": null,
+          "text_tokens": null
+        }
+      },
+      "estimated_usd": 0.0011384000000000001,
+      "human_grade": null
+    },
+    {
+      "method": "bank",
+      "question_id": "srxy-url-decode",
+      "answer": "Browsing a directory containing a literal '#' character failed on KDE due to a regression in URL decoding. The issue was that the main Browse function did not correctly handle the selected folder path when it contained special characters like '#', '%23', '%20', or Unicode characters. This caused incorrect display, validation, and search behavior for such paths.\n\nThe fix implemented (as of 2026-10-26) was to pass the selected folder as a typed QUrl object to the function setBrowsedPath(), which then calls toLocalFile() exactly once. This approach ensures that the URL is properly decoded and converted to a local file path, correctly handling special characters and Unicode.\n\nTherefore, the correct way to convert QUrl in this context is to pass the selected folder as a typed QUrl and then call toLocalFile() once to obtain the local file system path. This method avoids repeated or improper decoding and ensures correct handling of special characters like '#' in directory names.\n\nThis fix was verified by regression tests covering native '#', literal '%23'/'%20', and Unicode paths, confirming correct display",
+      "finish_reason": "length",
+      "usage": {
+        "completion_tokens": 220,
+        "prompt_tokens": 2060,
+        "total_tokens": 2280,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": 0,
+          "audio_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": 0,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": 0,
+          "cache_write_tokens": null,
+          "cached_tokens": 0,
+          "image_tokens": null,
+          "text_tokens": null
+        }
+      },
+      "estimated_usd": 0.001176,
+      "human_grade": null
+    },
+    {
+      "method": "bm25",
+      "question_id": "srxy-next-step",
+      "answer": "The next release validation step for srxy 1.8.0 is to review the current feature branch directly on native Windows and macOS, including testing ignore-editor states and native folder-picker behavior, before proceeding with a normal v1.8.0 release. This step is explicitly stated as the immediate next step before release (srxy@72bab1dbdc64/memory/activeContext.md#section-4).\n\nAdditional context:\n- Unlimited OCR (draft PR #38) is deferred beyond v1.8.0 and should be left untouched.\n- Qt fallback backend repair and native picker QA are tracked as follow-ups after the release.\n- CLI interrupt and GUI launch/picker task changes have already been committed and pushed.\n- The v1.8.0 release scope includes offline installer fixes and other merged features, with QA ongoing on native platforms (srxy@72bab1dbdc64/memory/activeContext.md#sections-2-4).\n\nTherefore, the immediate next validation step is native Windows/macOS visual QA and review of the feature branch before the official release",
+      "finish_reason": "length",
+      "usage": {
+        "completion_tokens": 220,
+        "prompt_tokens": 2029,
+        "total_tokens": 2249,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": 0,
+          "audio_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": 0,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": 0,
+          "cache_write_tokens": null,
+          "cached_tokens": 0,
+          "image_tokens": null,
+          "text_tokens": null
+        }
+      },
+      "estimated_usd": 0.0011635999999999999,
+      "human_grade": null
+    },
+    {
+      "method": "bm25",
+      "question_id": "srxy-url-decode",
+      "answer": "Browsing a directory containing `#` failed on KDE because the main Browse handler stripped the `file://` prefix but retained escaping, so the `#` character in the directory name was converted to `%23` in the search field. This caused validation to fail since the `%23` was treated literally rather than as a decoded `#` character.\n\nThe correct approach is to pass the selected `QUrl` directly to a dedicated controller slot and convert it once using `toLocalFile()`. This avoids manual decoding of typed native paths, preserving literal `%23` and `%20` sequences as they are. This method ensures that native `#`, literal `%23`, literal `%20`, and Unicode paths display, validate, and search correctly in KDE.\n\nIn summary:\n- The failure was due to improper handling of escaped characters (`#` became `%23`) after stripping the `file://` prefix.\n- The fix is to handle the `QUrl` as a typed object and convert it once with `toLocalFile()`, without manual decoding.\n- This approach repairs the acceptance boundary for KDE",
+      "finish_reason": "length",
+      "usage": {
+        "completion_tokens": 220,
+        "prompt_tokens": 2042,
+        "total_tokens": 2262,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": 0,
+          "audio_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": 0,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": 0,
+          "cache_write_tokens": null,
+          "cached_tokens": 0,
+          "image_tokens": null,
+          "text_tokens": null
+        }
+      },
+      "estimated_usd": 0.0011688000000000002,
+      "human_grade": null
+    },
+    {
+      "method": "hybrid",
+      "question_id": "srxy-next-step",
+      "answer": "The next release validation step for srxy 1.8.0 as of 2026-10-26 is to review the current feature branch directly on native Windows and macOS, including testing ignore-editor states and native folder-picker behavior, before proceeding toward a normal v1.8.0 release. This review is prioritized before the release candidate CI planning, which is shelved. Unlimited OCR features are deferred beyond v1.8.0 and not required for this release [srxy:memory/activeContext.md:3-4].\n\nSummary:\n- Perform native Windows and macOS review of feature branch.\n- Test ignore-editor states and native folder-picker behavior.\n- Proceed to normal v1.8.0 release after successful review.\n- Unlimited OCR draft PR #38 is not part of v1.8.0 release [srxy:memory/activeContext.md:3-4].\n\nNo further steps beyond this review are documented as required before the release at this time.",
+      "finish_reason": "stop",
+      "usage": {
+        "completion_tokens": 199,
+        "prompt_tokens": 2002,
+        "total_tokens": 2201,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": 0,
+          "audio_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": 0,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": 0,
+          "cache_write_tokens": null,
+          "cached_tokens": 0,
+          "image_tokens": null,
+          "text_tokens": null
+        }
+      },
+      "estimated_usd": 0.0011192,
+      "human_grade": null
+    },
+    {
+      "method": "hybrid",
+      "question_id": "srxy-url-decode",
+      "answer": "Browsing a directory containing `#` failed on KDE because the main Browse handler stripped the `file://` prefix but retained escaping, so the `#` character became `%23` in the search field and failed validation. This caused the directory selection to be invalid in the search context ([srxy:memory/decisions.md:2]).\n\nThe correct approach is to pass the selected `QUrl` directly to a dedicated controller slot and convert it with `toLocalFile()` exactly once. This avoids manual decoding of typed native paths, so literal `%23` and `%20` names remain literal and are not incorrectly decoded. This fix ensures that native `#`, literal `%23`, literal `%20`, and Unicode paths display, validate, and search correctly in KDE ([srxy:memory/decisions.md:2], [srxy:memory/progress.md:7]).\n\nIn summary:\n\n- Problem: Stripping `file://` but keeping escaped `%23` caused validation failure for directories with `#`.\n- Fix: Pass the typed `QUrl` directly and convert once with",
+      "finish_reason": "length",
+      "usage": {
+        "completion_tokens": 220,
+        "prompt_tokens": 1998,
+        "total_tokens": 2218,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": 0,
+          "audio_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": 0,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": 0,
+          "cache_write_tokens": null,
+          "cached_tokens": 0,
+          "image_tokens": null,
+          "text_tokens": null
+        }
+      },
+      "estimated_usd": 0.0011512,
+      "human_grade": null
+    },
+    {
+      "method": "raw-upstream",
+      "question_id": "srxy-next-step",
+      "answer": "The next release validation step for srxy 1.8.0 is to review the current feature branch directly on native Windows and macOS, including testing ignore-editor states and native folder-picker behavior, before proceeding toward a normal v1.8.0 release. This review is prioritized over other follow-ups, such as Qt fallback backend repair and native picker QA, which are tracked as follow-ups after the release. The Unlimited OCR feature (draft PR #38) is deferred beyond this release and should remain untouched. CLI interrupt and GUI launch/picker task changes have already been committed and pushed (as of 2026-10-26) [srxy:memory/activeContext.md:3-5].",
+      "finish_reason": "stop",
+      "usage": {
+        "completion_tokens": 143,
+        "prompt_tokens": 2082,
+        "total_tokens": 2225,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": 0,
+          "audio_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": 0,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": 0,
+          "cache_write_tokens": null,
+          "cached_tokens": 0,
+          "image_tokens": null,
+          "text_tokens": null
+        }
+      },
+      "estimated_usd": 0.0010616000000000002,
+      "human_grade": null
+    }
+  ],
+  "stopped": "budget"
+}

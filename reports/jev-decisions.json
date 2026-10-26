@@ -1,0 +1,250 @@
+{
+  "backend": "jev",
+  "runtime": "hosted",
+  "scope": "20 synthetic typed decisions, author-labeled; not held out or a coding effectiveness benchmark",
+  "model_load_seconds": 1.925000105984509e-06,
+  "rows": [
+    {
+      "case": "durable",
+      "question_key": "decision",
+      "prediction": true,
+      "p": 0.98,
+      "expected": [
+        true,
+        0.5
+      ],
+      "correct": true,
+      "request_seconds": 0.2737265579999075
+    },
+    {
+      "case": "durable",
+      "question_key": "status",
+      "prediction": false,
+      "p": 0.09,
+      "expected": [
+        false,
+        0.85
+      ],
+      "correct": true,
+      "request_seconds": 0.2737265579999075
+    },
+    {
+      "case": "durable",
+      "question_key": "injection",
+      "prediction": false,
+      "p": 0.02,
+      "expected": [
+        false,
+        0.5
+      ],
+      "correct": true,
+      "request_seconds": 0.2737265579999075
+    },
+    {
+      "case": "work-status",
+      "question_key": "status",
+      "prediction": true,
+      "p": 0.98,
+      "expected": [
+        true,
+        0.85
+      ],
+      "correct": true,
+      "request_seconds": 0.12015026300014142
+    },
+    {
+      "case": "work-status",
+      "question_key": "injection",
+      "prediction": false,
+      "p": 0.03,
+      "expected": [
+        false,
+        0.5
+      ],
+      "correct": true,
+      "request_seconds": 0.12015026300014142
+    },
+    {
+      "case": "injection",
+      "question_key": "injection",
+      "prediction": true,
+      "p": 0.99,
+      "expected": [
+        true,
+        0.5
+      ],
+      "correct": true,
+      "request_seconds": 0.15930547300013131
+    },
+    {
+      "case": "relevance",
+      "question_key": "item_0",
+      "prediction": true,
+      "p": 0.97,
+      "expected": [
+        true,
+        0.3
+      ],
+      "correct": true,
+      "request_seconds": 0.1340266850002081
+    },
+    {
+      "case": "relevance",
+      "question_key": "item_1",
+      "prediction": false,
+      "p": 0.02,
+      "expected": [
+        false,
+        0.3
+      ],
+      "correct": true,
+      "request_seconds": 0.1340266850002081
+    },
+    {
+      "case": "missing-evidence",
+      "question_key": "evidence_sufficient",
+      "prediction": false,
+      "p": 0.01,
+      "expected": [
+        false,
+        0.3
+      ],
+      "correct": true,
+      "request_seconds": 0.11924586799977988
+    },
+    {
+      "case": "missing-evidence",
+      "question_key": "missing_evidence",
+      "prediction": true,
+      "p": 0.99,
+      "expected": [
+        true,
+        0.7
+      ],
+      "correct": true,
+      "request_seconds": 0.11924586799977988
+    },
+    {
+      "case": "replacement",
+      "question_key": "pair_0_same_question",
+      "prediction": true,
+      "p": 0.94,
+      "expected": [
+        true,
+        0.5
+      ],
+      "correct": true,
+      "request_seconds": 0.10940147200017236
+    },
+    {
+      "case": "replacement",
+      "question_key": "pair_0_different_answer",
+      "prediction": true,
+      "p": 0.95,
+      "expected": [
+        true,
+        0.5
+      ],
+      "correct": true,
+      "request_seconds": 0.10940147200017236
+    },
+    {
+      "case": "replacement",
+      "question_key": "pair_0_outdated",
+      "prediction": true,
+      "p": 0.97,
+      "expected": [
+        true,
+        0.5
+      ],
+      "correct": true,
+      "request_seconds": 0.10940147200017236
+    },
+    {
+      "case": "replacement",
+      "question_key": "pair_0_new_reports_change",
+      "prediction": true,
+      "p": 0.98,
+      "expected": [
+        true,
+        0.5
+      ],
+      "correct": true,
+      "request_seconds": 0.10940147200017236
+    },
+    {
+      "case": "replacement",
+      "question_key": "pair_0_candidate_reports_change",
+      "prediction": false,
+      "p": 0.09,
+      "expected": [
+        false,
+        0.5
+      ],
+      "correct": true,
+      "request_seconds": 0.10940147200017236
+    },
+    {
+      "case": "replacement",
+      "question_key": "pair_0_new_covers",
+      "prediction": false,
+      "p": 0.05,
+      "expected": [
+        false,
+        0.5
+      ],
+      "correct": true,
+      "request_seconds": 0.10940147200017236
+    },
+    {
+      "case": "replacement",
+      "question_key": "pair_0_candidate_covers",
+      "prediction": false,
+      "p": 0.02,
+      "expected": [
+        false,
+        0.5
+      ],
+      "correct": true,
+      "request_seconds": 0.10940147200017236
+    },
+    {
+      "case": "replacement",
+      "question_key": "pair_0_link_usefulness",
+      "prediction": true,
+      "p": 0.91,
+      "expected": [
+        true,
+        0.5
+      ],
+      "correct": true,
+      "request_seconds": 0.10940147200017236
+    },
+    {
+      "case": "replacement",
+      "question_key": "pair_0_pattern",
+      "prediction": false,
+      "p": 0.05,
+      "expected": [
+        false,
+        0.5
+      ],
+      "correct": true,
+      "request_seconds": 0.10940147200017236
+    },
+    {
+      "case": "choice",
+      "question_key": "route",
+      "prediction": "coder",
+      "p": null,
+      "expected": "coder",
+      "correct": true,
+      "request_seconds": 0.10797636900042562
+    }
+  ],
+  "correct": 20,
+  "total": 20,
+  "physical_calls": 7,
+  "input_tokens": 3580,
+  "seconds_including_load": 1.0277005360003386
+}

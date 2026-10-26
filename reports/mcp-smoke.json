@@ -1,0 +1,13 @@
+{
+  "status": "passed",
+  "tools": [
+    "project_memory_recall",
+    "project_memory_remember",
+    "project_memory_capture",
+    "project_memory_index",
+    "project_memory_maintain"
+  ],
+  "recall_is_error": false,
+  "mode": "offline synthetic project",
+  "sandbox_note": "stdio handshake requires host execution in this sandbox"
+}

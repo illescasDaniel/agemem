@@ -1,0 +1,8 @@
+{
+  "name": "04_jev_mem",
+  "methods": [
+    "jevmem"
+  ],
+  "budget_units": 1800,
+  "output": "reports/jev-pilot.json"
+}

@@ -1,0 +1,45 @@
+{
+  "deployMode": "standalone",
+  "stateBackend": "local",
+  "server": {
+    "port": 18420,
+    "host": "127.0.0.1"
+  },
+  "data": {
+    "baseDir": ".cache/tencent"
+  },
+  "llm": {
+    "baseUrl": "https://api.openai.com/v1",
+    "apiKey": "${TDAI_LLM_API_KEY}",
+    "model": "gpt-4.1-mini-2025-04-14",
+    "maxTokens": 768,
+    "timeoutMs": 15000
+  },
+  "memory": {
+    "capture": {
+      "enabled": true
+    },
+    "extraction": {
+      "enabled": false
+    },
+    "persona": {
+      "triggerEveryN": 100000
+    },
+    "pipeline": {
+      "everyNConversations": 100000,
+      "enableWarmup": false,
+      "l1IdleTimeoutSeconds": 86400,
+      "l2DelayAfterL1Seconds": 86400
+    },
+    "embedding": {
+      "provider": "none"
+    },
+    "bm25": {
+      "enabled": true,
+      "language": "en"
+    }
+  },
+  "skill": {
+    "enabled": false
+  }
+}

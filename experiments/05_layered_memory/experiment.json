@@ -1,0 +1,8 @@
+{
+  "name": "05_layered_memory",
+  "methods": [
+    "layered"
+  ],
+  "budget_units": 1800,
+  "output": "reports/layered-local.json"
+}
