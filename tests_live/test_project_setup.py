@@ -15,9 +15,9 @@ class ProjectSetupTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory(prefix="agemem setup ")
         self.addCleanup(self.temp.cleanup)
-        self.root = Path(self.temp.name) / "project"
+        self.root = Path(self.temp.name).resolve() / "project"
         self.root.mkdir()
-        environment = patch.dict(os.environ, {"AGEMEM_CONFIG": str(Path(self.temp.name) / "config.yaml"), "PATH": os.environ.get("PATH", "")}, clear=True)
+        environment = patch.dict(os.environ, {"AGEMEM_CONFIG": str(Path(self.temp.name).resolve() / "config.yaml"), "PATH": os.environ.get("PATH", ""), "USERPROFILE": os.environ.get("USERPROFILE", str(Path.home())), "SYSTEMROOT": os.environ.get("SYSTEMROOT", "")}, clear=True)
         environment.start()
         self.addCleanup(environment.stop)
         subprocess.run(["git", "init", "-q", str(self.root)], check=True)

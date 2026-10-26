@@ -13,7 +13,7 @@ class MCPInstallTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory(prefix="agemem project ")
         self.addCleanup(self.temp.cleanup)
-        self.root = Path(self.temp.name)
+        self.root = Path(self.temp.name).resolve()
         initialize(self.root, "bm25", "hash")
 
     def test_json_clients_preserve_entries_repeat_and_paths_with_spaces(self):
@@ -51,7 +51,8 @@ class MCPInstallTests(unittest.TestCase):
             run.return_value.returncode = 0
             install(self.root, "codex")
         command = run.call_args.args[0]
-        self.assertEqual(command[:5], ["/bin/codex", "mcp", "add", "agemem", "--"])
+        self.assertEqual(command[:4], ["/bin/codex", "mcp", "add", "agemem"])
+        self.assertEqual(command[command.index("--") + 1], "uvx")
         self.assertIn(str(self.root.resolve()), command)
         self.assertEqual(run.call_args.kwargs["cwd"], self.root)
 

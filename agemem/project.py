@@ -22,6 +22,7 @@ BANK = {
 
 
 def inside(root, path):
+    root = Path(root).resolve()
     resolved = Path(path).resolve()
     if not resolved.is_relative_to(root):
         raise ValueError("Project path escapes through a symlink")

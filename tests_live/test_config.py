@@ -15,9 +15,9 @@ from agemem.project import configuration, initialize
 class ConfigurationTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
-        self.root = Path(self.temp.name)
+        self.root = Path(self.temp.name).resolve()
         self.environment = patch.dict(os.environ, {"XDG_CONFIG_HOME": str(self.root / "config"),
-                                                  "XDG_DATA_HOME": str(self.root / "data"), "PATH": os.environ.get("PATH", "")}, clear=True)
+                                                  "XDG_DATA_HOME": str(self.root / "data"), "PATH": os.environ.get("PATH", ""), "USERPROFILE": os.environ.get("USERPROFILE", str(Path.home())), "SYSTEMROOT": os.environ.get("SYSTEMROOT", "")}, clear=True)
         self.environment.start()
         self.addCleanup(self.environment.stop)
         self.addCleanup(self.temp.cleanup)
