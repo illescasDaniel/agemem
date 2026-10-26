@@ -97,7 +97,7 @@ class ConfigurationTests(unittest.TestCase):
         output = io.StringIO()
         with patch("sys.argv", ["agemem", "provider", "setup", "qsiv", "--dry-run"]), contextlib.redirect_stdout(output), patch("agemem.providers.setup_qsiv", return_value={"dry_run": True}) as setup:
             main()
-        setup.assert_called_once_with(directory="/custom/model", runtime_directory=Path("/custom/runtime"), dry_run=True)
+        setup.assert_called_once_with(directory=str(Path("/custom/model")), runtime_directory=Path("/custom/runtime"), dry_run=True)
         self.assertEqual(provider_options({})["decision_backend"], "jev")
 
     def test_doctor_passes_exact_selected_runtime_and_reports_ready(self):
