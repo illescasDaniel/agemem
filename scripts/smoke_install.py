@@ -30,7 +30,7 @@ def main():
 
         cli("config", "init")
         executable = Path(sys.executable).parent / "agemem"
-        cli("--offline", "project", "init", "--mcp", "cursor", "claude", "--no-input", "--retrieval", "bm25", "--embedder", "hash", "--hooks", "--executable", str(executable))
+        cli("--offline", "project", "init", "--mcp", "cursor", "claude", "--no-input", "--retrieval", "bm25", "--embedder", "hash", "--executable", str(executable))
         source = cli("--offline", "capture", "The smoke project deploys with Ansible.")["source_id"]
         cli("--offline", "remember", "The smoke project deploys with Ansible.", "--source-id", source)
         packet = cli("--offline", "recall", "How does the smoke project deploy?")

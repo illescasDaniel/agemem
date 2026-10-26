@@ -8,7 +8,7 @@
   screened notes, indexing and maintenance.
 - Guided and unattended project setup, versioned private YAML configuration,
   and MCP registration for Codex, Cursor and Claude Code.
-- Optional local read-only Claude Code/Codex hooks and explicit executable
+- Local read-only Claude Code/Codex hooks installed by default during project setup and explicit executable
   launchers for testing unpublished source builds.
 - Local BM25/dense retrieval, optional adapted RAW-RAG retrieval, hosted Jev
   decisions and optional GPU QSIV, ollaya and cascade providers.

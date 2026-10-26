@@ -73,7 +73,7 @@ def configure_provider(offline=False, model=None, no_input=False):
     return initialize_user_config(api_key=key)
 
 
-def initialize_project(project, client=None, retrieval="hybrid", embedder="BAAI/bge-small-en-v1.5", offline=False, *, model=None, clients=None, no_input=False, hooks=False, executable=None):
+def initialize_project(project, client=None, retrieval="hybrid", embedder="BAAI/bge-small-en-v1.5", offline=False, *, model=None, clients=None, no_input=False, hooks=True, executable=None):
     root = Path(project).expanduser().resolve()
     if not root.is_dir():
         raise ValueError("Project directory must already exist")

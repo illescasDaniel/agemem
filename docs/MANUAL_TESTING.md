@@ -25,7 +25,7 @@ Use a test repository, rather than important project memory, for the first pass.
 From its root, replace the executable path below with the checkout's real path:
 
 ```bash
-/absolute/path/to/agemem/.venv/bin/agemem project init --mcp claude --executable /absolute/path/to/agemem/.venv/bin/agemem --hooks
+/absolute/path/to/agemem/.venv/bin/agemem project init --mcp claude --executable /absolute/path/to/agemem/.venv/bin/agemem
 ```
 
 This still prompts for the provider when creating a new user configuration. With
@@ -41,7 +41,7 @@ For a no-download/offline contract check, first run `config init` with the same
 executable and test config path, then:
 
 ```bash
-/absolute/path/to/agemem/.venv/bin/agemem --offline project init --mcp claude --executable /absolute/path/to/agemem/.venv/bin/agemem --hooks --no-input --retrieval bm25 --embedder hash
+/absolute/path/to/agemem/.venv/bin/agemem --offline project init --mcp claude --executable /absolute/path/to/agemem/.venv/bin/agemem --no-input --retrieval bm25 --embedder hash
 ```
 
 Hash embeddings are a testing substitute only. Installed hooks always use local

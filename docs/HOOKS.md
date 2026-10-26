@@ -1,7 +1,8 @@
-# Optional lifecycle hooks
+# Lifecycle hooks
 
 Agemem supports command hooks for Claude Code and current Codex clients. These
-complement the five MCP tools; they are opt-in and do not install the original
+complement the five MCP tools; project setup installs them by default for selected
+Claude Code and Codex clients. They do not install the original
 jev-mem hooks or skill. Cursor hook integration is not implemented.
 
 | Event | Context added |
@@ -27,10 +28,11 @@ client shell/uvx launch overhead counts toward it.
 With a published package:
 
 ```bash
-uvx --python 3.12 agemem@0.1.0 project init --model jev --mcp claude codex --hooks --no-input
+uvx --python 3.12 agemem@0.1.0 project init --model jev --mcp claude codex --no-input
 ```
 
-Supply the Jev key through private YAML or environment first. Or add hooks to an
+Supply the Jev key through private YAML or environment first. Use `--no-hooks`
+to skip hook installation; it does not remove hooks already installed. Or add hooks to an
 already initialized project:
 
 ```bash

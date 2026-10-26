@@ -36,10 +36,20 @@ Or paste this prompt into your coding agent:
 > and required client restart or approval steps.
 
 Setup connects Codex, Cursor or Claude Code and configures hosted Jev or local
-GPU QSIV. Restart your client, enable the server, and add the
-[suggested agent instructions](https://github.com/illescasDaniel/agemem/blob/main/docs/AGENT_INTEGRATION.md).
-Optional [Claude/Codex lifecycle hooks](https://github.com/illescasDaniel/agemem/blob/main/docs/HOOKS.md)
-load local context automatically; add `--hooks` during setup.
+GPU QSIV. Restart your client and enable the server.
+
+### Give your agent memory instructions
+
+Add the [suggested memory workflow](https://github.com/illescasDaniel/agemem/blob/main/docs/AGENT_INTEGRATION.md)
+to your project’s agent instructions (for example, `AGENTS.md` for Codex or
+`CLAUDE.md` for Claude Code). This tells the agent when to recall, verify,
+capture and maintain memory; installation does not edit these files.
+
+[Claude/Codex lifecycle hooks](https://github.com/illescasDaniel/agemem/blob/main/docs/HOOKS.md)
+load local context automatically and are installed by default for those clients.
+Use `--no-hooks` to skip installation. Hooks complement
+the instructions: they supply context, while the instructions guide how the
+agent uses and updates memory.
 See the [installation guide](https://github.com/illescasDaniel/agemem/blob/main/docs/INSTALLATION.md) for details. For development, [install from source](https://github.com/illescasDaniel/agemem/blob/main/docs/INSTALLATION.md#development-installation).
 
 ## How it works

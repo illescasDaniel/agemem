@@ -58,7 +58,19 @@ class ProjectSetupTests(unittest.TestCase):
         result = json.loads(completed.stdout)
         self.assertEqual(result["project"], str(self.root))
         self.assertTrue((self.root / ".mcp.json").exists())
+        hook_file = self.root / ".claude/settings.local.json"
+        self.assertTrue(hook_file.exists())
+        first = hook_file.read_text()
+        repeated = subprocess.run([*command, "--offline", "project", "init", "--client", "claude-code", "--retrieval", "bm25", "--embedder", "hash"], cwd=self.root, capture_output=True, text=True)
+        self.assertEqual(repeated.returncode, 0, repeated.stderr)
+        self.assertEqual(hook_file.read_text(), first)
 
+    def test_cli_no_hooks_skips_installation(self):
+        completed = subprocess.run([sys.executable, "-m", "agemem.cli", "--offline", "project", "init", "--client", "claude-code", "--no-hooks", "--retrieval", "bm25", "--embedder", "hash"], cwd=self.root, capture_output=True, text=True)
+        self.assertEqual(completed.returncode, 0, completed.stderr)
+        self.assertEqual(json.loads(completed.stdout)["hooks"], [])
+        self.assertFalse((self.root / ".claude/settings.local.json").exists())
+        self.assertTrue((self.root / ".mcp.json").exists())
 
     def test_jev_key_is_private_and_absent_from_output(self):
         import stat

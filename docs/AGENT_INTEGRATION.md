@@ -11,7 +11,10 @@ captures conversations automatically. Connect the MCP explicitly as described in
 [installation](INSTALLATION.md), then add the guidance below to the target
 project's existing agent instructions if desired.
 
-## Suggested AGENTS.md section
+## Suggested project instructions
+
+Add this section to the instructions your client reads, such as `AGENTS.md` for
+Codex or `CLAUDE.md` for Claude Code. Preserve any existing guidance.
 
 ```markdown
 ## Project memory with Agemem
