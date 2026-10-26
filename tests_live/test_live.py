@@ -7,11 +7,11 @@ from types import SimpleNamespace
 from pathlib import Path
 from unittest.mock import patch
 
-from amem_lab.core import TOKEN
+from agemem.evidence import TOKEN
 from agemem.deciders import Disabled, HostedJev, QSIVDecider, CascadingDecider
 from agemem.engine import Engine
 from agemem.project import initialize
-from jevmem.decider import Answer, ChoiceQ, DeciderUnavailable, FakeDecider, NoulQ
+from agemem.notes.decider import Answer, ChoiceQ, DeciderUnavailable, FakeDecider, NoulQ
 
 
 class LiveTests(unittest.TestCase):
@@ -122,13 +122,14 @@ class LiveTests(unittest.TestCase):
         self.assertLessEqual(len(TOKEN.findall(result["context"])), 128)
         engine.close()
 
-    def test_offline_raw_setup_is_explicitly_rejected(self):
+    def test_raw_offline_requires_prepared_tokenizer(self):
         path = self.root / ".agemem/config.json"
         config = json.loads(path.read_text())
         config["retrieval"] = "raw-rag"
         path.write_text(json.dumps(config))
         engine = Engine(self.root, offline=True)
-        with self.assertRaises(ValueError):
+        engine.index()
+        with patch.dict(os.environ, {"TIKTOKEN_CACHE_DIR": ""}), self.assertRaisesRegex(ValueError, "cl100k_base"):
             engine.recall("deployment")
         engine.close()
 

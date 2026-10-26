@@ -8,10 +8,12 @@ uv pip install --python .venv/bin/python -e .
 ```
 
 Alternatively use `python3 -m venv .venv` and `.venv/bin/python -m pip install -e .`.
-Export `JEV_API_KEY` or `TYPESAFE_API_KEY` in the launching environment. The integration never reads or modifies your global jev-mem configuration. Never paste a literal key into tracked config.
+Run `agemem config init` and set `providers.jev.api_key` in the private user
+`config.yaml`; see [configuration](CONFIGURATION.md). Environment credentials
+remain supported as overrides. The integration never reads or modifies your global jev-mem configuration. Never paste a literal key into tracked config.
 
 ```bash
-AGEMEM=/home/daniel/Projects/Code/Python/agemem/.venv/bin/agemem
+AGEMEM=/absolute/path/to/agemem/.venv/bin/agemem
 PROJECT=/absolute/path/to/your/project
 "$AGEMEM" --project "$PROJECT" init
 "$AGEMEM" --project "$PROJECT" index
@@ -33,7 +35,7 @@ For Codex, add this to the applicable MCP configuration (replace the project pat
 
 ```toml
 [mcp_servers.agemem-myproject]
-command = "/home/daniel/Projects/Code/Python/agemem/.venv/bin/agemem"
+command = "/absolute/path/to/agemem/.venv/bin/agemem"
 args = ["--project", "/absolute/path/to/project", "mcp"]
 env_vars = ["TYPESAFE_API_KEY", "JEV_API_KEY"]
 ```
@@ -48,17 +50,20 @@ A generic MCP client configuration:
 
 Ask the coding agent to recall context before work, update the readable bank at stopping points, capture useful original evidence, and remember durable decisions with provenance. Calling these tools is explicit; installing the server alone does not ingest conversations.
 
-## Actual upstream RAW-RAG
+## Agent instructions
 
-Install `.[upstream]` and clone the upstream source separately:
+Installation does not install the original memory-bank skill or edit agent
+instructions. Add the optional [Agemem AGENTS.md section](AGENT_INTEGRATION.md)
+to teach the agent when to recall, capture, remember and update working state.
 
-```bash
-uv pip install --python .venv/bin/python -e '.[upstream]'
-git clone https://github.com/Litmeb/RAW-RAG /path/to/RAW-RAG
-git -C /path/to/RAW-RAG checkout 95639191e9547219b426710e50fe1a36235e26fc
-export AGEMEM_RAW_RAG_DIR=/path/to/RAW-RAG
-```
+## Optional RAW-RAG retrieval
 
-Set `retrieval` to `raw-rag` in project config. This invokes the upstream retriever with local embeddings; Jev remains the decision backend. First-use tokenizer/embedding setup can download weights. This integration explicitly rejects `raw-rag` recall with `--offline`; use tested `hybrid` or `bm25` retrieval for offline operation.
+Install `.[raw]` for the bundled adapted retriever; no external checkout is needed.
+Follow [RAW-RAG setup](RAW_RAG.md) to prepare local tokenizer, BGE and MiniLM caches,
+then select `retrieval: raw-rag` in project config. This changes source retrieval;
+Jev remains the default decision provider.
+
+For user YAML settings and explicit provider setup commands, see
+[configuration](CONFIGURATION.md).
 
 For a validated independent GPU environment and durable local weights, follow [standalone QSIV installation](QSIV_INSTALLATION.md). Keep the default Jev environment unless explicitly selecting a local backend.

@@ -8,7 +8,7 @@ import time
 from pathlib import Path
 
 from agemem.deciders import HostedJev, QSIVDecider, CascadingDecider
-from jevmem.decider import ChoiceQ
+from agemem.notes.decider import ChoiceQ
 from jevmem.questions import consolidation_questions, lite_escalation_questions, relevance_questions, typing_questions, relation_questions, stop_questions
 
 

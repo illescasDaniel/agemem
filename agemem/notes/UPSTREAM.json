@@ -1,0 +1,24 @@
+{
+  "project": "https://github.com/illescasDaniel/jev-mem",
+  "version": "0.4.0",
+  "source": "installed wheel",
+  "original_sha256": {
+    "config.py": "69b03c225c7be19f85435207d1b35e75e56c8686175bf6009a0ef81851ac9b06",
+    "consolidate.py": "e8746283e3a2e299b3d551ce696e6a144b751d76508ff207985e51e089bb2caa",
+    "retrieve.py": "b981c9a22379563bd55f471d7efbdf61193caf35c9a470bc55a1be23715378bc",
+    "screen.py": "edd1e2674baceaef385a8b7d1d08514f155460dd08f150925029e70cbd37ae87",
+    "store.py": "f35b153e848c82b7f3e1f8c1140f92984edf1c5ea98436905e996646f0667145",
+    "write.py": "5d251b95197d4857cdf1906ca229cf44921f14b10ed062449acb0964ba85c272",
+    "questions.py": "46b216b2d1f73886a3e95ce20afe3b8974d9c4e2523345293bdf82f54d391141",
+    "vectorindex.py": "13c2c30a8bcd96d8ea5b135bbf5c52510ab78b480edec0a5ce1af70324c65979",
+    "extras.py": "1f99d4cff68e82f980cb6d2cb0905706ee4f401631fe47016768f5eff09bdf93",
+    "decide.py": "8bad7d8bf3fa58cc9166858239970dae3c4c8a289ef4daf980d69d7684ef03c4",
+    "decider.py": "2026f8614d09112803b7f40171435732ebf21d5c638a7f8f29ebb25787c6f270"
+  },
+  "adaptations": [
+    "Internal namespace and attribution headers",
+    "Removed hosted JevDecider; agemem.deciders owns provider access",
+    "Retained only local MatrixIndex and required MAX_ITEM_CHARS constant",
+    "Excluded optional remote vector stores, service, hooks, CLI and global settings"
+  ]
+}

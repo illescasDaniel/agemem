@@ -3,7 +3,6 @@ __pycache__/
 *.pyc
 .env
 .env.*
-!.env.example
 .cache/
 vendor/
 runs/
@@ -11,3 +10,21 @@ runs/
 
 .venv-*/
 .agemem/local/
+
+# Maintainer workspace (keep local copies, exclude from public source)
+/HANDOFF.md
+/memory/
+/experiments/
+
+# Local benchmark/probe output and findings
+/reports/
+
+# Python build and tool output
+/dist/
+/build/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/

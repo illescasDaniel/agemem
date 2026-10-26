@@ -4,7 +4,7 @@ import json
 import time
 from pathlib import Path
 from agemem.deciders import QSIVDecider
-from jevmem.decider import ChoiceQ
+from agemem.notes.decider import ChoiceQ
 
 root = Path('/home/daniel/Projects/Code/Python')
 specs = [

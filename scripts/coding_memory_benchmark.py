@@ -8,7 +8,7 @@ from pathlib import Path
 
 from agemem.deciders import CascadingDecider, HostedJev, QSIVDecider
 from evaluation.coding_memory import digest, tasks
-from jevmem.decider import ChoiceQ, NoulQ
+from agemem.notes.decider import ChoiceQ, NoulQ
 
 
 def summarize(rows):

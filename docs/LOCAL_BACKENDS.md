@@ -4,7 +4,7 @@ Edit `decision_backend` in `.agemem/config.json`: `jev` (default), `qsiv`, `olla
 
 ## QSIV
 
-QSIV weights and runtime are not bundled. Download the upstream repository and real model/tokenizer files (a Git LFS pointer is not a model). Tested revision: `f1ee842daf758c0ab535cf7d281c85439d6e4b25` from https://huggingface.co/djinn-san/QSIV . Install its runtime dependencies in a separate GPU environment, then install this project there. Set `AGEMEM_QSIV_DIR` to the directory containing `qsiv_fp8.safetensors`, `calibration.json` and `tokenizer/`; ensure the upstream `qsiv` package is importable, for example through `PYTHONPATH=/path/to/QSIV`.
+QSIV is GPU-only in production; use Jev when a compatible NVIDIA GPU is unavailable. There is no automatic paid fallback. QSIV weights and runtime are not bundled. Download the upstream repository and real model/tokenizer files (a Git LFS pointer is not a model). Tested revision: `f1ee842daf758c0ab535cf7d281c85439d6e4b25` from https://huggingface.co/djinn-san/QSIV . Install its runtime dependencies in a separate GPU environment, then install this project there. Set `AGEMEM_QSIV_DIR` to the directory containing `qsiv_fp8.safetensors`, `calibration.json` and `tokenizer/`; ensure the upstream `qsiv` package is importable, for example through `PYTHONPATH=/path/to/QSIV`.
 
 Configuration:
 
@@ -14,7 +14,7 @@ Configuration:
 
 Merge these fields into the initialized config; preserve its project ID and other settings. `AGEMEM_QSIV_DIR` overrides the configured directory. Local loading refuses missing artifacts and does not silently download or call a hosted fallback. Native requests are batched at eight questions.
 
-FP8 inference worked on this machine's RTX 4070 Laptop (8 GB), despite the runtime's Blackwell-optimization warning. A two-decision hardware probe allocated approximately 1.44 GiB of GPU memory. That establishes feasibility for these short inputs, not arbitrary context sizes or concurrency. See `reports/qsiv-fp8-hardware-probe.json`.
+FP8 inference worked on this machine's RTX 4070 Laptop (8 GB), despite the runtime's Blackwell-optimization warning. A two-decision hardware probe allocated approximately 1.44 GiB of GPU memory. That establishes feasibility for these short inputs, not arbitrary context sizes or concurrency.
 
 A clean standalone GPU environment is now validated in `.venv-qsiv/`, with durable
 weights under `.cache/qsiv/model/` and embeddings under `.cache/embeddings/`.
@@ -45,7 +45,7 @@ Every question goes to local QSIV. Only answers below the cutoff go to Jev, and 
 
 The cutoff was fixed using the original pilot before measuring 30 additional synthetic questions. We did not tune it against the new 30. At 0.90, the cascade matched Jev's 49/50 while routing 34/50 questions to Jev. It reduced hosted input tokens by 25%, but was slower overall in the measured run. Keep Jev as default until broader task-level evaluations support a change.
 
-With `--offline`, a cascade cannot use its hosted fallback; uncertain decisions become unavailable and normal memory safeguards apply. Use `qsiv` for a fully local decision path. Cache the local embedding model first and use hybrid/BM25 retrieval. Fully offline memory does not itself make a hosted coding agent offline.
+With `--offline`, a cascade cannot use its hosted fallback; uncertain decisions become unavailable and normal memory safeguards apply. Use `qsiv` for a fully local decision path. Prepare the local model caches first. Hybrid/BM25 and [prepared RAW-RAG](RAW_RAG.md) support offline source retrieval. Fully offline memory does not itself make a hosted coding agent offline.
 
 ## New controlled coding-memory fixtures
 
@@ -54,4 +54,4 @@ On ten final author-created executable-oracle selection tasks: Jev 9/10, QSIV
 cascade accepted none. Across calibration plus final, cascade required 29/32
 hosted question fallbacks and saved only 3.22% of input tokens. These are small
 controlled fixtures with supplied candidate code, not independently human-labeled
-or end-to-end coding tasks. See [measured findings](../reports/CODING_MEMORY_FINDINGS.md).
+or end-to-end coding tasks.

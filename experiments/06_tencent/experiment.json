@@ -1,8 +1,0 @@
-{
-  "name": "06_tencent",
-  "methods": [
-    "tencent-l0"
-  ],
-  "budget_units": 1800,
-  "output": "reports/tencent-l0.json"
-}

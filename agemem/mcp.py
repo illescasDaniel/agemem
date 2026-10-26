@@ -18,9 +18,14 @@ def serve(project, offline=False):
             # A fresh connection sees branch switches and file edits between calls.
             with lock:
                 engine = Engine(project, offline)
-                key = tuple(engine.config.get(k) for k in ("decision_backend", "qsiv_directory", "qsiv_runtime", "ollaya_url", "ollaya_model", "cascade_min_confidence"))
+                key = tuple(engine.config.get(k) for k in ("decision_backend", "qsiv_directory", "qsiv_runtime", "ollaya_url", "ollaya_model", "cascade_min_confidence", "qsiv_python", "jev_api_key"))
                 if key == cached_key:
                     engine.decider = cached_decider
+                elif cached_decider is not None:
+                    local = getattr(cached_decider, "local", cached_decider)
+                    worker = getattr(local, "worker", None)
+                    if worker is not None:
+                        worker.close()
                 try:
                     return fn(engine, *args, **kwargs)
                 except Exception as exc:

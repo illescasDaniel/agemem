@@ -1,8 +1,0 @@
-{
-  "name": "03_raw_rag",
-  "methods": [
-    "raw-upstream"
-  ],
-  "budget_units": 1800,
-  "output": "reports/raw-upstream.json"
-}

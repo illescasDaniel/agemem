@@ -7,6 +7,8 @@ import subprocess
 import uuid
 from pathlib import Path
 
+from .config import provider_options
+
 DEFAULTS = {"schema_version": 1, "decision_backend": "jev", "retrieval": "hybrid",
             "embedder": "BAAI/bge-small-en-v1.5", "context_budget": 1800,
             "qsiv_directory": None, "qsiv_runtime": "fp8", "raw_rag_directory": None,
@@ -48,7 +50,8 @@ def initialize(directory, retrieval="hybrid", embedder="BAAI/bge-small-en-v1.5")
     created = []
     config = folder / "config.json"
     if not config.exists():
-        config.write_text(json.dumps({**DEFAULTS, "project_id": uuid.uuid4().hex, "retrieval": retrieval,
+        project_defaults = {key: value for key, value in DEFAULTS.items() if key not in ("decision_backend", "qsiv_directory", "qsiv_runtime")}
+        config.write_text(json.dumps({**project_defaults, "project_id": uuid.uuid4().hex, "retrieval": retrieval,
                                       "embedder": embedder}, indent=2) + "\n")
         created.append(str(config.relative_to(root)))
     ignore = inside(root, folder / ".gitignore")
@@ -62,15 +65,18 @@ def initialize(directory, retrieval="hybrid", embedder="BAAI/bge-small-en-v1.5")
         if not path.exists():
             path.write_text(text)
             created.append(str(path.relative_to(root)))
-    return {"project": str(root), "created": created, "decision_backend": "jev"}
+    return {"project": str(root), "created": created, "decision_backend": configuration(root)["decision_backend"]}
 
 
 def configuration(root):
     path = inside(root, root / ".agemem/config.json")
     if not path.exists():
         raise ValueError("Run agemem init for this project first")
-    config = {**DEFAULTS, **json.loads(path.read_text())}
-    for key, variable in (("qsiv_directory", "AGEMEM_QSIV_DIR"), ("raw_rag_directory", "AGEMEM_RAW_RAG_DIR")):
+    project = json.loads(path.read_text())
+    if not isinstance(project, dict):
+        raise ValueError("Project configuration must be a JSON mapping")
+    config = {**DEFAULTS, **project, **provider_options(project)}
+    for key, variable in (("raw_rag_directory", "AGEMEM_RAW_RAG_DIR"),):
         if os.environ.get(variable):
             config[key] = os.environ[variable]
     if config["decision_backend"] not in ("jev", "qsiv", "ollaya", "cascade") or config["retrieval"] not in ("bm25", "hybrid", "raw-rag"):

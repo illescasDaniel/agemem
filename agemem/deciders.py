@@ -7,7 +7,7 @@ import os
 import time
 from pathlib import Path
 
-from jevmem.decider import Answer, ChoiceQ, DeciderUnavailable, NoulQ
+from agemem.notes.decider import Answer, ChoiceQ, DeciderUnavailable, NoulQ
 
 
 class Disabled:
@@ -20,11 +20,11 @@ class Disabled:
 
 class HostedJev:
     """Uses the Jev SDK, without loading or modifying global jev-mem settings."""
-    def __init__(self, max_calls=32, max_input_tokens=80000, local_url=None, model=None):
+    def __init__(self, max_calls=32, max_input_tokens=80000, local_url=None, model=None, api_key=None):
         self.calls = self.input_tokens = 0
         self.max_calls, self.max_input_tokens = max_calls, max_input_tokens
         self.client = None
-        self.local_url, self.model = local_url, model
+        self.local_url, self.model, self.api_key = local_url, model, api_key
         if local_url:
             from urllib.parse import urlparse
             if urlparse(local_url).hostname not in ("localhost", "127.0.0.1", "::1"):
@@ -40,7 +40,7 @@ class HostedJev:
         from typesafe_sdk import Choice, Noul, TypeSafeClient, TypeSafeError
         from typesafe_sdk._core.retry import RetryPolicy
         if self.client is None:
-            key = "unused-local" if self.local_url else os.environ.get("TYPESAFE_API_KEY") or os.environ.get("JEV_API_KEY")
+            key = "unused-local" if self.local_url else self.api_key or os.environ.get("TYPESAFE_API_KEY") or os.environ.get("JEV_API_KEY")
             if not key:
                 raise DeciderUnavailable("Set TYPESAFE_API_KEY or JEV_API_KEY for hosted Jev")
             self.client = TypeSafeClient(api_key=key, base_url=self.local_url,
@@ -78,7 +78,12 @@ class QSIVDecider:
         self.latency_s = 0.0
 
     @classmethod
-    def load(cls, directory, runtime="fp8"):
+    def load(cls, directory, runtime="fp8", python=None):
+        if python:
+            worker = QSIVWorker(python, directory, runtime)
+            result = cls(worker.decide, runtime)
+            result.worker = worker
+            return result
         root = Path(directory).expanduser().resolve()
         if runtime not in ("reference", "fp8"):
             raise ValueError("QSIV runtime must be reference or fp8")
@@ -87,6 +92,12 @@ class QSIVDecider:
             if not (root / name).exists():
                 raise DeciderUnavailable(f"Missing QSIV local artifact: {name}")
         try:
+            import torch
+            if not torch.cuda.is_available():
+                raise DeciderUnavailable("QSIV requires a compatible NVIDIA GPU; select Jev on this machine")
+            minimum = (8, 9) if runtime == "fp8" else (8, 0)
+            if torch.cuda.get_device_capability() < minimum:
+                raise DeciderUnavailable("GPU does not meet this QSIV runtime's requirements; select Jev")
             if runtime == "reference":
                 from qsiv.reference import ReferenceService
                 service = ReferenceService(str(root / "model.safetensors"), str(root / "calibration.json"),
@@ -96,7 +107,7 @@ class QSIVDecider:
                 service = QSIVService(str(root / "qsiv_fp8.safetensors"), str(root / "calibration.json"),
                                       tokenizer_dir=str(root / "tokenizer"), plan_memory_gb=1)
         except (ImportError, OSError, RuntimeError) as exc:
-            raise DeciderUnavailable(f"QSIV local runtime unavailable ({type(exc).__name__})") from exc
+            raise DeciderUnavailable(f"QSIV GPU runtime unavailable; run agemem doctor or select Jev ({type(exc).__name__})") from exc
         return cls(service.decide, runtime)
 
     def ask(self, state, questions):
@@ -181,3 +192,67 @@ class CascadingDecider:
         if uncertain:
             answers.update(self.remote.ask(state, uncertain))
         return answers
+
+
+class QSIVWorker:
+    """Keep one native model resident in an explicitly configured Python runtime."""
+    def __init__(self, python, directory, runtime, timeout=120):
+        import subprocess
+        import atexit
+        self.timeout = timeout
+        # Do not forward hosted credentials into the local inference subprocess.
+        env = {k: v for k, v in os.environ.items()
+               if not any(word in k.upper() for word in ("API_KEY", "TOKEN", "SECRET"))}
+        env.update(HF_HUB_OFFLINE="1", TRANSFORMERS_OFFLINE="1")
+        try:
+            self.process = subprocess.Popen(
+                [str(Path(python).expanduser()), "-m", "agemem.qsiv_worker",
+                 str(Path(directory).expanduser()), runtime],
+                stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=None,
+                text=True, env=env, bufsize=1)
+            if self._read().get("ready") is not True:
+                raise DeciderUnavailable("Local QSIV startup failed; run agemem doctor")
+        except Exception:
+            self.close()
+            raise DeciderUnavailable("QSIV requires a working compatible NVIDIA GPU runtime; run agemem doctor or select Jev") from None
+        atexit.register(self.close)
+
+    def _read(self):
+        import selectors
+        with selectors.DefaultSelector() as selector:
+            selector.register(self.process.stdout, selectors.EVENT_READ)
+            if not selector.select(self.timeout):
+                self.close()
+                raise DeciderUnavailable("Local QSIV worker timed out")
+            line = self.process.stdout.readline()
+        if not line:
+            raise DeciderUnavailable("Local QSIV worker stopped")
+        return json.loads(line)
+
+    def decide(self, request):
+        try:
+            self.process.stdin.write(json.dumps(request) + "\n")
+            self.process.stdin.flush()
+            response = self._read()
+            if "answers" not in response:
+                raise ValueError("Worker error")
+            return response["answers"]
+        except Exception:
+            self.close()
+            raise DeciderUnavailable("Local QSIV worker failed; run agemem doctor") from None
+
+    def close(self):
+        import atexit
+        atexit.unregister(self.close)
+        process = getattr(self, "process", None)
+        if process is not None:
+            if process.poll() is None:
+                process.terminate()
+                try:
+                    process.wait(timeout=5)
+                except Exception:
+                    process.kill()
+                    process.wait()
+            for pipe in (process.stdin, process.stdout):
+                if pipe:
+                    pipe.close()
