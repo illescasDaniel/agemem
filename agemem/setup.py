@@ -73,7 +73,7 @@ def configure_provider(offline=False, model=None, no_input=False):
     return initialize_user_config(api_key=key)
 
 
-def initialize_project(project, client=None, retrieval="hybrid", embedder="BAAI/bge-small-en-v1.5", offline=False, *, model=None, clients=None, no_input=False):
+def initialize_project(project, client=None, retrieval="hybrid", embedder="BAAI/bge-small-en-v1.5", offline=False, *, model=None, clients=None, no_input=False, hooks=False, executable=None):
     root = Path(project).expanduser().resolve()
     if not root.is_dir():
         raise ValueError("Project directory must already exist")
@@ -99,7 +99,15 @@ def initialize_project(project, client=None, retrieval="hybrid", embedder="BAAI/
         index = engine.index()
     finally:
         engine.close()
-    registrations = [install(root, selected, offline=offline) for selected in selected_clients]
+    registrations = [install(root, selected, offline=offline, **({"executable": executable} if executable else {})) for selected in selected_clients]
+    hook_results = []
+    if hooks:
+        from .hooks import install as install_hooks
+        supported = [selected for selected in selected_clients if selected in ("codex", "claude-code")]
+        if supported:
+            hook_results = install_hooks(root, supported, executable=executable)
+        if "cursor" in selected_clients:
+            hook_results.append({"client": "cursor", "skipped": "Hook integration currently supports Claude Code and Codex"})
     next_steps = ["Restart or reload the client and enable the agemem server",
                   "Add the project-memory instructions from docs/AGENT_INTEGRATION.md to your agent guidance"]
     options = provider_options({})
@@ -107,4 +115,4 @@ def initialize_project(project, client=None, retrieval="hybrid", embedder="BAAI/
         next_steps.insert(0, "Configure the selected provider in " + user["path"])
     return {"project": str(root), "user_config": user, "initialization": project_result,
             "index": index, "mcp": registrations[0] if len(registrations) == 1 else registrations,
-            "next_steps": next_steps}
+            "hooks": hook_results, "next_steps": next_steps}

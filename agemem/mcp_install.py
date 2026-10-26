@@ -25,24 +25,36 @@ def select_client(client=None):
     return client
 
 
-def install(project, client=None, dry_run=False, offline=False):
+def launcher(project, offline=False, executable=None):
+    project = Path(project).expanduser().resolve()
+    if executable is not None:
+        executable = Path(executable).expanduser().resolve()
+        if not executable.is_file():
+            raise ValueError("Launcher executable must be an existing installed agemem command")
+        entry = {"command": str(executable), "args": ["--project", str(project)]}
+    else:
+        entry = {"command": "uvx", "args": ["--python", "3.12", f"agemem@{__version__}", "--project", str(project)]}
+    if offline:
+        entry["args"].append("--offline")
+    entry["args"].append("mcp")
+    if os.environ.get("AGEMEM_CONFIG"):
+        entry["env"] = {"AGEMEM_CONFIG": str(Path(os.environ["AGEMEM_CONFIG"]).expanduser().resolve())}
+    return entry
+
+
+def install(project, client=None, dry_run=False, offline=False, executable=None):
     project = Path(project).expanduser().resolve()
     if not (project / ".agemem/config.json").is_file():
         raise ValueError("Run agemem init for this project before mcp-install")
     client = select_client(client)
-    args = ["--python", "3.12", f"agemem@{__version__}", "--project", str(project)]
-    if offline:
-        args.append("--offline")
-    args.append("mcp")
-    entry = {"command": "uvx", "args": args}
-    if os.environ.get("AGEMEM_CONFIG"):
-        entry["env"] = {"AGEMEM_CONFIG": str(Path(os.environ["AGEMEM_CONFIG"]).expanduser().resolve())}
+    entry = launcher(project, offline=offline, executable=executable)
+    args = entry["args"]
     result = {"client": client, "project": str(project), "server": "agemem", "launcher": entry, "dry_run": dry_run}
     if client == "codex":
         command = ["codex", "mcp", "add", "agemem"]
         for key, value in entry.get("env", {}).items():
             command.extend(["--env", f"{key}={value}"])
-        command.extend(["--", "uvx", *args])
+        command.extend(["--", entry["command"], *args])
         result["registration_command"] = command
         result["scope"] = "user"
         config = Path(os.environ.get("CODEX_HOME", str(Path.home() / ".codex"))).expanduser() / "config.toml"

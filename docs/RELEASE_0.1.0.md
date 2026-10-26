@@ -1,7 +1,8 @@
 # Public release 0.1.0 plan
 
-Status: preparation only; version metadata already says 0.1.0. No release is
-published by this cleanup.
+Status: publication on hold pending manual MCP and lifecycle-hook checks. Daniel
+plans Claude Code testing on 2026-10-27. Do not tag or dispatch Release until he
+provides renewed approval. See [manual testing](MANUAL_TESTING.md).
 
 ## Scope
 

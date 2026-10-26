@@ -20,6 +20,8 @@ def main():
     clients.add_argument("--client", choices=["codex", "cursor", "claude-code"], help="Register one client")
     clients.add_argument("--mcp", nargs="+", choices=["codex", "cursor", "claude", "claude-code"], help="Register selected clients; claude means Claude Code")
     project_init.add_argument("--model", choices=["jev", "qsiv"], help="Select the decision provider without prompting")
+    project_init.add_argument("--hooks", action="store_true", help="Also install local read-only hooks for selected Claude/Codex clients")
+    project_init.add_argument("--executable", type=Path, help="Use an installed agemem executable instead of uvx (source testing)")
     project_init.add_argument("--no-input", action="store_true", help="Never prompt; fail when required setup choices are missing")
     project_init.add_argument("--retrieval", choices=["hybrid", "bm25", "raw-rag"], default="hybrid")
     project_init.add_argument("--embedder", default="BAAI/bge-small-en-v1.5")
@@ -54,16 +56,30 @@ def main():
     p = sub.add_parser("mcp-install", help="Register this project with a coding client")
     p.add_argument("--client", choices=["codex", "cursor", "claude-code"], help="Prompt when omitted")
     p.add_argument("--dry-run", action="store_true", help="Preview registration without changing client configuration")
+    p.add_argument("--executable", type=Path, help="Use an installed agemem executable instead of uvx")
+    p = sub.add_parser("hooks-install", help="Install optional read-only lifecycle hooks")
+    p.add_argument("--client", nargs="+", choices=["codex", "claude", "claude-code"], required=True)
+    p.add_argument("--executable", type=Path)
+    p.add_argument("--dry-run", action="store_true")
+    p = sub.add_parser("hook", help="Handle client lifecycle JSON on stdin; local read-only context")
+    p.add_argument("event", choices=["session-start", "user-prompt"])
     args = parser.parse_args()
     try:
         if args.command == "project":
             from .setup import initialize_project
-            result = initialize_project(args.project, args.client, args.retrieval, args.embedder, args.offline, model=args.model, clients=args.mcp, no_input=args.no_input)
+            result = initialize_project(args.project, args.client, args.retrieval, args.embedder, args.offline, model=args.model, clients=args.mcp, no_input=args.no_input, hooks=args.hooks, executable=args.executable)
         elif args.command == "config":
             result = initialize_user_config()
         elif args.command == "mcp-install":
             from .mcp_install import install
-            result = install(args.project, args.client, args.dry_run, args.offline)
+            result = install(args.project, args.client, args.dry_run, args.offline, args.executable)
+        elif args.command == "hooks-install":
+            from .hooks import install
+            result = install(args.project, args.client, args.executable, args.dry_run)
+        elif args.command == "hook":
+            from .hooks import run
+            run(args.project, args.event)
+            return
         elif args.command == "provider":
             from .providers import setup_qsiv
             options = provider_options({})

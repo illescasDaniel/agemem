@@ -10,6 +10,9 @@ The answering agent receives current context, selected durable notes and source 
 
 ## Install and use
 
+0.1.0 is not published yet. Use the [source-testing guide](https://github.com/illescasDaniel/agemem/blob/main/docs/MANUAL_TESTING.md)
+until manual validation is complete. The command below targets the planned PyPI release.
+
 Requires Git and [uv](https://docs.astral.sh/uv/). From your project directory:
 
 ```bash
@@ -35,6 +38,8 @@ Or paste this prompt into your coding agent:
 Setup connects Codex, Cursor or Claude Code and configures hosted Jev or local
 GPU QSIV. Restart your client, enable the server, and add the
 [suggested agent instructions](https://github.com/illescasDaniel/agemem/blob/main/docs/AGENT_INTEGRATION.md).
+Optional [Claude/Codex lifecycle hooks](https://github.com/illescasDaniel/agemem/blob/main/docs/HOOKS.md)
+load local context automatically; add `--hooks` during setup.
 See the [installation guide](https://github.com/illescasDaniel/agemem/blob/main/docs/INSTALLATION.md) for details. For development, [install from source](https://github.com/illescasDaniel/agemem/blob/main/docs/INSTALLATION.md#development-installation).
 
 ## How it works

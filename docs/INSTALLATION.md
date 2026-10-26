@@ -260,6 +260,20 @@ Keep the private YAML credentials outside client config. If using a custom
 `AGEMEM_CONFIG` location, explicitly forward that non-secret path via the client's
 MCP environment configuration.
 
+## Optional lifecycle hooks and source testing
+
+Add `--hooks` to `project init` to install read-only hooks for selected Claude
+Code and Codex clients. Cursor hook integration is skipped. Or use
+`agemem --project . hooks-install --client claude codex` on an existing project.
+Hooks load context at session start and retrieve local evidence on prompts;
+they do not make hosted calls or automatically capture conversations.
+
+For unreleased source, `project init`, `mcp-install` and `hooks-install` accept
+`--executable /absolute/path/to/installed/agemem`, registering that executable
+instead of a PyPI `uvx` launcher. See [hook setup](HOOKS.md) and the
+[manual pre-release checklist](MANUAL_TESTING.md). Publication of 0.1.0 is held
+until manual client/hook testing and renewed release approval.
+
 ## Agent instructions
 
 Add the optional [Agemem project-memory section](AGENT_INTEGRATION.md) to your
