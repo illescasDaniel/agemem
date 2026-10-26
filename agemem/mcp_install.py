@@ -2,11 +2,9 @@
 import json
 import os
 from pathlib import Path
-import shutil
-import subprocess
 import sys
 import tempfile
-import tomllib
+import tomlkit
 
 from . import __version__
 from .project import inside
@@ -48,29 +46,32 @@ def install(project, client=None, dry_run=False, offline=False, executable=None)
         raise ValueError("Run agemem init for this project before mcp-install")
     client = select_client(client)
     entry = launcher(project, offline=offline, executable=executable)
-    args = entry["args"]
     result = {"client": client, "project": str(project), "server": "agemem", "launcher": entry, "dry_run": dry_run}
     if client == "codex":
-        command = ["codex", "mcp", "add", "agemem"]
-        for key, value in entry.get("env", {}).items():
-            command.extend(["--env", f"{key}={value}"])
-        command.extend(["--", entry["command"], *args])
-        result["registration_command"] = command
-        result["scope"] = "user"
-        config = Path(os.environ.get("CODEX_HOME", str(Path.home() / ".codex"))).expanduser() / "config.toml"
+        path = inside(project, project / ".codex/config.toml")
+        result["path"] = str(path)
+        result["scope"] = "project"
         try:
-            current = tomllib.loads(config.read_text()).get("mcp_servers", {}).get("agemem", {}) if config.exists() else {}
+            data = tomlkit.parse(path.read_text() if path.exists() else "")
         except (ValueError, UnicodeError):
             raise ValueError("Invalid Codex TOML; repair the existing client configuration before installing") from None
-        matches = all(current.get(key) == value for key, value in entry.items()) and current.get("env", {}) == entry.get("env", {}) and current.get("enabled", True)
+        servers = data.get("mcp_servers", {})
+        if not isinstance(servers, dict):
+            raise ValueError("Codex MCP configuration must contain a mcp_servers mapping")
+        current = servers.get("agemem", {})
+        matches = current == entry
         result["changed"] = not matches
         if not dry_run and not matches:
-            executable = shutil.which("codex")
-            if not executable:
-                raise ValueError("Codex CLI is required for registration; install it or use the manual MCP configuration")
-            completed = subprocess.run([executable, *command[1:]], cwd=project, capture_output=True, text=True)
-            if completed.returncode:
-                raise ValueError("Codex registration failed; check codex mcp configuration and permissions")
+            data.setdefault("mcp_servers", tomlkit.table())["agemem"] = entry
+            path.parent.mkdir(parents=True, exist_ok=True)
+            descriptor, temporary = tempfile.mkstemp(dir=path.parent, prefix=".agemem-mcp-")
+            try:
+                with os.fdopen(descriptor, "w") as stream:
+                    stream.write(tomlkit.dumps(data))
+                os.replace(temporary, path)
+            finally:
+                Path(temporary).unlink(missing_ok=True)
+        result["next_step"] = "Trust the project, then restart or reload Codex to enable the agemem server"
     else:
         path = inside(project, project / (".cursor/mcp.json" if client == "cursor" else ".mcp.json"))
         result["path"] = str(path)
@@ -96,5 +97,5 @@ def install(project, client=None, dry_run=False, offline=False, executable=None)
                 os.replace(temporary, path)
             finally:
                 Path(temporary).unlink(missing_ok=True)
-    result["next_step"] = "Restart or reload the client and enable the agemem server"
+    result.setdefault("next_step", "Restart or reload the client and enable the agemem server")
     return result

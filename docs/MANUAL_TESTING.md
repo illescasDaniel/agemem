@@ -33,8 +33,8 @@ existing valid YAML it reuses the settings. To keep the test configuration
 separate, set `AGEMEM_CONFIG` to a private test YAML path before setup; the path
 is forwarded to MCP/hook launchers. An explicit `--model jev` requires a key in
 private YAML/environment; `--model qsiv` installs GPU dependencies/model. For
-Codex too, use `--mcp claude codex`; Codex registration modifies its user-level
-`agemem` entry and remains fixed to the selected project. Add Cursor if desired.
+Codex too, use `--mcp claude codex`; Codex registration writes the project's
+`.codex/config.toml` and requires the project to be trusted. Add Cursor if desired.
 Review the generated settings and launcher paths, then reload the client.
 
 For a no-download/offline contract check, first run `config init` with the same

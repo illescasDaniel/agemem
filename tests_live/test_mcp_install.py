@@ -46,15 +46,35 @@ class MCPInstallTests(unittest.TestCase):
                 install(self.root, "claude-code")
             self.assertEqual(path.read_text(), text)
 
-    def test_codex_uses_argument_list_without_shell(self):
-        with patch("agemem.mcp_install.shutil.which", return_value="/bin/codex"), patch("agemem.mcp_install.subprocess.run") as run:
-            run.return_value.returncode = 0
-            install(self.root, "codex")
-        command = run.call_args.args[0]
-        self.assertEqual(command[:4], ["/bin/codex", "mcp", "add", "agemem"])
-        self.assertEqual(command[command.index("--") + 1], "uvx")
-        self.assertIn(str(self.root.resolve()), command)
-        self.assertEqual(run.call_args.kwargs["cwd"], self.root)
+    def test_codex_project_config_preserves_settings_and_updates(self):
+        import tomllib
+        path = self.root / '.codex/config.toml'
+        path.parent.mkdir()
+        path.write_text('# preserved comment\nmodel = "example"\n[mcp_servers.other]\ncommand = "kept"\n')
+        with patch.dict(os.environ, {"AGEMEM_CONFIG": str(self.root / "private config.yaml")}):
+            result = install(self.root, 'codex', offline=True)
+            self.assertEqual(result['scope'], 'project')
+            first = path.read_text()
+            self.assertFalse(install(self.root, 'codex', offline=True)['changed'])
+            self.assertEqual(first, path.read_text())
+            install(self.root, 'codex', offline=False)
+        data = tomllib.loads(path.read_text())
+        self.assertIn('# preserved comment', path.read_text())
+        self.assertEqual(data['model'], 'example')
+        self.assertEqual(data['mcp_servers']['other']['command'], 'kept')
+        self.assertNotIn('--offline', data['mcp_servers']['agemem']['args'])
+        self.assertEqual(data['mcp_servers']['agemem']['env']['AGEMEM_CONFIG'], str(self.root / 'private config.yaml'))
+
+    def test_codex_invalid_config_preserved_and_dry_run(self):
+        path = self.root / '.codex/config.toml'
+        self.assertTrue(install(self.root, 'codex', dry_run=True)['changed'])
+        self.assertFalse(path.exists())
+        path.parent.mkdir()
+        for content in ('[bad', 'mcp_servers = "bad"'):
+            path.write_text(content)
+            with self.assertRaises(ValueError):
+                install(self.root, 'codex')
+            self.assertEqual(path.read_text(), content)
 
     def test_noninteractive_requires_client(self):
         with patch("sys.stdin.isatty", return_value=False), self.assertRaises(ValueError):

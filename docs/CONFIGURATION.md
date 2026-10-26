@@ -70,6 +70,11 @@ Agemem environment use the isolated runtime. There is no silent hosted fallback
 when QSIV fails. The separate `cascade` provider intentionally permits Jev
 fallback and therefore is not local-only.
 
+To use QSIV first and fall back to Jev for low-confidence answers, set
+`default_provider: cascade` in the private YAML, alongside the QSIV paths and Jev
+credentials. A project `decision_backend` or `AGEMEM_PROVIDER` can override the
+YAML provider selection. Offline mode disables the hosted fallback.
+
 `agemem doctor` checks the selected provider and reports missing credentials,
 model files or runtime dependencies. It does not run inference, download
 weights or call hosted APIs. `--offline` prevents hosted decisions; selecting

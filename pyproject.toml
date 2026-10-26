@@ -7,7 +7,7 @@ license-files = ["LICENSE", "THIRD_PARTY.md", "agemem/LICENSE.raw-rag", "agemem/
 authors = [{name = "Daniel Illescas Romero", email = "illescas.daniel@protonmail.com"}]
 description = "Project memory: git-tracked working state, jev-mem decisions, and original evidence"
 requires-python = ">=3.12,<3.15"
-dependencies = ["PyYAML>=6,<7", "numpy>=2.4,<3", "fastembed>=0.8.1,<1", "mcp>=2,<3", "typesafe-sdk>=0.7.2,<1"]
+dependencies = ["PyYAML>=6,<7", "numpy>=2.4,<3", "fastembed>=0.8.1,<1", "mcp>=2,<3", "typesafe-sdk>=0.7.2,<1", "tomlkit>=0.13,<1"]
 
 # Optional QSIV GPU dependencies are installed into a separate environment by
 # `agemem provider setup qsiv`, using agemem/data/qsiv-linux-py312.lock.

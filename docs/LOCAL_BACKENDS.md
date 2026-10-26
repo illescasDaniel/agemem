@@ -1,6 +1,6 @@
 # Local decision backends
 
-Edit `decision_backend` in `.agemem/config.json`: `jev` (default), `qsiv`, `ollaya`, or experimental `cascade`. These are typed decision engines; a separate answering/coding model still generates the final response.
+Set `default_provider` in the private `config.yaml`: `jev` (default), `qsiv`, `ollaya`, or experimental `cascade`. A project `decision_backend` can override it. These are typed decision engines; a separate answering/coding model still generates the final response.
 
 ## QSIV
 
@@ -37,9 +37,22 @@ The endpoint must be loopback. Hosted keys are never forwarded to it. This uses 
 
 ## Confidence cascade
 
-```json
-{"decision_backend":"cascade","cascade_min_confidence":0.9,"qsiv_runtime":"fp8","qsiv_directory":"/absolute/path/to/QSIV"}
+```yaml
+default_provider: cascade
+providers:
+  qsiv:
+    runtime: fp8
+    model_directory: /absolute/path/to/QSIV
+    # python: /absolute/path/to/qsiv-runtime/bin/python
+  jev:
+    api_key: null  # Or supply a key through the environment.
 ```
+
+Keep this YAML private. An explicit `decision_backend` in the project config or
+`AGEMEM_PROVIDER` overrides `default_provider`; remove a project override to use
+the YAML selection. See [configuration](CONFIGURATION.md) for precedence.
+The default confidence cutoff is 0.9; it can be overridden by the project's
+`cascade_min_confidence` setting.
 
 Every question goes to local QSIV. Only answers below the cutoff go to Jev, and only those answers are replaced. Binary native confidence is `abs(2*p_true - 1)`: 0.90 confidence means `p_true >= .95` or `<= .05`, not `p_true >= .90`. Choice confidence comes from the native runtime. This is not a calibrated probability of correctness. A confidently wrong answer can bypass Jev.
 

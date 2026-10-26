@@ -30,6 +30,7 @@ class ConfigurationTests(unittest.TestCase):
         result = initialize_user_config()
         self.assertTrue(result["created"])
         self.assertEqual(load_user_config()["version"], 1)
+        self.assertIn("Options: jev, qsiv, cascade", config_path().read_text())
         if os.name != "nt":
             self.assertEqual(stat.S_IMODE(config_path().stat().st_mode), 0o600)
         self.write_user("default_provider: qsiv\n")
@@ -66,6 +67,14 @@ class ConfigurationTests(unittest.TestCase):
         self.assertNotIn("private-yaml-token", json.dumps(doctor(self.root)))
         with patch.dict(os.environ, {"JEV_API_KEY": "environment-token"}):
             self.assertEqual(configuration(self.root)["jev_api_key"], "environment-token")
+
+    def test_yaml_can_select_cascade_for_project(self):
+        self.write_user("default_provider: cascade\n")
+        initialize(self.root, "bm25", "hash")
+        self.assertEqual(configuration(self.root)["decision_backend"], "cascade")
+        self.assertEqual(configuration(self.root)["cascade_min_confidence"], 0.9)
+        with patch.dict(os.environ, {"AGEMEM_PROVIDER": "jev"}):
+            self.assertEqual(configuration(self.root)["decision_backend"], "jev")
 
     def test_runtime_python_is_discovered_from_xdg_install(self):
         runtime = self.root / "data/agemem/runtimes/qsiv/bin/python"

@@ -78,6 +78,7 @@ def initialize_user_config(default_provider="jev", api_key=None):
     template = """# Configuration schema version (independent of the Agemem package version).
 version: 1
 # Provider selection is global; projects can explicitly override it.
+# Options: jev, qsiv, cascade (or ollaya for the local Ollaya backend).
 default_provider: jev
 providers:
   jev:

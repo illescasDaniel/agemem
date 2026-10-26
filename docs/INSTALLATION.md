@@ -178,8 +178,8 @@ Choose `codex`, `cursor` or `claude-code` at the prompt. For scripts, pass
 `--client codex` (or another client). Add `--dry-run` to preview without writes.
 No Node.js/npm is required. Cursor merges `.cursor/mcp.json`; Claude Code merges
 `.mcp.json`, preserving unrelated entries. Repeating installation updates only the
-`agemem` entry. Codex uses `codex mcp add` and requires the Codex CLI on PATH;
-it updates user configuration and remains fixed to this project in other repositories.
+`agemem` entry. Codex merges `.codex/config.toml` in the project and requires
+the project to be trusted. Existing user-level entries are not removed.
 
 The installer resolves `--project .` to an absolute path, preserving spaces,
 and registers `uvx --python 3.12 agemem@0.1.0 ... mcp`. It forwards an explicit
@@ -189,14 +189,8 @@ The client must find `uvx` on PATH. Manual alternatives follow.
 
 ### Codex
 
-```bash
-codex mcp add agemem -- uvx --python 3.12 agemem@0.1.0 --project "$(pwd)" mcp
-codex mcp get agemem
-```
-
-This writes the user MCP configuration. The entry remains fixed to the project selected during registration
-when Codex opens another repository; remove it with `codex mcp remove
-agemem` when no longer needed. For manual configuration:
+For manual configuration, merge this entry into the trusted project's
+`.codex/config.toml`:
 
 ```toml
 [mcp_servers.agemem]
@@ -205,6 +199,10 @@ args = ["--python", "3.12", "agemem@0.1.0", "--project", "/absolute/path/to/proj
 ```
 
 See [official Codex MCP documentation](https://learn.chatgpt.com/docs/extend/mcp).
+The launcher contains an absolute project path; rerun registration after moving
+the checkout. If an older Agemem installation created a user-level entry, remove
+it separately with `codex mcp remove agemem` after checking that it is no longer
+needed.
 
 ### Cursor
 
