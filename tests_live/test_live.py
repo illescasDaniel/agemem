@@ -54,6 +54,32 @@ class LiveTests(unittest.TestCase):
         self.assertIn("queue backpressure", engine.recall("current blocker")["context"])
         engine.close()
 
+    def test_recall_reports_per_request_cascade_attempts(self):
+        local = QSIVDecider(lambda request: [{"p_true": .5} for _ in request["questions"]])
+        remote = HostedJev()
+        def remote_ask(state, questions):
+            remote.calls += 1
+            remote.input_tokens += 12
+            return {key: Answer(p=.9) for key in questions}
+        remote.ask = remote_ask
+        cascade = CascadingDecider(local, remote)
+        engine = Engine(self.root, decider=cascade)
+        (engine.local / "notes.sqlite").touch()
+        class Retriever:
+            def recall(self, *args, **kwargs):
+                cascade.ask({}, {"q": NoulQ("Relevant?")})
+                return SimpleNamespace(sufficient=False, degraded=False, diagnostic=None, evidence=[])
+        with patch.object(engine, "_notes", return_value=(None, None, Retriever())):
+            for _ in range(2):
+                packet = engine.recall("Atlas")
+                self.assertEqual(packet["decision_calls"], 2)
+                self.assertEqual(packet["decision_input_tokens"], 12)
+                self.assertEqual(packet["decision_provider_usage"], {
+                    "qsiv": {"calls": 1, "input_tokens": None},
+                    "jev": {"calls": 1, "input_tokens": 12},
+                })
+        engine.close()
+
     def test_removed_files_do_not_return_from_current_manifest(self):
         engine = Engine(self.root, offline=True)
         engine.index()

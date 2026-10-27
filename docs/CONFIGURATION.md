@@ -96,6 +96,12 @@ timeout. Clients must use the same model directory, runtime and
 Python executable; conflicting configurations return `model_in_use`. Restart
 existing agents after upgrading so all clients use the shared service.
 Structured diagnostics omit provider response bodies and credentials.
+Recall also reports `decision_provider_usage` for providers that made physical
+decision attempts during that recall, with per-provider `calls` and
+`input_tokens`. Attempts include failed calls; they do not by themselves prove
+that inference succeeded. QSIV token usage is `null` because its runtime does not
+report it. In a cascade, `decision_input_tokens` counts Jev tokens only. Counts
+are per recall, even when an MCP server reuses a provider between calls.
 `doctor` checks configuration and runtime
 availability, but a passing result does not confirm inference or Jev access.
 
