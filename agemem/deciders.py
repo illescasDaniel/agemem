@@ -121,7 +121,7 @@ class QSIVDecider:
         for name in ("calibration.json", "config.json", "tokenizer"):
             if not (root / name).exists():
                 raise DeciderUnavailable(f"Missing QSIV local artifact: {name}")
-        lock_fd = _lock_qsiv_model()
+        lock_fd = _lock_qsiv_model() if os.name == "posix" else None  # Windows has no GPU runtime; fail at the GPU check.
         try:
             import torch
             if not torch.cuda.is_available():
@@ -138,10 +138,10 @@ class QSIVDecider:
                 service = QSIVService(str(root / "qsiv_fp8.safetensors"), str(root / "calibration.json"),
                                       tokenizer_dir=str(root / "tokenizer"), plan_memory_gb=1)
         except (ImportError, OSError, RuntimeError) as exc:
-            os.close(lock_fd)
+            lock_fd is None or os.close(lock_fd)
             raise DeciderUnavailable(f"QSIV GPU runtime unavailable; run agemem doctor or select Jev ({type(exc).__name__})") from exc
         except BaseException:
-            os.close(lock_fd)
+            lock_fd is None or os.close(lock_fd)
             raise
         result = cls(service.decide, runtime)
         # Deliberately retain the descriptor for the process lifetime: CUDA may
