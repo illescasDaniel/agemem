@@ -311,5 +311,7 @@ class _LegacyQSIVWorker:
                     pipe.close()
 
 # The public worker uses a shared local service; the old pipe worker remains
-# private for compatibility with existing transport tests.
-from .qsiv_shared import QSIVWorker
+# private for compatibility with existing transport tests and non-POSIX hosts.
+from .qsiv_shared import QSIVWorker, fcntl as _fcntl
+if _fcntl is None:
+    QSIVWorker = _LegacyQSIVWorker

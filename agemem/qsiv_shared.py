@@ -1,6 +1,5 @@
 """One local QSIV model, shared by independent clients over a private socket."""
 import atexit
-import fcntl
 import json
 import os
 from pathlib import Path
@@ -10,6 +9,11 @@ import threading
 import time
 
 from .notes.decider import DeciderUnavailable
+
+try:
+    import fcntl
+except ImportError:  # Windows: callers fall back to a private worker.
+    fcntl = None
 
 
 def _directory():
