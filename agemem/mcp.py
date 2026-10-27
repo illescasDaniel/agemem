@@ -7,6 +7,7 @@ def serve(project, offline=False):
     from mcp.server.mcpserver import MCPServer
     from mcp.server.mcpserver.exceptions import ToolError
     from .engine import Engine
+    from .notes.decider import DeciderUnavailable
     server = MCPServer("agemem")
     lock = threading.Lock()
     cached_decider, cached_key = None, None
@@ -28,6 +29,11 @@ def serve(project, offline=False):
                         worker.close()
                 try:
                     return fn(engine, *args, **kwargs)
+                except DeciderUnavailable as exc:
+                    diagnostic = exc.diagnostic or {}
+                    stage = diagnostic.get("stage", "decision_provider")
+                    cause = diagnostic.get("cause", "unavailable")
+                    raise ToolError(f"agemem decision provider unavailable (stage={stage}, cause={cause}); run agemem doctor") from None
                 except Exception as exc:
                     raise ToolError(f"agemem operation failed ({type(exc).__name__}); use CLI diagnostics") from exc
                 finally:

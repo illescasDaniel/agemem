@@ -38,6 +38,7 @@ class RecallResult:
     depth: int = 0
     jev_calls: int = 0
     degraded: bool = False
+    diagnostic: dict | None = None
     stop_reason: str = ""
     routing: dict[str, float] = field(default_factory=dict)
     assess: dict[str, float] = field(default_factory=dict)   # last stop-check values (for threshold tuning)
@@ -224,8 +225,9 @@ class Retriever:
                     score[i] = sc; via[i] = cands[i][1]; visited.add(i)
                 beam = [i for i, _ in new]
                 depth += 1
-        except DeciderUnavailable:
+        except DeciderUnavailable as exc:
             res.degraded = True
+            res.diagnostic = exc.diagnostic
             return finish("degraded")
 
     def recall_lite(self, query: str, scopes: list[str] | None = None, k: int | None = None) -> RecallResult:
@@ -249,8 +251,9 @@ class Retriever:
                 hop, tmp = max(hop, a["multi_hop"].p), max(tmp, a["temporal"].p)
                 suff, miss = max(suff, a["evidence_sufficient"].p), min(miss, a["missing_evidence"].p)
                 judge += [(i, sim, a[f"item_{j}"].p) for j, (i, sim) in enumerate(chunk)]
-        except DeciderUnavailable:
+        except DeciderUnavailable as exc:
             res.degraded, res.stop_reason = True, "degraded"
+            res.diagnostic = exc.diagnostic
             judge = [(i, sim, sim) for i, sim in cand]          # no judgement: rank by similarity alone
             rel_min = -1.0
         else:

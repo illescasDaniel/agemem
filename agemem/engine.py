@@ -19,6 +19,7 @@ from agemem.notes.write import Writer
 
 from .evidence import Hit, Record, TOKEN, bm25, chunks, pack, render
 from .deciders import CascadingDecider, Disabled, HostedJev, QSIVDecider
+from .notes.decider import DeciderUnavailable
 from .project import configuration, git, identity, inside
 
 
@@ -87,7 +88,12 @@ class Engine:
                 directory = self.config.get("qsiv_directory")
                 if not directory:
                     raise ValueError("Configure providers.qsiv.model_directory in the user config or qsiv_directory in project config")
-                self.decider = QSIVDecider.load(directory, self.config["qsiv_runtime"], python=self.config.get("qsiv_python"))
+                try:
+                    self.decider = QSIVDecider.load(directory, self.config["qsiv_runtime"], python=self.config.get("qsiv_python"))
+                except DeciderUnavailable as exc:
+                    if (exc.diagnostic or {}).get("cause") == "model_in_use":
+                        raise
+                    raise DeciderUnavailable("QSIV startup failed; run agemem doctor", {"stage": "qsiv_startup", "cause": "runtime_unavailable"}) from exc
                 if self.config["decision_backend"] == "cascade":
                     self.decider = CascadingDecider(self.decider, Disabled() if self.offline else HostedJev(api_key=self.config.get("jev_api_key")),
                                                      self.config["cascade_min_confidence"])
@@ -206,12 +212,13 @@ class Engine:
                 if not secret_kind(text):
                     bank.append(Hit([f"bank:{name}"], text, f"memory/{name}"))
         state = pack(bank, content_budget // 4)
-        note_hits, note_sufficient, decision_status = [], None, "not_used"
+        note_hits, note_sufficient, decision_status, decision_diagnostic = [], None, "not_used", None
         if (self.local / "notes.sqlite").exists():
             store, _, retriever = self._notes()
             result = retriever.recall(query, [self.scope(), self.scope(True)], k=8, mode="auto")
             note_sufficient = result.sufficient
             decision_status = "degraded" if result.degraded else "completed"
+            decision_diagnostic = result.diagnostic
             for evidence in result.evidence:
                 node = store.get(evidence.id)
                 note_hits.append(Hit([f"note:{node.id}"], evidence.content,
@@ -259,7 +266,7 @@ class Engine:
         evidence = [*state, *notes, *raw]
         return {"project": self.root.name, "branch": self.branch, "query": query,
                 "decision_backend": self.config["decision_backend"], "offline": self.offline,
-                "decision_status": decision_status, "notes_sufficient": note_sufficient,
+                "decision_status": decision_status, "decision_diagnostic": decision_diagnostic, "notes_sufficient": note_sufficient,
                 "retrieval_details": retrieval_details,
                 "combined_sufficient": None, "retrieval": self.config["retrieval"],
                 "context_units": len(TOKEN.findall(prefix)) + sum(len(TOKEN.findall(render(h))) for h in evidence),

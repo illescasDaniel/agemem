@@ -68,6 +68,7 @@ class LiveTests(unittest.TestCase):
         with patch("agemem.deciders.HostedJev", side_effect=AssertionError("Network backend constructed")):
             result = engine.remember("Atlas deploys with Ansible.")
             self.assertTrue(result["pending"])
+            self.assertEqual(result["reason"], "decision provider unavailable; stored unscreened and hidden; run agemem doctor")
             self.assertEqual(engine.recall("Ansible deployment")["layers"]["notes"], [])
         self.assertIsInstance(engine.decider, Disabled)
         engine.close()
@@ -82,6 +83,33 @@ class LiveTests(unittest.TestCase):
         self.assertNotIn("Ansible", engine.recall("Atlas deployment")["context"])
         engine.close()
 
+    def test_cascade_failure_diagnostic_is_safe_and_marks_note_pending(self):
+        class Local:
+            calls = 0
+            def ask(self, state, questions):
+                return {key: Answer(p=0.5, confidence=0.0) for key in questions}
+        class Remote:
+            calls = 0
+            input_tokens = 0
+            def ask(self, state, questions):
+                raise DeciderUnavailable('private text and secret', {'stage': 'hosted', 'cause': 'authentication', 'http_status': 401})
+        engine = Engine(self.root, decider=CascadingDecider(Local(), Remote()))
+        result = engine.remember('Atlas deploys with Ansible.')
+        self.assertTrue(result['pending'])
+        self.assertEqual(result['diagnostic'], {'stage': 'jev_fallback', 'cause': 'authentication', 'http_status': 401})
+        self.assertNotIn('private text and secret', json.dumps(result))
+        engine.close()
+
+    def test_cascade_local_failure_diagnostic(self):
+        class Local:
+            calls = 0
+            def ask(self, state, questions):
+                raise DeciderUnavailable('private details')
+        engine = Engine(self.root, decider=CascadingDecider(Local(), Disabled()))
+        result = engine.remember('Atlas deploys with Ansible.')
+        self.assertEqual(result['diagnostic'], {'stage': 'qsiv', 'cause': 'inference_failed'})
+        self.assertTrue(result['pending'])
+        engine.close()
     def test_credentials_never_enter_raw_archive(self):
         engine = Engine(self.root, offline=True)
         with self.assertRaises(ValueError):

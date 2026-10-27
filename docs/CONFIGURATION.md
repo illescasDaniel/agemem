@@ -80,6 +80,25 @@ model files or runtime dependencies. It does not run inference, download
 weights or call hosted APIs. `--offline` prevents hosted decisions; selecting
 Jev while offline does not automatically select QSIV.
 
+Degraded writes include a `diagnostic` with a stage and a safe cause when
+available; degraded recalls include `decision_diagnostic`. For a cascade,
+`qsiv` identifies local inference and `jev_fallback` identifies the hosted
+fallback; causes include `offline`, `authentication`, `rate_limit`, `timeout`,
+`connection`, and `provider_error`; Jev HTTP failures include `http_status`.
+QSIV startup failures are reported separately as `qsiv_startup`. The QSIV worker
+prints its exception traceback to its stderr (normally the client MCP logs); it
+may include data supplied to the local runtime, so handle logs as private.
+Agents running as the same OS user share one local QSIV inference service.
+Requests are serialized, and the service exits (freeing GPU memory) after five
+minutes without requests, even if clients stay connected; the next request
+starts it again transparently. Set `AGEMEM_QSIV_IDLE_SECONDS` to change the
+timeout. Clients must use the same model directory, runtime and
+Python executable; conflicting configurations return `model_in_use`. Restart
+existing agents after upgrading so all clients use the shared service.
+Structured diagnostics omit provider response bodies and credentials.
+`doctor` checks configuration and runtime
+availability, but a passing result does not confirm inference or Jev access.
+
 The memory service can run locally while the coding agent using it still uses
 a hosted model. Local source retrieval also requires cached embedding and
 reranker models; see [RAW-RAG setup](RAW_RAG.md).

@@ -1,12 +1,15 @@
 """Isolated runtime transport contracts; no model weights or GPU needed."""
 import os
+import io
+import contextlib
+import json
 import sys
 import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from agemem.deciders import QSIVWorker
+from agemem.deciders import _LegacyQSIVWorker as QSIVWorker
 from agemem.notes.decider import DeciderUnavailable
 
 
@@ -53,3 +56,16 @@ for line in sys.stdin:
             with self.assertRaises(DeciderUnavailable):
                 worker.decide({})
             self.assertIsNotNone(worker.process.poll())
+
+    def test_worker_emits_inference_traceback_to_stderr(self):
+        from agemem.qsiv_worker import main
+        class Broken:
+            def decide(self, request):
+                raise RuntimeError('GPU diagnostic example')
+        stdout, stderr = io.StringIO(), io.StringIO()
+        with patch('agemem.deciders.QSIVDecider.load', return_value=Broken()), patch.object(sys, 'argv', ['worker', 'model', 'fp8']), patch.object(sys, 'stdin', io.StringIO('{}\n')), contextlib.redirect_stdout(stdout), contextlib.redirect_stderr(stderr):
+            main()
+        lines = stdout.getvalue().splitlines()
+        self.assertTrue(json.loads(lines[0])['ready'])
+        self.assertIn('error', json.loads(lines[1]))
+        self.assertIn('RuntimeError: GPU diagnostic example', stderr.getvalue())

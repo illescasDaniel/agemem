@@ -30,7 +30,11 @@ class Answer:
 
 
 class DeciderUnavailable(Exception):
-    """Jev could not be reached or returned something unusable. Callers degrade."""
+    """A decision provider is unavailable; diagnostics contain no request data."""
+
+    def __init__(self, message, diagnostic=None):
+        super().__init__(message)
+        self.diagnostic = diagnostic
 
 
 class Decider(Protocol):

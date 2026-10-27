@@ -4,10 +4,34 @@ from __future__ import annotations
 import json
 import math
 import os
+import sys
 import time
 from pathlib import Path
 
 from agemem.notes.decider import Answer, ChoiceQ, DeciderUnavailable, NoulQ
+
+
+def _lock_qsiv_model():
+    """Reserve the local user's QSIV GPU slot until the model process exits."""
+    import fcntl
+
+    # A fixed location makes independently launched agents coordinate, even if
+    # they use different project directories, model paths, or TMPDIR values.
+    directory = Path('/tmp') / f'agemem-qsiv-{os.getuid()}'
+    directory.mkdir(mode=0o700, exist_ok=True)
+    if directory.is_symlink() or directory.stat().st_uid != os.getuid() or directory.stat().st_mode & 0o077:
+        raise DeciderUnavailable('Unsafe QSIV lock directory')
+    fd = os.open(directory / 'model.lock', os.O_CREAT | os.O_RDWR | os.O_NOFOLLOW, 0o600)
+    try:
+        fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except BlockingIOError:
+        os.close(fd)
+        raise DeciderUnavailable('Another QSIV model is already running; stop it before starting another',
+                                 {'stage': 'qsiv_startup', 'cause': 'model_in_use'}) from None
+    except BaseException:
+        os.close(fd)
+        raise
+    return fd
 
 
 class Disabled:
@@ -15,7 +39,7 @@ class Disabled:
     input_tokens = 0
 
     def ask(self, state, questions):
-        raise DeciderUnavailable("Hosted decisions disabled in offline mode")
+        raise DeciderUnavailable("Hosted decisions disabled in offline mode", {"stage": "hosted", "cause": "offline"})
 
 
 class HostedJev:
@@ -36,13 +60,13 @@ class HostedJev:
         estimate = len(json.dumps(state).encode()) + sum(len(q.instructions.encode()) + 128
                                                         for q in questions.values()) + 2048
         if self.calls >= self.max_calls or self.input_tokens + estimate > self.max_input_tokens:
-            raise DeciderUnavailable("Decision budget exhausted")
+            raise DeciderUnavailable("Decision budget exhausted", {"stage": "hosted", "cause": "budget_exhausted"})
         from typesafe_sdk import Choice, Noul, TypeSafeClient, TypeSafeError
         from typesafe_sdk._core.retry import RetryPolicy
         if self.client is None:
             key = "unused-local" if self.local_url else self.api_key or os.environ.get("TYPESAFE_API_KEY") or os.environ.get("JEV_API_KEY")
             if not key:
-                raise DeciderUnavailable("Set TYPESAFE_API_KEY or JEV_API_KEY for hosted Jev")
+                raise DeciderUnavailable("Set TYPESAFE_API_KEY or JEV_API_KEY for hosted Jev", {"stage": "hosted", "cause": "missing_credentials"})
             self.client = TypeSafeClient(api_key=key, base_url=self.local_url,
                                          retry=RetryPolicy(max_retries=0), timeout=60 if self.local_url else 15)
         qs = {key: Noul(instructions=q.instructions) if isinstance(q, NoulQ)
@@ -52,7 +76,13 @@ class HostedJev:
             result = self.client.system_one(state=state, questions=qs, model=self.model,
                                            timeout=60 if self.local_url else 15)
         except TypeSafeError as exc:
-            raise DeciderUnavailable("Jev request failed; provider details omitted") from exc
+            name = type(exc).__name__
+            categories = {"TypeSafeAuthenticationError": "authentication", "TypeSafePermissionDeniedError": "permission", "TypeSafeRateLimitError": "rate_limit", "TypeSafeAPITimeoutError": "timeout", "TypeSafeAPIConnectionError": "connection", "TypeSafeInternalServerError": "server_error", "TypeSafeBadRequestError": "bad_request"}
+            diagnostic = {"stage": "hosted", "cause": categories.get(name, "provider_error")}
+            status = getattr(exc, "status", None)
+            if type(status) is int and 100 <= status <= 599:
+                diagnostic["http_status"] = status
+            raise DeciderUnavailable("Jev request failed", diagnostic) from exc
         self.input_tokens += result.usage.input_tokens
         answers = {}
         for key, answer in result.answers.items():
@@ -61,7 +91,7 @@ class HostedJev:
             elif answer.type == "choice":
                 answers[key] = Answer(choice=answer.choice, probs=dict(answer.probabilities), confidence=answer.confidence)
         if set(answers) != set(questions):
-            raise DeciderUnavailable("Jev returned incomplete typed answers")
+            raise DeciderUnavailable("Jev returned incomplete typed answers", {"stage": "hosted", "cause": "invalid_response"})
         return answers
 
 
@@ -78,9 +108,9 @@ class QSIVDecider:
         self.latency_s = 0.0
 
     @classmethod
-    def load(cls, directory, runtime="fp8", python=None):
-        if python:
-            worker = QSIVWorker(python, directory, runtime)
+    def load(cls, directory, runtime="fp8", python=None, *, _native=False):
+        if not _native:
+            worker = QSIVWorker(python or sys.executable, directory, runtime)
             result = cls(worker.decide, runtime)
             result.worker = worker
             return result
@@ -91,6 +121,7 @@ class QSIVDecider:
         for name in ("calibration.json", "config.json", "tokenizer"):
             if not (root / name).exists():
                 raise DeciderUnavailable(f"Missing QSIV local artifact: {name}")
+        lock_fd = _lock_qsiv_model()
         try:
             import torch
             if not torch.cuda.is_available():
@@ -107,8 +138,15 @@ class QSIVDecider:
                 service = QSIVService(str(root / "qsiv_fp8.safetensors"), str(root / "calibration.json"),
                                       tokenizer_dir=str(root / "tokenizer"), plan_memory_gb=1)
         except (ImportError, OSError, RuntimeError) as exc:
+            os.close(lock_fd)
             raise DeciderUnavailable(f"QSIV GPU runtime unavailable; run agemem doctor or select Jev ({type(exc).__name__})") from exc
-        return cls(service.decide, runtime)
+        except BaseException:
+            os.close(lock_fd)
+            raise
+        result = cls(service.decide, runtime)
+        # Deliberately retain the descriptor for the process lifetime: CUDA may
+        # keep allocations after the Python service object is collected.
+        return result
 
     def ask(self, state, questions):
         if not questions:
@@ -155,7 +193,8 @@ class QSIVDecider:
                         out[key] = Answer(choice=labels[selected], probs=dict(zip(labels, probabilities)),
                                           confidence=answer.get("confidence"))
             except Exception as exc:
-                raise DeciderUnavailable(f"QSIV decision failed ({type(exc).__name__})") from exc
+                diagnostic = getattr(exc, "diagnostic", None) or {"stage": "qsiv", "cause": "inference_failed", "error_type": type(exc).__name__}
+                raise DeciderUnavailable(f"QSIV decision failed ({type(exc).__name__})", diagnostic) from exc
             finally:
                 self.latency_s += time.perf_counter() - t
         return out
@@ -178,7 +217,12 @@ class CascadingDecider:
         return self.remote.input_tokens
 
     def ask(self, state, questions):
-        answers = self.local.ask(state, questions)
+        try:
+            answers = self.local.ask(state, questions)
+        except DeciderUnavailable as exc:
+            diagnostic = dict(exc.diagnostic or {"stage": "qsiv", "cause": "inference_failed"})
+            diagnostic["stage"] = "qsiv"
+            raise DeciderUnavailable("Cascade local decision failed", diagnostic) from exc
         uncertain = {}
         for key, q in questions.items():
             answer = answers[key]
@@ -190,11 +234,16 @@ class CascadingDecider:
         self.fallback_questions += len(uncertain)
         self.kept_questions += len(questions) - len(uncertain)
         if uncertain:
-            answers.update(self.remote.ask(state, uncertain))
+            try:
+                answers.update(self.remote.ask(state, uncertain))
+            except DeciderUnavailable as exc:
+                diagnostic = dict(exc.diagnostic or {"cause": "provider_unavailable"})
+                diagnostic["stage"] = "jev_fallback"
+                raise DeciderUnavailable("Cascade hosted fallback failed", diagnostic) from exc
         return answers
 
 
-class QSIVWorker:
+class _LegacyQSIVWorker:
     """Keep one native model resident in an explicitly configured Python runtime."""
     def __init__(self, python, directory, runtime, timeout=120):
         import subprocess
@@ -210,8 +259,12 @@ class QSIVWorker:
                  str(Path(directory).expanduser()), runtime],
                 stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=None,
                 text=True, env=env, bufsize=1)
-            if self._read().get("ready") is not True:
-                raise DeciderUnavailable("Local QSIV startup failed; run agemem doctor")
+            response = self._read()
+            if response.get("ready") is not True:
+                raise DeciderUnavailable(response.get("error", "Local QSIV startup failed; run agemem doctor"), response.get("diagnostic"))
+        except DeciderUnavailable:
+            self.close()
+            raise
         except Exception:
             self.close()
             raise DeciderUnavailable("QSIV requires a working compatible NVIDIA GPU runtime; run agemem doctor or select Jev") from None
@@ -256,3 +309,7 @@ class QSIVWorker:
             for pipe in (process.stdin, process.stdout):
                 if pipe:
                     pipe.close()
+
+# The public worker uses a shared local service; the old pipe worker remains
+# private for compatibility with existing transport tests.
+from .qsiv_shared import QSIVWorker

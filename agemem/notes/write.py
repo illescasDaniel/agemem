@@ -34,6 +34,7 @@ class WriteResult:
     type_scores: dict[str, float] = field(default_factory=dict)
     edges: list[tuple[int, int, str, float]] = field(default_factory=list)
     degraded: bool = False
+    diagnostic: dict | None = None
 
 
 class Writer:
@@ -58,10 +59,10 @@ class Writer:
         # 1. one batched call: type scores + injection screen
         try:
             ans = self.decider.ask({"observation": content}, typing_questions())
-        except DeciderUnavailable:
+        except DeciderUnavailable as exc:
             nid = self.store.add_node(content, scope, ts, entities, source, branch, commit)
             self.store.queue_pending(nid, UNSCREENED)
-            return WriteResult(nid, degraded=True, reason="jev unavailable; stored unscreened and hidden")
+            return WriteResult(nid, degraded=True, reason="decision provider unavailable; stored unscreened and hidden; run agemem doctor", diagnostic=exc.diagnostic)
         if ans["injection"].p >= self.cfg.injection_block:
             return WriteResult(None, rejected=True, reason=f"injection screen p={ans['injection'].p:.2f}")
         if ans["status"].p >= self.cfg.status_block:
@@ -106,9 +107,11 @@ class Writer:
                  "candidates": [{"content": c.content, "timestamp": iso(c.timestamp)} for c in cands]}
         try:
             ans = self.decider.ask(state, relation_questions(len(cands)))
-        except DeciderUnavailable:
+        except DeciderUnavailable as exc:
             self.store.queue_pending(nid, RELATIONS)
             res.degraded = True
+            res.reason = "decision provider unavailable during relation screening; retry maintenance"
+            res.diagnostic = exc.diagnostic
             return
         th = self.cfg.relation_threshold
         for i, c in enumerate(cands):
@@ -139,7 +142,7 @@ class Writer:
         return [i for i, _ in sorted(score.items(), key=lambda kv: -kv[1]) if i not in hidden][:k]
 
     def flush_pending(self) -> int:
-        """Retry degraded writes once Jev is back. Returns how many were resolved."""
+        """Retry degraded writes when the configured provider is available."""
         done = 0
         for nid in self.store.pending():
             node = self.store.get(nid)
