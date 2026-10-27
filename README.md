@@ -10,9 +10,6 @@ The answering agent receives current context, selected durable notes and source 
 
 ## Install and use
 
-0.1.0 is not published yet. Use the [source-testing guide](https://github.com/illescasDaniel/agemem/blob/main/docs/MANUAL_TESTING.md)
-until manual validation is complete. The command below targets the planned PyPI release.
-
 Requires Git and [uv](https://docs.astral.sh/uv/). From your project directory:
 
 ```bash
@@ -24,11 +21,15 @@ Or paste this prompt into your coding agent:
 > Integrate Agemem 0.1.0 into this project using the linked installation and
 > agent-integration guides. Inspect the environment and existing setup first.
 > Ask which clients to configure (Claude Code only, or also Cursor/Codex if
-> detected), whether to use local GPU QSIV or hosted Jev, and any installation
-> constraints. Explain QSIV's hardware and download requirements. Have me supply
+> detected), whether to use hosted Jev, local GPU QSIV, or the experimental
+> QSIV → Jev cascade, and any installation constraints. Recommend considering
+> the cascade if I have a compatible NVIDIA GPU. Explain QSIV's hardware and
+> download requirements and that cascade fallback uses hosted Jev. Have me supply
 > a Jev key privately through configuration or the environment, never in chat.
 > Run `uvx --python 3.12 agemem@0.1.0 project init --model <jev|qsiv> --mcp <selected clients> --no-input`
-> with the agreed choices; `claude` means Claude Code. Preserve existing settings
+> with the agreed choices; `claude` means Claude Code. For cascade, initialize
+> with QSIV and then configure the cascade as described in the local backends
+> guide; it is not a `--model` option. Preserve existing settings
 > and guidance, resolve conflicts with me, and add the suggested memory workflow
 > to the appropriate agent instructions. Agree on validation, run provider
 > diagnostics and an MCP handshake/tool-list/recall smoke test, and ask before
@@ -37,6 +38,12 @@ Or paste this prompt into your coding agent:
 
 Setup connects Codex, Cursor or Claude Code and configures hosted Jev or local
 GPU QSIV. Restart your client and enable the server.
+
+If you have a compatible NVIDIA GPU, consider the experimental [confidence
+cascade](https://github.com/illescasDaniel/agemem/blob/main/docs/LOCAL_BACKENDS.md#confidence-cascade):
+QSIV handles decisions locally and sends low-confidence decisions to hosted Jev.
+It requires both QSIV setup and a Jev key; fallback can incur API charges. The
+default cutoff is not a guarantee of correctness, and cascade may be slower.
 
 ### Give your agent memory instructions
 

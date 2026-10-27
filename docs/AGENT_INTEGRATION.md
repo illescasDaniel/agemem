@@ -11,6 +11,14 @@ captures conversations automatically. Connect the MCP explicitly as described in
 [installation](INSTALLATION.md), then add the guidance below to the target
 project's existing agent instructions if desired.
 
+`project_memory_recall` returns its recall packet in MCP `structuredContent`,
+with an empty `content` array on success. Clients must support structured tool
+results to consume recall; clients that only read text content will not see it.
+Recall execution failures also use `structuredContent`, with an `error` object
+and `isError` set. Errors raised by the MCP framework before the tool executes,
+such as invalid argument types, can still be returned as text. Other tools retain
+their existing response format.
+
 ## Suggested project instructions
 
 Add this section to the instructions your client reads, such as `AGENTS.md` for

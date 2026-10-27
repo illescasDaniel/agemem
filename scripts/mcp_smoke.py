@@ -20,6 +20,7 @@ async def main():
     tools=await session.list_tools()
     result=await session.call_tool('project_memory_recall',{'query':'How does Atlas deploy?'})
     assert not result.is_error
-    assert 'Ansible' in str(result)
+    assert result.content == []
+    assert 'Ansible' in result.structured_content['context']
     print(json.dumps({'status':'passed','installed_location':True,'tools':[t.name for t in tools.tools],'offline_recall':True}))
 asyncio.run(main())

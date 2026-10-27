@@ -62,7 +62,7 @@ async def mcp_roundtrip(project, environment):
                 "project_memory_index", "project_memory_maintain"}
             result = await session.call_tool("project_memory_recall", {"query": "How does the smoke project deploy?"})
             assert not result.is_error
-            assert any("Ansible" in getattr(block, "text", "") for block in result.content)
+            assert "Ansible" in result.structured_content["context"]
 
 
 if __name__ == "__main__":

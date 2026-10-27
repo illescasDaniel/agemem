@@ -84,7 +84,7 @@ async def mcp_probe(folder):
             tools=await session.list_tools()
             result=await session.call_tool('project_memory_recall',{'query':'How does Atlas deploy, why serialize settlements and what is blocked?'})
             assert not result.is_error, result
-            packet=json.loads(next(block.text for block in result.content if block.type=='text'))
+            packet=result.structured_content
             verify(packet, True)
             return dict(tool_names=[t.name for t in tools.tools],packet=packet)
 
