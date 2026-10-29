@@ -20,7 +20,7 @@ from agemem.notes.write import Writer
 from .evidence import Hit, Record, TOKEN, bm25, chunks, pack, render
 from .deciders import CascadingDecider, Disabled, HostedJev, QSIVDecider
 from .notes.decider import DeciderUnavailable
-from .project import configuration, git, identity, inside
+from .project import configuration, git, identity, inside, local_store
 
 
 def sha(value):
@@ -67,7 +67,7 @@ class Engine:
         self.config = configuration(self.root)
         self.offline = offline
         self.branch, self.commit = identity(self.root)
-        self.local = inside(self.root, self.root / ".agemem/local")
+        self.local = local_store(self.root)
         self.local.mkdir(exist_ok=True)
         self.db = sqlite3.connect(self.local / "sources.sqlite", check_same_thread=False)
         self.db.row_factory = sqlite3.Row

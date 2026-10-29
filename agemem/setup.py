@@ -74,25 +74,27 @@ def configure_provider(offline=False, model=None, no_input=False):
     return initialize_user_config(api_key=key)
 
 
-def disable_claude_auto_memory(root):
-    """Turn off Claude Code's built-in auto-memory in the personal project settings, since agemem is the memory.
+def disable_claude_auto_memory(root, local_settings=False):
+    """Turn off Claude Code's built-in auto-memory in the project settings, since agemem is the memory.
 
+    Written to the shared .claude/settings.json, or .claude/settings.local.json with local_settings.
     An explicit autoMemoryEnabled value in either project settings file is left alone.
     """
     shared = inside(root, root / ".claude/settings.json")
-    path = inside(root, root / ".claude/settings.local.json")
-    loaded = []
-    for candidate in (shared, path):
+    local = inside(root, root / ".claude/settings.local.json")
+    path = local if local_settings else shared
+    loaded = {}
+    for candidate in (shared, local):
         try:
             data = json.loads(candidate.read_text(encoding="utf-8")) if candidate.exists() else {}
         except (ValueError, UnicodeError):
             raise ValueError("Invalid Claude Code settings JSON; repair it before installing") from None
         if not isinstance(data, dict):
             raise ValueError("Claude Code settings must be a JSON object")
-        loaded.append(data)
-    if any("autoMemoryEnabled" in data for data in loaded):
+        loaded[candidate] = data
+    if any("autoMemoryEnabled" in data for data in loaded.values()):
         return {"client": "claude-code", "path": str(path), "changed": False}
-    data = loaded[1]
+    data = loaded[path]
     data["autoMemoryEnabled"] = False
     path.parent.mkdir(parents=True, exist_ok=True)
     descriptor, temporary = tempfile.mkstemp(dir=path.parent, prefix=".agemem-settings-")
@@ -105,7 +107,7 @@ def disable_claude_auto_memory(root):
     return {"client": "claude-code", "path": str(path), "changed": True}
 
 
-def initialize_project(project, client=None, retrieval="hybrid", embedder="BAAI/bge-small-en-v1.5", offline=False, *, model=None, clients=None, no_input=False, hooks=True, executable=None):
+def initialize_project(project, client=None, retrieval="hybrid", embedder="BAAI/bge-small-en-v1.5", offline=False, *, model=None, clients=None, no_input=False, hooks=True, executable=None, local_settings=False):
     root = Path(project).expanduser().resolve()
     if not root.is_dir():
         raise ValueError("Project directory must already exist")
@@ -132,13 +134,13 @@ def initialize_project(project, client=None, retrieval="hybrid", embedder="BAAI/
     finally:
         engine.close()
     registrations = [install(root, selected, offline=offline, **({"executable": executable} if executable else {})) for selected in selected_clients]
-    claude_settings = disable_claude_auto_memory(root) if "claude-code" in selected_clients else None
+    claude_settings = disable_claude_auto_memory(root, local_settings) if "claude-code" in selected_clients else None
     hook_results = []
     if hooks:
         from .hooks import install as install_hooks
         supported = [selected for selected in selected_clients if selected in ("codex", "claude-code")]
         if supported:
-            hook_results = install_hooks(root, supported, executable=executable)
+            hook_results = install_hooks(root, supported, executable=executable, local_settings=local_settings)
         if "cursor" in selected_clients:
             hook_results.append({"client": "cursor", "skipped": "Hook integration currently supports Claude Code and Codex"})
     next_steps = ["Restart or reload the client and enable the agemem server",

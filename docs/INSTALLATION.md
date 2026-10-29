@@ -8,7 +8,7 @@ ONNX Runtime (required by FastEmbed) has no matching wheels. Use the development
 With [uv](https://docs.astral.sh/uv/), run the CLI and MCP server using `uvx`:
 
 ```bash
-uvx --python 3.12 agemem@0.1.0 --help
+uvx --python 3.12 agemem@0.2.0 --help
 ```
 
 No separate package-install step is needed. `uvx` prepares an isolated environment
@@ -30,7 +30,7 @@ client commands. QSIV automatic GPU setup currently supports Linux x86_64 only.
 If you prefer an `agemem` command on your PATH:
 
 ```bash
-uv tool install --python 3.12 'agemem==0.1.0'
+uv tool install --python 3.12 'agemem==0.2.0'
 agemem --help
 ```
 
@@ -39,10 +39,10 @@ A pip environment is also supported:
 
 ```bash
 python3.12 -m venv /absolute/path/to/agemem-venv
-/absolute/path/to/agemem-venv/bin/python -m pip install 'agemem==0.1.0'
+/absolute/path/to/agemem-venv/bin/python -m pip install 'agemem==0.2.0'
 ```
 
-For these alternatives, replace `uvx --python 3.12 agemem@0.1.0` below with the
+For these alternatives, replace `uvx --python 3.12 agemem@0.2.0` below with the
 installed `agemem` executable. For MCP, use its absolute path; on Windows the
 virtual-environment executable is `Scripts/agemem.exe`.
 
@@ -51,7 +51,7 @@ virtual-environment executable is `Scripts/agemem.exe`.
 From the target project's Git repository:
 
 ```bash
-uvx --python 3.12 agemem@0.1.0 project init
+uvx --python 3.12 agemem@0.2.0 project init
 ```
 
 Choose `codex`, `cursor` or `claude-code` at the prompt.
@@ -61,14 +61,14 @@ Choose `codex`, `cursor` or `claude-code` at the prompt.
 Supply the provider and all desired clients explicitly:
 
 ```bash
-uvx --python 3.12 agemem@0.1.0 project init --model qsiv --mcp cursor claude --no-input
+uvx --python 3.12 agemem@0.2.0 project init --model qsiv --mcp cursor claude --no-input
 ```
 
 For hosted Jev, first supply a key in private configuration or the environment
 (`AGEMEM_JEV_API_KEY`, `TYPESAFE_API_KEY` or `JEV_API_KEY`), then run:
 
 ```bash
-uvx --python 3.12 agemem@0.1.0 project init --model jev --mcp claude codex --no-input
+uvx --python 3.12 agemem@0.2.0 project init --model jev --mcp claude codex --no-input
 ```
 
 `--model` accepts `jev` or `qsiv`. `--mcp` accepts one or more of `cursor`,
@@ -117,13 +117,15 @@ Setup and indexing make no hosted decision calls. The default embedding model
 downloads on first indexing unless offline. Restart/reload the client and enable
 the server after setup. Agent instructions are still added separately below.
 
-`--project` defaults to the current directory; use `--project ../other-project`
-before `project init` to target another checkout. `--retrieval` and `--embedder`
+Without `--project`, the project root is the nearest parent directory (starting at the
+current one) that contains `.agemem/config.json`; in a new project it is the current
+directory. Use `--project ../other-project` before `project init` to target another
+checkout explicitly. `--retrieval` and `--embedder`
 after `project init` affect only newly created project configuration. For a
 contract smoke test without model downloads or hosted decisions:
 
 ```bash
-uvx --python 3.12 agemem@0.1.0 --offline project init --client cursor --retrieval bm25 --embedder hash
+uvx --python 3.12 agemem@0.2.0 --offline project init --client cursor --retrieval bm25 --embedder hash
 ```
 
 Hash embeddings are only for testing. Re-running setup refreshes the index;
@@ -140,7 +142,7 @@ Use the individual commands below when you only want one setup step. The
 ## Configure and initialize a project
 
 ```bash
-uvx --python 3.12 agemem@0.1.0 config init
+uvx --python 3.12 agemem@0.2.0 config init
 ```
 
 Set `providers.jev.api_key` in the private user `config.yaml`, normally
@@ -151,18 +153,21 @@ configuration. Supported environment credentials remain optional overrides.
 From the target project's Git repository:
 
 ```bash
-uvx --python 3.12 agemem@0.1.0 --project . init
-uvx --python 3.12 agemem@0.1.0 --project . index
-uvx --python 3.12 agemem@0.1.0 --project . doctor
+uvx --python 3.12 agemem@0.2.0 --project . init
+uvx --python 3.12 agemem@0.2.0 --project . index
+uvx --python 3.12 agemem@0.2.0 --project . doctor
 ```
 
 `--project .` resolves relative to the process working directory; omitting
-`--project` also uses the current directory. Other relative paths, such as
+`--project` walks up from the current directory to the nearest `.agemem/config.json`
+(or uses the current directory when there is none). Other relative paths, such as
 `--project ../another-project`, work the same way.
 
 `init` preserves existing files. Review `.agemem/config.json`, `.agemem/.gitignore`
 and the `memory/` bank; commit config/bank when appropriate. Generated databases,
-source snapshots and vectors stay under ignored `.agemem/local/`. The default
+source snapshots and vectors stay under ignored `.agemem/local/`. In a linked
+git worktree that store is shared with the main checkout (when its `.agemem/config.json` has the
+same project id), while bank files and branch identity come from the worktree. The default
 embedder downloads on first use and then runs locally. Indexing makes no hosted
 decision calls; `remember`, note-aware recall and maintenance can call Jev.
 
@@ -171,7 +176,7 @@ decision calls; `remember`, note-aware recall and maintenance can call Jev.
 From the initialized project directory:
 
 ```bash
-uvx --python 3.12 agemem@0.1.0 --project . mcp-install
+uvx --python 3.12 agemem@0.2.0 --project . mcp-install
 ```
 
 Choose `codex`, `cursor` or `claude-code` at the prompt. For scripts, pass
@@ -181,8 +186,11 @@ No Node.js/npm is required. Cursor merges `.cursor/mcp.json`; Claude Code merges
 `agemem` entry. Codex merges `.codex/config.toml` in the project and requires
 the project to be trusted. Existing user-level entries are not removed.
 
-The installer resolves `--project .` to an absolute path, preserving spaces,
-and registers `uvx --python 3.12 agemem@0.1.0 ... mcp`. It forwards an explicit
+The installer registers `uvx --python 3.12 agemem@0.2.0 mcp` with no project path, so
+the configuration can be committed and works in every checkout and git worktree; the server
+finds its project from the client's working directory. Cursor is the exception: its entry adds
+`--project ${workspaceFolder}`, which Cursor interpolates. Re-running `project init` on a 0.1.x
+installation replaces the old entries that contained an absolute path. It forwards an explicit
 `AGEMEM_CONFIG` path and `--offline` when supplied. It does not copy credentials
 or agent instructions. Re-run registration when upgrading the Agemem launcher.
 The client must find `uvx` on PATH. Manual alternatives follow.
@@ -195,19 +203,17 @@ For manual configuration, merge this entry into the trusted project's
 ```toml
 [mcp_servers.agemem]
 command = "uvx"
-args = ["--python", "3.12", "agemem@0.1.0", "--project", "/absolute/path/to/project", "mcp"]
+args = ["--python", "3.12", "agemem@0.2.0", "mcp"]
 ```
 
 See [official Codex MCP documentation](https://learn.chatgpt.com/docs/extend/mcp).
-The launcher contains an absolute project path; rerun registration after moving
-the checkout. If an older Agemem installation created a user-level entry, remove
+The launcher contains no project path. If an older Agemem installation created a user-level entry, remove
 it separately with `codex mcp remove agemem` after checking that it is no longer
 needed.
 
 ### Cursor
 
-Merge this entry into the target project's `.cursor/mcp.json`, replacing the
-project path. Preserve other existing server entries:
+Merge this entry into the target project's `.cursor/mcp.json`. Preserve other existing server entries:
 
 ```json
 {
@@ -215,7 +221,7 @@ project path. Preserve other existing server entries:
     "agemem": {
       "type": "stdio",
       "command": "uvx",
-      "args": ["--python", "3.12", "agemem@0.1.0", "--project", "/absolute/path/to/project", "mcp"]
+      "args": ["--python", "3.12", "agemem@0.2.0", "--project", "${workspaceFolder}", "mcp"]
     }
   }
 }
@@ -230,14 +236,14 @@ See [official Cursor MCP documentation](https://cursor.com/docs/mcp).
 From the target project's directory:
 
 ```bash
-claude mcp add --transport stdio --scope project agemem -- uvx --python 3.12 agemem@0.1.0 --project "$(pwd)" mcp
+claude mcp add --transport stdio --scope project agemem -- uvx --python 3.12 agemem@0.2.0 mcp
 claude mcp get agemem
 ```
 
 This writes project `.mcp.json`. Approve the project server when prompted. See
 [official Claude Code MCP documentation](https://code.claude.com/docs/en/mcp).
 For Claude Desktop, use the JSON `mcpServers` entry above in its desktop config;
-project selection is still fixed to the supplied path.
+Claude Desktop has no project working directory, so add `"--project", "/absolute/path/to/project"` before `"mcp"` there.
 
 ### Verify the connection
 
@@ -263,19 +269,30 @@ MCP environment configuration.
 `project init` installs read-only hooks for selected Claude Code and Codex
 clients by default; use `--no-hooks` to skip them. Cursor hook integration is
 skipped. Or use
-`agemem --project . hooks-install --client claude codex` on an existing project.
+`agemem hooks-install --client claude codex` on an existing project. Hook commands
+contain no project path: the root is found from the `cwd` the client sends.
 Hooks load context at session start and retrieve local evidence on prompts;
 they do not make hosted calls or automatically capture conversations.
 
 When Claude Code is selected, `project init` also writes `autoMemoryEnabled: false`
-to `.claude/settings.local.json` (with or without `--no-hooks`), so Claude's built-in
+to the shareable `.claude/settings.json` (with or without `--no-hooks`), so Claude's built-in
 auto-memory does not duplicate agemem. If `autoMemoryEnabled` is already set in
-`.claude/settings.json` or `.claude/settings.local.json`, it is left as is.
+`.claude/settings.json` or `.claude/settings.local.json`, it is left as is. Add
+`--local-settings` to `project init` or `hooks-install` to write the Claude hooks and this
+setting to the personal `.claude/settings.local.json` instead.
+
+### Upgrading from 0.1.x
+
+0.1.x wrote absolute project paths into `.mcp.json`, `.cursor/mcp.json`, `.codex/config.toml`,
+`.claude/settings.local.json` and `.codex/hooks.json`. Re-run `agemem project init` with the same
+`--mcp` clients: the old `agemem` MCP entries and `# agemem:` hooks are replaced with path-free ones,
+and agemem hooks are removed from the other Claude settings file so they do not run twice.
+Other entries are untouched. Explicit `--project` keeps working.
 
 For unreleased source, `project init`, `mcp-install` and `hooks-install` accept
 `--executable /absolute/path/to/installed/agemem`, registering that executable
 instead of a PyPI `uvx` launcher. See [hook setup](HOOKS.md) and the
-[manual pre-release checklist](MANUAL_TESTING.md). Publication of 0.1.0 is held
+[manual pre-release checklist](MANUAL_TESTING.md). Publication of 0.2.0 is held
 until manual client/hook testing and renewed release approval.
 
 ## Agent instructions
@@ -292,11 +309,11 @@ For an existing configuration, install QSIV explicitly on Linux x86_64 with
 an NVIDIA GPU of compute capability 8.9+:
 
 ```bash
-uvx --python 3.12 agemem@0.1.0 provider setup qsiv --dry-run
-uvx --python 3.12 agemem@0.1.0 provider setup qsiv
+uvx --python 3.12 agemem@0.2.0 provider setup qsiv --dry-run
+uvx --python 3.12 agemem@0.2.0 provider setup qsiv
 # Set default_provider: qsiv in ~/.config/agemem/config.yaml.
-uvx --python 3.12 agemem@0.1.0 --project . doctor
-uvx --python 3.12 agemem@0.1.0 --project . recall "What are the project decisions?"
+uvx --python 3.12 agemem@0.2.0 --project . doctor
+uvx --python 3.12 agemem@0.2.0 --project . recall "What are the project decisions?"
 ```
 
 Setup downloads the model and installs an isolated GPU runtime. After selecting
@@ -310,17 +327,17 @@ paths and validation limits.
 Use the package's `raw` extra for every invocation, including the MCP launcher:
 
 ```bash
-uvx --python 3.12 --from 'agemem[raw]==0.1.0' agemem --project . mcp
+uvx --python 3.12 --from 'agemem[raw]==0.2.0' agemem --project . mcp
 ```
 
 In client JSON, the corresponding arguments are:
 
 ```json
-["--python", "3.12", "--from", "agemem[raw]==0.1.0", "agemem", "--project", "/absolute/path/to/project", "mcp"]
+["--python", "3.12", "--from", "agemem[raw]==0.2.0", "agemem", "mcp"]
 ```
 
 For a persistent installation, use `uv tool install --force --python 3.12
-'agemem[raw]==0.1.0'`, or install that extra with your pip environment's Python.
+'agemem[raw]==0.2.0'`, or install that extra with your pip environment's Python.
 Follow [RAW-RAG setup](RAW_RAG.md) to prepare tokenizer, embedding and reranker
 caches, then select `retrieval: raw-rag` in project config.
 No upstream checkout is needed. Jev remains the default decision provider.

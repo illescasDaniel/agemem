@@ -58,7 +58,7 @@ class ProjectSetupTests(unittest.TestCase):
         result = json.loads(completed.stdout)
         self.assertEqual(result["project"], str(self.root))
         self.assertTrue((self.root / ".mcp.json").exists())
-        hook_file = self.root / ".claude/settings.local.json"
+        hook_file = self.root / ".claude/settings.json"
         self.assertTrue(hook_file.exists())
         first = hook_file.read_text()
         repeated = subprocess.run([*command, "--offline", "project", "init", "--client", "claude-code", "--retrieval", "bm25", "--embedder", "hash"], cwd=self.root, capture_output=True, text=True)
@@ -67,7 +67,7 @@ class ProjectSetupTests(unittest.TestCase):
 
     def test_claude_code_auto_memory_is_disabled_unless_already_set(self):
         initialize_project(self.root, "claude-code", "bm25", "hash", True, hooks=False)
-        local = self.root / ".claude/settings.local.json"
+        local = self.root / ".claude/settings.json"
         self.assertEqual(json.loads(local.read_text()), {"autoMemoryEnabled": False})
         local.write_text(json.dumps({"autoMemoryEnabled": True, "model": "opus"}))
         again = initialize_project(self.root, "claude-code", "bm25", "hash", True, hooks=False)
@@ -79,7 +79,8 @@ class ProjectSetupTests(unittest.TestCase):
         shared.parent.mkdir()
         shared.write_text(json.dumps({"autoMemoryEnabled": True}))
         initialize_project(self.root, "claude-code", "bm25", "hash", True)
-        self.assertEqual(json.loads((self.root / ".claude/settings.local.json").read_text()).get("autoMemoryEnabled"), None)
+        self.assertIs(json.loads((self.root / ".claude/settings.json").read_text())["autoMemoryEnabled"], True)
+        self.assertFalse((self.root / ".claude/settings.local.json").exists() and "autoMemoryEnabled" in (self.root / ".claude/settings.local.json").read_text())
         other = Path(self.temp.name) / "other"
         other.mkdir()
         subprocess.run(["git", "init", "-q", str(other)], check=True)
@@ -90,7 +91,7 @@ class ProjectSetupTests(unittest.TestCase):
         completed = subprocess.run([sys.executable, "-m", "agemem.cli", "--offline", "project", "init", "--client", "claude-code", "--no-hooks", "--retrieval", "bm25", "--embedder", "hash"], cwd=self.root, capture_output=True, text=True)
         self.assertEqual(completed.returncode, 0, completed.stderr)
         self.assertEqual(json.loads(completed.stdout)["hooks"], [])
-        self.assertNotIn("hooks", json.loads((self.root / ".claude/settings.local.json").read_text()))
+        self.assertNotIn("hooks", json.loads((self.root / ".claude/settings.json").read_text()))
         self.assertTrue((self.root / ".mcp.json").exists())
 
     def test_jev_key_is_private_and_absent_from_output(self):

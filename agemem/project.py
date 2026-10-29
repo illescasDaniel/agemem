@@ -36,6 +36,57 @@ def git(root, *args, default=""):
         return default
 
 
+def find_root(start):
+    """Nearest directory at or above start that holds .agemem/config.json, else None."""
+    start = Path(start).expanduser().resolve()
+    for candidate in (start, *start.parents):
+        if (candidate / ".agemem/config.json").is_file():
+            return candidate
+    return None
+
+
+def discover_root(start=None):
+    """Project root for start (default cwd); start itself when no project is found yet."""
+    start = Path(start).expanduser().resolve() if start is not None else Path.cwd().resolve()
+    return find_root(start) or start
+
+
+def _project_id(root):
+    try:
+        data = json.loads((root / ".agemem/config.json").read_text(encoding="utf-8"))
+        return data.get("project_id") if isinstance(data, dict) else None
+    except (OSError, ValueError):
+        return None
+
+
+def local_store(root):
+    """Directory for the untracked local stores.
+
+    A linked git worktree shares the main checkout's .agemem/local when that checkout
+    has the same project id (stores are keyed by branch); otherwise the root's own.
+    """
+    root = Path(root).resolve()
+    own = root / ".agemem/local"
+    out = git(root, "rev-parse", "--git-dir", "--git-common-dir", "--show-toplevel").splitlines()
+    if len(out) != 3:
+        return own
+    gitdir, common, top = ((root / line).resolve() for line in out)
+    if gitdir == common or common.name != ".git":
+        return own
+    try:
+        relative = root.relative_to(top)
+    except ValueError:
+        return own
+    main = common.parent / relative
+    wanted = _project_id(root)
+    if wanted is None or main == root or _project_id(main) != wanted:
+        return own
+    shared = main / ".agemem/local"
+    if shared.is_symlink() or not shared.resolve().is_relative_to(main.resolve()):
+        return own
+    return shared
+
+
 def identity(root):
     branch = git(root, "branch", "--show-current")
     commit = git(root, "rev-parse", "HEAD")

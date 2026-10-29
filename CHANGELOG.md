@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.2.0] - 2026-10-29
+
+### Changed
+
+- Client configuration no longer contains machine-specific paths. `project init`, `mcp-install` and
+  `hooks-install` write `uvx --python 3.12 agemem@<version> mcp` without `--project`; Cursor passes
+  `--project ${workspaceFolder}`, which it interpolates.
+- Without `--project`, the project root is the nearest parent directory containing
+  `.agemem/config.json` (falling back to the current directory so `init` works in a new project).
+  Hooks derive the root from the `cwd` in the client payload.
+- Git worktrees share the main checkout's untracked `.agemem/local/` store when it has the same
+  project id. Bank files and branch identity still come from the worktree itself, and stores are keyed by branch.
+- Claude Code hooks and `autoMemoryEnabled: false` go to the shareable `.claude/settings.json` by default.
+  Use `--local-settings` with `project init` or `hooks-install` for `.claude/settings.local.json`.
+  Codex hooks stay in `.codex/hooks.json`.
+- `--project` still works unchanged.
+
+### Migration
+
+- Re-run `agemem project init` (same `--mcp` clients) in projects set up with 0.1.x. It replaces the
+  old `agemem` MCP entries and `# agemem:` hooks with path-free ones and removes the old agemem hooks from
+  the other Claude settings file; other entries are untouched. An existing `autoMemoryEnabled` value in
+  `.claude/settings.local.json` is kept as is.
+
 ## [0.1.1] - 2026-10-29
 
 ### Changed

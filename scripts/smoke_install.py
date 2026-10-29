@@ -24,8 +24,8 @@ def main():
         subprocess.run(["git", "-C", str(project), "add", "README.md"], check=True)
 
         def cli(*args):
-            result = subprocess.run([sys.executable, "-m", "agemem.cli", "--project", str(project), *args],
-                                    cwd=root, env=environment, capture_output=True, text=True, check=True)
+            result = subprocess.run([sys.executable, "-m", "agemem.cli", *args],
+                                    cwd=project, env=environment, capture_output=True, text=True, check=True)
             return json.loads(result.stdout)
 
         cli("config", "init")
@@ -37,12 +37,13 @@ def main():
         assert "Ansible" in packet["context"]
         assert packet["layers"]["sources"]
         assert not (project / "AGENTS.md").exists()
-        settings = json.loads((project / ".claude/settings.local.json").read_text())
+        settings = json.loads((project / ".claude/settings.json").read_text())
         hook_command = settings["hooks"]["UserPromptSubmit"][0]["hooks"][0]["command"]
         hook = subprocess.run(hook_command, shell=True,
             input=json.dumps({"cwd": str(project), "prompt": "How does the smoke project deploy?"}),
             env=environment, cwd=root, capture_output=True, text=True, check=True, timeout=10)
         assert "Ansible" in json.loads(hook.stdout)["hookSpecificOutput"]["additionalContext"]
+        assert str(project) not in json.dumps(settings) and "--project" not in hook_command
         asyncio.run(mcp_roundtrip(project, environment))
     print("Installed-wheel CLI, offline hooks/evidence recall and five-tool MCP handshake passed")
 
@@ -52,7 +53,7 @@ async def mcp_roundtrip(project, environment):
     from mcp.client.stdio import stdio_client
     entry = json.loads((project / ".mcp.json").read_text())["mcpServers"]["agemem"]
     parameters = StdioServerParameters(command=entry["command"],
-        args=entry["args"], env={**environment, **entry.get("env", {})})
+        args=entry["args"], cwd=project, env={**environment, **entry.get("env", {})})
     async with stdio_client(parameters) as (read, write):
         async with ClientSession(read, write) as session:
             await session.initialize()

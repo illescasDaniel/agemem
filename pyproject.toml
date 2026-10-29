@@ -1,6 +1,6 @@
 [project]
 name = "agemem"
-version = "0.1.1"
+version = "0.2.0"
 readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE", "THIRD_PARTY.md", "agemem/LICENSE.raw-rag", "agemem/notes/LICENSE.jevmem"]

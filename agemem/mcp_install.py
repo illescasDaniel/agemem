@@ -23,15 +23,21 @@ def select_client(client=None):
     return client
 
 
-def launcher(project, offline=False, executable=None):
-    project = Path(project).expanduser().resolve()
+def launcher(offline=False, executable=None, workspace_variable=None):
+    """Client launcher without any machine-specific project path.
+
+    The server finds its project from its working directory. workspace_variable (for example
+    "${workspaceFolder}", which Cursor interpolates) is passed as --project when given.
+    """
     if executable is not None:
         executable = Path(executable).expanduser().resolve()
         if not executable.is_file():
             raise ValueError("Launcher executable must be an existing installed agemem command")
-        entry = {"command": str(executable), "args": ["--project", str(project)]}
+        entry = {"command": str(executable), "args": []}
     else:
-        entry = {"command": "uvx", "args": ["--python", "3.12", f"agemem@{__version__}", "--project", str(project)]}
+        entry = {"command": "uvx", "args": ["--python", "3.12", f"agemem@{__version__}"]}
+    if workspace_variable:
+        entry["args"] += ["--project", workspace_variable]
     if offline:
         entry["args"].append("--offline")
     entry["args"].append("mcp")
@@ -45,7 +51,7 @@ def install(project, client=None, dry_run=False, offline=False, executable=None)
     if not (project / ".agemem/config.json").is_file():
         raise ValueError("Run agemem init for this project before mcp-install")
     client = select_client(client)
-    entry = launcher(project, offline=offline, executable=executable)
+    entry = launcher(offline=offline, executable=executable, workspace_variable="${workspaceFolder}" if client == "cursor" else None)
     result = {"client": client, "project": str(project), "server": "agemem", "launcher": entry, "dry_run": dry_run}
     if client == "codex":
         path = inside(project, project / ".codex/config.toml")

@@ -30,7 +30,11 @@ class MCPInstallTests(unittest.TestCase):
             self.assertTrue(data["other"])
             self.assertEqual(data["mcpServers"]["existing"], {"command": "kept"})
             entry = data["mcpServers"]["agemem"]
-            self.assertIn(str(self.root.resolve()), entry["args"])
+            self.assertNotIn(str(self.root), json.dumps(entry["args"]))
+            self.assertEqual(entry["args"][-1], "mcp")
+            self.assertEqual("--project" in entry["args"], client == "cursor")
+            if client == "cursor":
+                self.assertEqual(entry["args"][entry["args"].index("--project") + 1], "${workspaceFolder}")
             self.assertEqual(entry["env"]["AGEMEM_CONFIG"], str(self.root / "private config.yaml"))
 
     def test_dry_run_no_writes_and_offline_forwarded(self):

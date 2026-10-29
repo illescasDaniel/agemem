@@ -5,13 +5,13 @@ import sys
 from pathlib import Path
 
 from .engine import Engine
-from .project import initialize
+from .project import discover_root, initialize
 from .config import initialize_user_config, doctor, provider_options
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--project", type=Path, default=Path.cwd(), help="Project checkout to use")
+    parser.add_argument("--project", type=Path, default=None, help="Project checkout to use (default: nearest parent directory with .agemem/config.json, else the current directory)")
     parser.add_argument("--offline", action="store_true", help="Never use hosted decisions or download embedding weights")
     sub = parser.add_subparsers(dest="command", required=True)
     p = sub.add_parser("project", help="Set up a project and its MCP connection")
@@ -24,6 +24,7 @@ def main():
     hook_options.add_argument("--no-hooks", dest="hooks", action="store_false", help="Do not install lifecycle hooks")
     hook_options.add_argument("--hooks", dest="hooks", action="store_true", help=argparse.SUPPRESS)
     project_init.set_defaults(hooks=True)
+    project_init.add_argument("--local-settings", action="store_true", help="Write Claude Code hooks and settings to .claude/settings.local.json instead of the shared .claude/settings.json")
     project_init.add_argument("--executable", type=Path, help="Use an installed agemem executable instead of uvx (source testing)")
     project_init.add_argument("--no-input", action="store_true", help="Never prompt; fail when required setup choices are missing")
     project_init.add_argument("--retrieval", choices=["hybrid", "bm25", "raw-rag"], default="hybrid")
@@ -63,14 +64,17 @@ def main():
     p = sub.add_parser("hooks-install", help="Install optional read-only lifecycle hooks")
     p.add_argument("--client", nargs="+", choices=["codex", "claude", "claude-code"], required=True)
     p.add_argument("--executable", type=Path)
+    p.add_argument("--local-settings", action="store_true", help="Write Claude Code hooks to .claude/settings.local.json instead of .claude/settings.json")
     p.add_argument("--dry-run", action="store_true")
     p = sub.add_parser("hook", help="Handle client lifecycle JSON on stdin; local read-only context")
     p.add_argument("event", choices=["session-start", "user-prompt"])
     args = parser.parse_args()
+    if args.command != "hook" and args.project is None:
+        args.project = discover_root()
     try:
         if args.command == "project":
             from .setup import initialize_project
-            result = initialize_project(args.project, args.client, args.retrieval, args.embedder, args.offline, model=args.model, clients=args.mcp, no_input=args.no_input, hooks=args.hooks, executable=args.executable)
+            result = initialize_project(args.project, args.client, args.retrieval, args.embedder, args.offline, model=args.model, clients=args.mcp, no_input=args.no_input, hooks=args.hooks, executable=args.executable, local_settings=args.local_settings)
         elif args.command == "config":
             result = initialize_user_config()
         elif args.command == "mcp-install":
@@ -78,7 +82,7 @@ def main():
             result = install(args.project, args.client, args.dry_run, args.offline, args.executable)
         elif args.command == "hooks-install":
             from .hooks import install
-            result = install(args.project, args.client, args.executable, args.dry_run)
+            result = install(args.project, args.client, args.executable, args.dry_run, local_settings=args.local_settings)
         elif args.command == "hook":
             from .hooks import run
             run(args.project, args.event)

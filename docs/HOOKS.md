@@ -28,7 +28,7 @@ client shell/uvx launch overhead counts toward it.
 With a published package:
 
 ```bash
-uvx --python 3.12 agemem@0.1.1 project init --model jev --mcp claude codex --no-input
+uvx --python 3.12 agemem@0.2.0 project init --model jev --mcp claude codex --no-input
 ```
 
 Supply the Jev key through private YAML or environment first. Use `--no-hooks`
@@ -36,18 +36,23 @@ to skip hook installation; it does not remove hooks already installed. Or add ho
 already initialized project:
 
 ```bash
-agemem --project . hooks-install --client claude codex
-agemem --project . hooks-install --client claude --dry-run
+agemem hooks-install --client claude codex
+agemem hooks-install --client claude --dry-run
+agemem hooks-install --client claude --local-settings
 ```
 
-The installer merges `.claude/settings.local.json` and `.codex/hooks.json`,
+The installer merges `.claude/settings.json` and `.codex/hooks.json`,
 preserving unrelated settings and hooks. Re-running replaces only Agemem's
-marked handlers. Claude uses a local settings file so machine-specific launcher
-paths need not be committed. Codex hooks also contain an absolute project path;
-review before sharing them. Explicit `AGEMEM_CONFIG` is forwarded as a non-secret
+marked handlers (`# agemem:SessionStart`, `# agemem:UserPromptSubmit`). The commands
+are path-free (`uvx --python 3.12 agemem@<version> hook session-start`), so the files can be
+committed. With `--local-settings`, Claude hooks go to `.claude/settings.local.json` instead.
+Either way, Agemem's handlers are removed from the other Claude settings file (this migrates
+0.1.x installs, which used `settings.local.json` with an absolute `--project`). Without
+`--project`, the hook walks up from the `cwd` in the client payload to the nearest
+`.agemem/config.json`, so each git worktree uses its own bank and branch. Explicit `AGEMEM_CONFIG` is forwarded as a non-secret
 path; credentials are never copied into hook settings.
 
-Shell commands quote project/executable paths, including spaces. They use POSIX
+Shell commands quote the executable path, including spaces. They use POSIX
 shell syntax; Windows manual testing currently requires Git Bash. The hook JSON
 and local handlers have unit tests on Windows, but native Windows client/shell
 execution has not been validated.
@@ -55,7 +60,7 @@ execution has not been validated.
 For source builds before PyPI publication, use an installed executable:
 
 ```bash
-/absolute/path/to/agemem/.venv/bin/agemem --project . hooks-install --client claude codex --executable /absolute/path/to/agemem/.venv/bin/agemem
+/absolute/path/to/agemem/.venv/bin/agemem hooks-install --client claude codex --executable /absolute/path/to/agemem/.venv/bin/agemem
 ```
 
 `mcp-install` and `project init` also accept `--executable`; the default `uvx`

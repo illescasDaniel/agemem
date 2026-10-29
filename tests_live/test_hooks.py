@@ -85,7 +85,7 @@ class HookTests(unittest.TestCase):
         self.assertNotIn('continue', result)
 
     def test_install_preserves_other_settings_and_is_idempotent(self):
-        for client, relative in [('claude', '.claude/settings.local.json'), ('codex', '.codex/hooks.json')]:
+        for client, relative in [('claude', '.claude/settings.json'), ('codex', '.codex/hooks.json')]:
             path = self.root / relative
             path.parent.mkdir(exist_ok=True)
             existing = {'permissions': {'allow': ['Read']}, 'hooks': {'SessionStart': [{'hooks': [{'type': 'command', 'command': 'echo unrelated'}]}]}}
@@ -100,7 +100,8 @@ class HookTests(unittest.TestCase):
             self.assertEqual(data['hooks']['SessionStart'][0], existing['hooks']['SessionStart'][0])
             command = data['hooks']['SessionStart'][1]['hooks'][0]['command']
             tokens = shlex.split(command.split(' # agemem:')[0])
-            self.assertIn(str(self.root), tokens)
+            self.assertNotIn('--project', tokens)
+            self.assertNotIn(str(self.root), command)
             self.assertEqual(tokens[-2:], ['hook', 'session-start'])
 
     def test_dry_run_and_invalid_configuration_preserved(self):
@@ -119,13 +120,13 @@ class HookTests(unittest.TestCase):
             (self.root / '.claude').symlink_to(outside, target_is_directory=True)
             with self.assertRaisesRegex(ValueError, 'escapes'):
                 install(self.root, ['claude'])
-            self.assertFalse((Path(outside) / 'settings.local.json').exists())
+            self.assertFalse((Path(outside) / 'settings.json').exists())
 
     def test_installed_executable_mcp_launcher_does_not_need_pypi(self):
         from agemem.mcp_install import install as install_mcp
         result = install_mcp(self.root, 'cursor', executable=Path(sys.executable))
         self.assertEqual(result['launcher']['command'], str(Path(sys.executable).resolve()))
-        self.assertNotIn('agemem@0.1.0', result['launcher']['args'])
+        self.assertNotIn('agemem@0.2.0', result['launcher']['args'])
 
 
     @unittest.skipIf(os.name == 'nt', 'POSIX hook shell execution; Windows requires Git Bash')
