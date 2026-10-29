@@ -28,7 +28,7 @@ client shell/uvx launch overhead counts toward it.
 With a published package:
 
 ```bash
-uvx --python 3.12 agemem@0.1.0 project init --model jev --mcp claude codex --no-input
+uvx --python 3.12 agemem@0.1.1 project init --model jev --mcp claude codex --no-input
 ```
 
 Supply the Jev key through private YAML or environment first. Use `--no-hooks`

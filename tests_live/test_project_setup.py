@@ -65,11 +65,32 @@ class ProjectSetupTests(unittest.TestCase):
         self.assertEqual(repeated.returncode, 0, repeated.stderr)
         self.assertEqual(hook_file.read_text(), first)
 
+    def test_claude_code_auto_memory_is_disabled_unless_already_set(self):
+        initialize_project(self.root, "claude-code", "bm25", "hash", True, hooks=False)
+        local = self.root / ".claude/settings.local.json"
+        self.assertEqual(json.loads(local.read_text()), {"autoMemoryEnabled": False})
+        local.write_text(json.dumps({"autoMemoryEnabled": True, "model": "opus"}))
+        again = initialize_project(self.root, "claude-code", "bm25", "hash", True, hooks=False)
+        self.assertFalse(again["claude_settings"]["changed"])
+        self.assertEqual(json.loads(local.read_text()), {"autoMemoryEnabled": True, "model": "opus"})
+
+    def test_shared_claude_setting_and_other_clients_are_respected(self):
+        shared = self.root / ".claude/settings.json"
+        shared.parent.mkdir()
+        shared.write_text(json.dumps({"autoMemoryEnabled": True}))
+        initialize_project(self.root, "claude-code", "bm25", "hash", True)
+        self.assertEqual(json.loads((self.root / ".claude/settings.local.json").read_text()).get("autoMemoryEnabled"), None)
+        other = Path(self.temp.name) / "other"
+        other.mkdir()
+        subprocess.run(["git", "init", "-q", str(other)], check=True)
+        initialize_project(other, "cursor", "bm25", "hash", True)
+        self.assertFalse((other / ".claude").exists())
+
     def test_cli_no_hooks_skips_installation(self):
         completed = subprocess.run([sys.executable, "-m", "agemem.cli", "--offline", "project", "init", "--client", "claude-code", "--no-hooks", "--retrieval", "bm25", "--embedder", "hash"], cwd=self.root, capture_output=True, text=True)
         self.assertEqual(completed.returncode, 0, completed.stderr)
         self.assertEqual(json.loads(completed.stdout)["hooks"], [])
-        self.assertFalse((self.root / ".claude/settings.local.json").exists())
+        self.assertNotIn("hooks", json.loads((self.root / ".claude/settings.local.json").read_text()))
         self.assertTrue((self.root / ".mcp.json").exists())
 
     def test_jev_key_is_private_and_absent_from_output(self):

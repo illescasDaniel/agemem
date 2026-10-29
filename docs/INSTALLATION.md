@@ -267,6 +267,11 @@ skipped. Or use
 Hooks load context at session start and retrieve local evidence on prompts;
 they do not make hosted calls or automatically capture conversations.
 
+When Claude Code is selected, `project init` also writes `autoMemoryEnabled: false`
+to `.claude/settings.local.json` (with or without `--no-hooks`), so Claude's built-in
+auto-memory does not duplicate agemem. If `autoMemoryEnabled` is already set in
+`.claude/settings.json` or `.claude/settings.local.json`, it is left as is.
+
 For unreleased source, `project init`, `mcp-install` and `hooks-install` accept
 `--executable /absolute/path/to/installed/agemem`, registering that executable
 instead of a PyPI `uvx` launcher. See [hook setup](HOOKS.md) and the

@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.1] - 2026-10-29
+
+### Changed
+
+- `project init` for Claude Code now sets `autoMemoryEnabled: false` in
+  `.claude/settings.local.json`, so Claude's built-in auto-memory does not duplicate agemem.
+  An existing `autoMemoryEnabled` value in project settings is kept.
+
 ## [0.1.0] - 2026-10-26
 
 ### Added

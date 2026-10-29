@@ -5,12 +5,13 @@ import os
 import json
 import platform
 import sys
+import tempfile
 import warnings
 
 from .config import initialize_user_config, load_user_config, config_path, provider_options
 from .engine import Engine
 from .mcp_install import install, select_client
-from .project import initialize
+from .project import initialize, inside
 
 
 def configure_provider(offline=False, model=None, no_input=False):
@@ -73,6 +74,37 @@ def configure_provider(offline=False, model=None, no_input=False):
     return initialize_user_config(api_key=key)
 
 
+def disable_claude_auto_memory(root):
+    """Turn off Claude Code's built-in auto-memory in the personal project settings, since agemem is the memory.
+
+    An explicit autoMemoryEnabled value in either project settings file is left alone.
+    """
+    shared = inside(root, root / ".claude/settings.json")
+    path = inside(root, root / ".claude/settings.local.json")
+    loaded = []
+    for candidate in (shared, path):
+        try:
+            data = json.loads(candidate.read_text(encoding="utf-8")) if candidate.exists() else {}
+        except (ValueError, UnicodeError):
+            raise ValueError("Invalid Claude Code settings JSON; repair it before installing") from None
+        if not isinstance(data, dict):
+            raise ValueError("Claude Code settings must be a JSON object")
+        loaded.append(data)
+    if any("autoMemoryEnabled" in data for data in loaded):
+        return {"client": "claude-code", "path": str(path), "changed": False}
+    data = loaded[1]
+    data["autoMemoryEnabled"] = False
+    path.parent.mkdir(parents=True, exist_ok=True)
+    descriptor, temporary = tempfile.mkstemp(dir=path.parent, prefix=".agemem-settings-")
+    try:
+        with os.fdopen(descriptor, "w", encoding="utf-8") as stream:
+            stream.write(json.dumps(data, indent=2) + "\n")
+        os.replace(temporary, path)
+    finally:
+        Path(temporary).unlink(missing_ok=True)
+    return {"client": "claude-code", "path": str(path), "changed": True}
+
+
 def initialize_project(project, client=None, retrieval="hybrid", embedder="BAAI/bge-small-en-v1.5", offline=False, *, model=None, clients=None, no_input=False, hooks=True, executable=None):
     root = Path(project).expanduser().resolve()
     if not root.is_dir():
@@ -100,6 +132,7 @@ def initialize_project(project, client=None, retrieval="hybrid", embedder="BAAI/
     finally:
         engine.close()
     registrations = [install(root, selected, offline=offline, **({"executable": executable} if executable else {})) for selected in selected_clients]
+    claude_settings = disable_claude_auto_memory(root) if "claude-code" in selected_clients else None
     hook_results = []
     if hooks:
         from .hooks import install as install_hooks
@@ -115,4 +148,4 @@ def initialize_project(project, client=None, retrieval="hybrid", embedder="BAAI/
         next_steps.insert(0, "Configure the selected provider in " + user["path"])
     return {"project": str(root), "user_config": user, "initialization": project_result,
             "index": index, "mcp": registrations[0] if len(registrations) == 1 else registrations,
-            "hooks": hook_results, "next_steps": next_steps}
+            "hooks": hook_results, "claude_settings": claude_settings, "next_steps": next_steps}
