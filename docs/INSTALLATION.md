@@ -8,7 +8,7 @@ ONNX Runtime (required by FastEmbed) has no matching wheels. Use the development
 With [uv](https://docs.astral.sh/uv/), run the CLI and MCP server using `uvx`:
 
 ```bash
-uvx --python 3.12 agemem@0.2.0 --help
+uvx --python 3.12 agemem@0.2.1 --help
 ```
 
 No separate package-install step is needed. `uvx` prepares an isolated environment
@@ -30,7 +30,7 @@ client commands. QSIV automatic GPU setup currently supports Linux x86_64 only.
 If you prefer an `agemem` command on your PATH:
 
 ```bash
-uv tool install --python 3.12 'agemem==0.2.0'
+uv tool install --python 3.12 'agemem==0.2.1'
 agemem --help
 ```
 
@@ -39,10 +39,10 @@ A pip environment is also supported:
 
 ```bash
 python3.12 -m venv /absolute/path/to/agemem-venv
-/absolute/path/to/agemem-venv/bin/python -m pip install 'agemem==0.2.0'
+/absolute/path/to/agemem-venv/bin/python -m pip install 'agemem==0.2.1'
 ```
 
-For these alternatives, replace `uvx --python 3.12 agemem@0.2.0` below with the
+For these alternatives, replace `uvx --python 3.12 agemem@0.2.1` below with the
 installed `agemem` executable. For MCP, use its absolute path; on Windows the
 virtual-environment executable is `Scripts/agemem.exe`.
 
@@ -51,7 +51,7 @@ virtual-environment executable is `Scripts/agemem.exe`.
 From the target project's Git repository:
 
 ```bash
-uvx --python 3.12 agemem@0.2.0 project init
+uvx --python 3.12 agemem@0.2.1 project init
 ```
 
 Choose `codex`, `cursor` or `claude-code` at the prompt.
@@ -61,14 +61,14 @@ Choose `codex`, `cursor` or `claude-code` at the prompt.
 Supply the provider and all desired clients explicitly:
 
 ```bash
-uvx --python 3.12 agemem@0.2.0 project init --model qsiv --mcp cursor claude --no-input
+uvx --python 3.12 agemem@0.2.1 project init --model qsiv --mcp cursor claude --no-input
 ```
 
 For hosted Jev, first supply a key in private configuration or the environment
 (`AGEMEM_JEV_API_KEY`, `TYPESAFE_API_KEY` or `JEV_API_KEY`), then run:
 
 ```bash
-uvx --python 3.12 agemem@0.2.0 project init --model jev --mcp claude codex --no-input
+uvx --python 3.12 agemem@0.2.1 project init --model jev --mcp claude codex --no-input
 ```
 
 `--model` accepts `jev` or `qsiv`. `--mcp` accepts one or more of `cursor`,
@@ -125,7 +125,7 @@ after `project init` affect only newly created project configuration. For a
 contract smoke test without model downloads or hosted decisions:
 
 ```bash
-uvx --python 3.12 agemem@0.2.0 --offline project init --client cursor --retrieval bm25 --embedder hash
+uvx --python 3.12 agemem@0.2.1 --offline project init --client cursor --retrieval bm25 --embedder hash
 ```
 
 Hash embeddings are only for testing. Re-running setup refreshes the index;
@@ -142,7 +142,7 @@ Use the individual commands below when you only want one setup step. The
 ## Configure and initialize a project
 
 ```bash
-uvx --python 3.12 agemem@0.2.0 config init
+uvx --python 3.12 agemem@0.2.1 config init
 ```
 
 Set `providers.jev.api_key` in the private user `config.yaml`, normally
@@ -153,9 +153,9 @@ configuration. Supported environment credentials remain optional overrides.
 From the target project's Git repository:
 
 ```bash
-uvx --python 3.12 agemem@0.2.0 --project . init
-uvx --python 3.12 agemem@0.2.0 --project . index
-uvx --python 3.12 agemem@0.2.0 --project . doctor
+uvx --python 3.12 agemem@0.2.1 --project . init
+uvx --python 3.12 agemem@0.2.1 --project . index
+uvx --python 3.12 agemem@0.2.1 --project . doctor
 ```
 
 `--project .` resolves relative to the process working directory; omitting
@@ -176,7 +176,7 @@ decision calls; `remember`, note-aware recall and maintenance can call Jev.
 From the initialized project directory:
 
 ```bash
-uvx --python 3.12 agemem@0.2.0 --project . mcp-install
+uvx --python 3.12 agemem@0.2.1 --project . mcp-install
 ```
 
 Choose `codex`, `cursor` or `claude-code` at the prompt. For scripts, pass
@@ -186,7 +186,7 @@ No Node.js/npm is required. Cursor merges `.cursor/mcp.json`; Claude Code merges
 `agemem` entry. Codex merges `.codex/config.toml` in the project and requires
 the project to be trusted. Existing user-level entries are not removed.
 
-The installer registers `uvx --python 3.12 agemem@0.2.0 mcp` with no project path, so
+The installer registers `uvx --python 3.12 agemem@0.2.1 mcp` with no project path, so
 the configuration can be committed and works in every checkout and git worktree; the server
 finds its project from the client's working directory. Cursor is the exception: its entry adds
 `--project ${workspaceFolder}`, which Cursor interpolates. Re-running `project init` on a 0.1.x
@@ -203,7 +203,7 @@ For manual configuration, merge this entry into the trusted project's
 ```toml
 [mcp_servers.agemem]
 command = "uvx"
-args = ["--python", "3.12", "agemem@0.2.0", "mcp"]
+args = ["--python", "3.12", "agemem@0.2.1", "mcp"]
 ```
 
 See [official Codex MCP documentation](https://learn.chatgpt.com/docs/extend/mcp).
@@ -221,7 +221,7 @@ Merge this entry into the target project's `.cursor/mcp.json`. Preserve other ex
     "agemem": {
       "type": "stdio",
       "command": "uvx",
-      "args": ["--python", "3.12", "agemem@0.2.0", "--project", "${workspaceFolder}", "mcp"]
+      "args": ["--python", "3.12", "agemem@0.2.1", "--project", "${workspaceFolder}", "mcp"]
     }
   }
 }
@@ -236,7 +236,7 @@ See [official Cursor MCP documentation](https://cursor.com/docs/mcp).
 From the target project's directory:
 
 ```bash
-claude mcp add --transport stdio --scope project agemem -- uvx --python 3.12 agemem@0.2.0 mcp
+claude mcp add --transport stdio --scope project agemem -- uvx --python 3.12 agemem@0.2.1 mcp
 claude mcp get agemem
 ```
 
@@ -292,7 +292,7 @@ Other entries are untouched. Explicit `--project` keeps working.
 For unreleased source, `project init`, `mcp-install` and `hooks-install` accept
 `--executable /absolute/path/to/installed/agemem`, registering that executable
 instead of a PyPI `uvx` launcher. See [hook setup](HOOKS.md) and the
-[manual pre-release checklist](MANUAL_TESTING.md). Publication of 0.2.0 is held
+[manual pre-release checklist](MANUAL_TESTING.md). Publication of 0.2.1 is held
 until manual client/hook testing and renewed release approval.
 
 ## Agent instructions
@@ -309,11 +309,11 @@ For an existing configuration, install QSIV explicitly on Linux x86_64 with
 an NVIDIA GPU of compute capability 8.9+:
 
 ```bash
-uvx --python 3.12 agemem@0.2.0 provider setup qsiv --dry-run
-uvx --python 3.12 agemem@0.2.0 provider setup qsiv
+uvx --python 3.12 agemem@0.2.1 provider setup qsiv --dry-run
+uvx --python 3.12 agemem@0.2.1 provider setup qsiv
 # Set default_provider: qsiv in ~/.config/agemem/config.yaml.
-uvx --python 3.12 agemem@0.2.0 --project . doctor
-uvx --python 3.12 agemem@0.2.0 --project . recall "What are the project decisions?"
+uvx --python 3.12 agemem@0.2.1 --project . doctor
+uvx --python 3.12 agemem@0.2.1 --project . recall "What are the project decisions?"
 ```
 
 Setup downloads the model and installs an isolated GPU runtime. After selecting
@@ -327,17 +327,17 @@ paths and validation limits.
 Use the package's `raw` extra for every invocation, including the MCP launcher:
 
 ```bash
-uvx --python 3.12 --from 'agemem[raw]==0.2.0' agemem --project . mcp
+uvx --python 3.12 --from 'agemem[raw]==0.2.1' agemem --project . mcp
 ```
 
 In client JSON, the corresponding arguments are:
 
 ```json
-["--python", "3.12", "--from", "agemem[raw]==0.2.0", "agemem", "mcp"]
+["--python", "3.12", "--from", "agemem[raw]==0.2.1", "agemem", "mcp"]
 ```
 
 For a persistent installation, use `uv tool install --force --python 3.12
-'agemem[raw]==0.2.0'`, or install that extra with your pip environment's Python.
+'agemem[raw]==0.2.1'`, or install that extra with your pip environment's Python.
 Follow [RAW-RAG setup](RAW_RAG.md) to prepare tokenizer, embedding and reranker
 caches, then select `retrieval: raw-rag` in project config.
 No upstream checkout is needed. Jev remains the default decision provider.

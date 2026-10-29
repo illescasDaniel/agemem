@@ -93,6 +93,10 @@ def identity(root):
     return branch or (f"detached:{commit}" if commit else "working"), commit
 
 
+# The local store is never committed. The SQLite sidecar files are listed too, in case a store is ever moved.
+LOCAL_IGNORE = ("/local/", "*.sqlite-wal", "*.sqlite-shm", "*.sqlite-journal")
+
+
 def initialize(directory, retrieval="hybrid", embedder="BAAI/bge-small-en-v1.5"):
     root = Path(directory).expanduser().resolve()
     if not root.is_dir():
@@ -108,8 +112,10 @@ def initialize(directory, retrieval="hybrid", embedder="BAAI/bge-small-en-v1.5")
         created.append(str(config.relative_to(root)))
     ignore = inside(root, folder / ".gitignore")
     existing = ignore.read_text() if ignore.exists() else ""
-    if "/local/" not in existing.splitlines():
-        ignore.write_text(existing.rstrip() + "\n/local/\n")
+    lines = existing.splitlines()
+    missing = [rule for rule in LOCAL_IGNORE if rule not in lines]
+    if missing:
+        ignore.write_text((existing.rstrip() + "\n" if existing.strip() else "") + "\n".join(missing) + "\n")
     memory = inside(root, root / "memory")
     memory.mkdir(exist_ok=True)
     for name, text in BANK.items():

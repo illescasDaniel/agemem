@@ -45,6 +45,7 @@ class Consolidator:
     def run(self, max_nodes: int | None = None) -> ConsolidationReport:
         cfg, rep = self.cfg, ConsolidationReport()
         last = self.store.meta_get("last_consolidated_id")
+        counted = self.store.meta_get("writes_since_consolidation")     # writes by other processes meanwhile stay counted
         hidden = set(self.store.pending(UNSCREENED))
         cap = max_nodes or cfg.consolidate_max_nodes
         todo = [n for n in self.store.nodes_after(last, cap + len(hidden)) if n.id not in hidden][:cap]
@@ -54,10 +55,10 @@ class Consolidator:
             if ids and not self._judge(node, [self.store.get(i) for i in ids], rep):
                 return rep          # keep last_consolidated_id: retry these nodes next time
             rep.checked += 1
-            self.store.meta_set("last_consolidated_id", node.id)
+            self.store.meta_raise("last_consolidated_id", node.id)
         if not self._drain_queue(rep):
             return rep
-        self.store.meta_set("writes_since_consolidation", 0)
+        self.store.meta_add("writes_since_consolidation", -counted)
         return rep
 
     def _judge(self, node, cands: list, rep: ConsolidationReport) -> bool:

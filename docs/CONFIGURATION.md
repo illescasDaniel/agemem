@@ -115,3 +115,10 @@ installing or downloading. Doctor checks CUDA and device capability, and inferen
 also rejects unsupported hardware. Use `default_provider: jev` on machines without
 a compatible GPU. This is an explicit user choice; no automatic paid call occurs.
 There is no production CPU fallback.
+
+## Shared local store
+
+`.agemem/local/` (the SQLite stores, model cache and `-wal`/`-shm` files) is git-ignored and is shared by all
+git worktrees and sessions of a project. It must be on a local file system, not NFS, SMB or a cloud-sync
+folder, because SQLite WAL needs reliable file locking and shared memory. See
+[Concurrent processes and worktrees](ARCHITECTURE.md#concurrent-processes-and-worktrees).

@@ -13,12 +13,12 @@ The answering agent receives current context, selected durable notes and source 
 Requires Git and [uv](https://docs.astral.sh/uv/). From your project directory:
 
 ```bash
-uvx --python 3.12 agemem@0.2.0 project init
+uvx --python 3.12 agemem@0.2.1 project init
 ```
 
 Or paste this prompt into your coding agent:
 
-> Integrate Agemem 0.2.0 into this project using the linked installation and
+> Integrate Agemem 0.2.1 into this project using the linked installation and
 > agent-integration guides. Inspect the environment and existing setup first.
 > Ask which clients to configure (Claude Code only, or also Cursor/Codex if
 > detected), whether to use hosted Jev, local GPU QSIV, or the experimental
@@ -26,7 +26,7 @@ Or paste this prompt into your coding agent:
 > the cascade if I have a compatible NVIDIA GPU. Explain QSIV's hardware and
 > download requirements and that cascade fallback uses hosted Jev. Have me supply
 > a Jev key privately through configuration or the environment, never in chat.
-> Run `uvx --python 3.12 agemem@0.2.0 project init --model <jev|qsiv> --mcp <selected clients> --no-input`
+> Run `uvx --python 3.12 agemem@0.2.1 project init --model <jev|qsiv> --mcp <selected clients> --no-input`
 > with the agreed choices; `claude` means Claude Code. For cascade, initialize
 > with QSIV and then configure the cascade as described in the local backends
 > guide; it is not a `--model` option. Preserve existing settings

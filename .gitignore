@@ -10,6 +10,9 @@ runs/
 
 .venv-*/
 .agemem/local/
+*.sqlite-wal
+*.sqlite-shm
+*.sqlite-journal
 
 # Maintainer workspace (keep local copies, exclude from public source)
 /HANDOFF.md

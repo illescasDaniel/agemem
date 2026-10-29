@@ -71,8 +71,7 @@ class Writer:
                 "markdown (progress/activeContext file), or restate it as a dated fact ('On 2026-10-03 X was finished')"))
         scores = {t: ans[t].p for t in MEMORY_TYPES}
 
-        nid = self.store.add_node(content, scope, ts, entities, source, branch, commit)
-        self.store.set_type_scores(nid, scores)
+        nid = self.store.add_node(content, scope, ts, entities, source, branch, commit, type_scores=scores)
         res = WriteResult(nid, type_scores=scores)
         self._relate(nid, res)
         self.store.bump_writes()

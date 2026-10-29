@@ -126,7 +126,7 @@ class HookTests(unittest.TestCase):
         from agemem.mcp_install import install as install_mcp
         result = install_mcp(self.root, 'cursor', executable=Path(sys.executable))
         self.assertEqual(result['launcher']['command'], str(Path(sys.executable).resolve()))
-        self.assertNotIn('agemem@0.2.0', result['launcher']['args'])
+        self.assertNotIn('agemem@0.2.1', result['launcher']['args'])
 
 
     @unittest.skipIf(os.name == 'nt', 'POSIX hook shell execution; Windows requires Git Bash')

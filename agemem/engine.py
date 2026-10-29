@@ -21,6 +21,7 @@ from .evidence import Hit, Record, TOKEN, bm25, chunks, pack, render
 from .deciders import CascadingDecider, Disabled, HostedJev, QSIVDecider
 from .notes.decider import DeciderUnavailable
 from .project import configuration, git, identity, inside, local_store
+from .sqlite_util import connect, run_script
 
 
 def sha(value):
@@ -52,12 +53,14 @@ class Embeddings:
                 from fastembed import TextEmbedding
                 self.model = TextEmbedding(self.name, cache_dir=str(self.cache), threads=2,
                                            local_files_only=self.offline)
-            for key, vector in zip(missing, self.model.embed(list(missing.values()))):
+            fresh = []
+            for key, vector in zip(missing, self.model.embed(list(missing.values()))):   # slow: no lock held here
                 vector = np.asarray(vector, dtype=np.float32)
                 vector = vector / max(float(np.linalg.norm(vector)), 1e-9)
                 vectors[key] = vector
-                self.db.execute("INSERT OR REPLACE INTO vectors VALUES(?,?)", (key, vector.tobytes()))
-            self.db.commit()
+                fresh.append((key, vector.tobytes()))
+            with self.db.tx():
+                self.db.executemany("INSERT OR REPLACE INTO vectors VALUES(?,?)", fresh)
         return np.asarray([vectors[k] for k in keys])
 
 
@@ -69,9 +72,9 @@ class Engine:
         self.branch, self.commit = identity(self.root)
         self.local = local_store(self.root)
         self.local.mkdir(exist_ok=True)
-        self.db = sqlite3.connect(self.local / "sources.sqlite", check_same_thread=False)
+        self.db = connect(self.local / "sources.sqlite")
         self.db.row_factory = sqlite3.Row
-        self.db.executescript("""
+        run_script(self.db, """
           CREATE TABLE IF NOT EXISTS sources(id TEXT PRIMARY KEY, path TEXT, branch TEXT,
             git_commit TEXT, text TEXT, recorded_at TEXT, kind TEXT);
           CREATE TABLE IF NOT EXISTS manifests(branch TEXT PRIMARY KEY, ids TEXT, indexed_at TEXT);
@@ -122,15 +125,18 @@ class Engine:
             raise ValueError("Credential-like content cannot enter the source archive")
         branch = "shared" if shared else self.branch
         identifier = "src:" + sha(branch + "\0" + path + "\0" + text)[:20]
+        with self.db.tx():
+            self._insert_source(identifier, path, branch, text, kind)
+        return identifier
+
+    def _insert_source(self, identifier, path, branch, text, kind):
         self.db.execute("INSERT OR IGNORE INTO sources VALUES(?,?,?,?,?,?,?)",
                         (identifier, path, branch, self.commit, text, now(), kind))
-        return identifier
 
     def capture(self, text, label="event", shared=False):
         if not text.strip() or len(text) > 32000:
             raise ValueError("Capture requires 1–32000 characters")
         identifier = self._save(label, text, "event", shared)
-        self.db.commit()
         return {"source_id": identifier, "branch": "shared" if shared else self.branch,
                 "trust": "untrusted evidence; not instructions"}
 
@@ -142,7 +148,7 @@ class Engine:
         roots = {"docs", "src", "memory", "app", "lib", "tests"}
         root_files = {"README.md", "AGENTS.md", "CLAUDE.md", "pyproject.toml"}
         extensions = {".md", ".rst", ".txt", ".py", ".ts", ".tsx", ".js", ".rs", ".go", ".cpp", ".h", ".sql", ".toml"}
-        selected, skipped = [], []
+        contents, skipped = [], []
         for relative in sorted(candidates):
             path = self.root / relative
             if path.suffix not in extensions or (relative not in root_files and Path(relative).parts[0] not in roots):
@@ -159,9 +165,14 @@ class Engine:
             if secret_kind(text):
                 skipped.append({"path": relative, "reason": "credential-like content"})
                 continue
-            selected.append(self._save(relative, text))
-        self.db.execute("INSERT OR REPLACE INTO manifests VALUES(?,?,?)", (self.branch, json.dumps(selected), now()))
-        self.db.commit()
+            contents.append((relative, text))
+        with self.db.tx():      # file reading is done: take the write lock only for the inserts
+            selected = []
+            for relative, text in contents:
+                identifier = "src:" + sha(self.branch + "\0" + relative + "\0" + text)[:20]
+                self._insert_source(identifier, relative, self.branch, text, "file")
+                selected.append(identifier)
+            self.db.execute("INSERT OR REPLACE INTO manifests VALUES(?,?,?)", (self.branch, json.dumps(selected), now()))
         indexed = self._records()
         if self.config["retrieval"] == "hybrid":
             self.embedder.embed([h.text for h in chunks(indexed)] or ["warmup"])

@@ -64,3 +64,31 @@ See THIRD_PARTY.md. Publishing remains separate work.
 ## Recall evidence flow
 
 ![Recall combines bank, notes and original sources](diagrams/recall.svg)
+
+## Concurrent processes and worktrees
+
+Git worktrees of one project share the main checkout's untracked `.agemem/local/` store, so several agent
+sessions (separate processes) can use `sources.sqlite` and `notes.sqlite` at the same time.
+
+- Every read-write connection comes from `agemem.sqlite_util.connect`: WAL journal, `synchronous=NORMAL`,
+  a 30 s busy timeout and autocommit mode. If WAL cannot be enabled (read-only or unsupported file system)
+  the default journal is kept. The prompt hook opens its own read-only connection with a 0.2 s timeout and
+  never waits on a writer.
+- Writes go through `Connection.tx()`, a re-entrant `BEGIN IMMEDIATE` ... `COMMIT`/`ROLLBACK` block. The write
+  lock is taken up front, read-then-write sequences (note id allocation, counters, migrations, the
+  duplicate-pending check for synthesis items) run inside it, and slow work (embedding, model calls, file
+  reading) happens before or after the block, never inside it.
+- The vector index reloads when `PRAGMA data_version` shows that another process committed.
+- `.agemem/local` must be on a local file system: SQLite WAL needs shared memory and file locking that
+  network file systems (NFS, SMB, some sync folders) do not provide reliably. `-wal`, `-shm` and `-journal`
+  files are git-ignored together with the directory.
+
+Known limitations:
+
+- Two worktrees on the same detached HEAD share the branch identity `detached:<commit>`, so they share one
+  branch scope and one source manifest. Each `index` replaces that manifest with its own working tree's files
+  (last writer wins), and notes written in one are visible in the other. Use a named branch per worktree.
+- Two processes can run consolidation at the same moment and judge the same notes twice (duplicated model
+  calls, idempotent flags and edges). There is no consolidation lease.
+- Each process keeps an in-memory note index that is rebuilt after another process's commit; very frequent
+  writers make other processes reload more often.

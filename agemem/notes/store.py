@@ -9,6 +9,7 @@ import json
 import re
 import sqlite3
 import time
+from ..sqlite_util import connect, run_script
 from .vectorindex import make_index
 from dataclasses import dataclass, field
 from typing import Protocol
@@ -125,11 +126,11 @@ def norm_scopes(scopes: list[str] | None) -> list[str] | None:
 class Store:
     def __init__(self, path: str = ":memory:", embedder: Embedder | None = None, index: str | None = None,
                  switch_embedder: bool = False):
-        self.db = sqlite3.connect(path, check_same_thread=False)  # MCP runs tools on worker threads; callers serialize
+        self.db = connect(path)   # WAL + busy timeout; MCP runs tools on worker threads, callers serialize
         self.db.row_factory = sqlite3.Row
         self.path = path
         self._index_spec = index
-        self.db.executescript("""
+        run_script(self.db, """
         CREATE TABLE IF NOT EXISTS nodes(
           id INTEGER PRIMARY KEY, content TEXT NOT NULL, scope TEXT NOT NULL, ts REAL,
           entities TEXT NOT NULL, type_scores TEXT, source TEXT, emb BLOB, created REAL NOT NULL);
@@ -153,20 +154,21 @@ class Store:
         CREATE INDEX IF NOT EXISTS nodes_scope ON nodes(scope);
         CREATE INDEX IF NOT EXISTS nodes_ts ON nodes(ts);
         """)
-        cols = {r["name"] for r in self.db.execute("PRAGMA table_info(nodes)")}
-        for col in ("git_branch", "git_commit"):          # databases made before notes recorded where they were written
-            if col not in cols:
-                self.db.execute(f"ALTER TABLE nodes ADD COLUMN {col} TEXT")
-        # databases made before scopes were case-insensitive
-        if self.db.execute("SELECT 1 FROM nodes WHERE scope != lower(trim(scope)) LIMIT 1").fetchone():
-            self.db.execute("UPDATE nodes SET scope = lower(trim(scope))"); self.db.commit(); self._scopes_migrated = True
+        with self.db.tx():       # migrations: check inside the write lock so two processes cannot both ALTER
+            cols = {r["name"] for r in self.db.execute("PRAGMA table_info(nodes)")}
+            for col in ("git_branch", "git_commit"):      # databases made before notes recorded where they were written
+                if col not in cols:
+                    self.db.execute(f"ALTER TABLE nodes ADD COLUMN {col} TEXT")
+            # databases made before scopes were case-insensitive
+            if self.db.execute("SELECT 1 FROM nodes WHERE scope != lower(trim(scope)) LIMIT 1").fetchone():
+                self.db.execute("UPDATE nodes SET scope = lower(trim(scope))"); self._scopes_migrated = True
         self.embedder = embedder or self._choose_embedder(switch_embedder)
         self._backfill_entities()
         dim = int(self.embedder.embed(["dim"]).shape[1])
         self.index = make_index(self.db, dim, path, index, self.count())
         self.sync_index(force=getattr(self, "_scopes_migrated", False))
-        if self.meta_text("embedder") is None:
-            self.meta_set_text("embedder", getattr(self.embedder, "spec", "custom"))
+        with self.db.tx():
+            self.db.execute("INSERT OR IGNORE INTO meta VALUES('embedder', ?)", (getattr(self.embedder, "spec", "custom"),))
 
     def _choose_embedder(self, switch: bool) -> Embedder:
         """The database remembers its embedder: use it unless the user asks for another one explicitly."""
@@ -188,30 +190,33 @@ class Store:
     # -- nodes ---------------------------------------------------------------
     def add_node(self, content: str, scope: str = "global", timestamp: float | None = None,
                  entities: list[str] | None = None, source: str | None = None, branch: str | None = None,
-                 commit: str | None = None) -> int:
+                 commit: str | None = None, type_scores: dict[str, float] | None = None) -> int:
         scope = norm_scope(scope)
-        emb = self.embedder.embed([content])[0].astype(np.float32)
-        # never reuse the id of a deleted note: consolidation watermarks and edges refer to ids
-        top = self.db.execute("SELECT COALESCE(MAX(id), 0) FROM nodes").fetchone()[0]
-        nid = max(top, self.meta_get("max_node_id")) + 1
-        self.db.execute(
-            "INSERT INTO nodes(id,content,scope,ts,entities,source,emb,created,git_branch,git_commit) "
-            "VALUES(?,?,?,?,?,?,?,?,?,?)",
-            (nid, content, scope, timestamp, json.dumps(entities or []), source, emb.tobytes(), time.time(),
-             branch, commit))
-        self.meta_set("max_node_id", nid)
-        self.db.execute("INSERT INTO fts(rowid, content) VALUES(?,?)", (nid, content))
-        self._index_entities(nid, entities or [])
-        self.db.commit()
+        emb = self.embedder.embed([content])[0].astype(np.float32)      # slow: computed before taking the write lock
+        with self.db.tx():
+            # never reuse the id of a deleted note: consolidation watermarks and edges refer to ids.
+            # Allocated under the write lock, so two processes cannot pick the same id.
+            top = self.db.execute("SELECT COALESCE(MAX(id), 0) FROM nodes").fetchone()[0]
+            nid = max(top, self.meta_get("max_node_id")) + 1
+            self.db.execute(
+                "INSERT INTO nodes(id,content,scope,ts,entities,type_scores,source,emb,created,git_branch,git_commit) "
+                "VALUES(?,?,?,?,?,?,?,?,?,?,?)",
+                (nid, content, scope, timestamp, json.dumps(entities or []),
+                 json.dumps(type_scores) if type_scores else None, source, emb.tobytes(), time.time(), branch, commit))
+            self.meta_set("max_node_id", nid)
+            self.db.execute("INSERT INTO fts(rowid, content) VALUES(?,?)", (nid, content))
+            self._index_entities(nid, entities or [])
         self.index.add(nid, scope, emb)
         return nid
 
     def _backfill_entities(self) -> None:
         if self.db.execute("SELECT 1 FROM node_entities LIMIT 1").fetchone():
             return
-        for r in self.db.execute("SELECT id, entities FROM nodes").fetchall():
-            self._index_entities(r["id"], json.loads(r["entities"]))
-        self.db.commit()
+        with self.db.tx():
+            if self.db.execute("SELECT 1 FROM node_entities LIMIT 1").fetchone():
+                return
+            for r in self.db.execute("SELECT id, entities FROM nodes").fetchall():
+                self._index_entities(r["id"], json.loads(r["entities"]))
 
     def _index_entities(self, nid: int, entities: list[str]) -> None:
         self.db.executemany("INSERT OR IGNORE INTO node_entities VALUES(?,?)", [(nid, e.lower()) for e in entities])
@@ -231,33 +236,35 @@ class Store:
     def reembed(self) -> int:
         """Recompute every stored embedding with the current embedder (needed after switching embedders)."""
         rows = self.db.execute("SELECT id, content FROM nodes").fetchall()
-        for i in range(0, len(rows), 64):
+        updates = []
+        for i in range(0, len(rows), 64):               # slow part first, outside any transaction
             chunk = rows[i:i + 64]
             embs = self.embedder.embed([r["content"] for r in chunk]).astype(np.float32)
-            self.db.executemany("UPDATE nodes SET emb=? WHERE id=?", [(e.tobytes(), r["id"]) for e, r in zip(embs, chunk)])
-        self.db.commit()
-        self.meta_set_text("embedder", getattr(self.embedder, "spec", "custom"))
+            updates += [(e.tobytes(), r["id"]) for e, r in zip(embs, chunk)]
+        with self.db.tx():
+            self.db.executemany("UPDATE nodes SET emb=? WHERE id=?", updates)
+            self.meta_set_text("embedder", getattr(self.embedder, "spec", "custom"))
         self.sync_index(force=True)
         return len(rows)
 
     def set_type_scores(self, nid: int, scores: dict[str, float]) -> None:
-        self.db.execute("UPDATE nodes SET type_scores=? WHERE id=?", (json.dumps(scores), nid))
-        self.db.commit()
+        with self.db.tx():
+            self.db.execute("UPDATE nodes SET type_scores=? WHERE id=?", (json.dumps(scores), nid))
 
     def delete_node(self, nid: int) -> None:
-        self.db.execute("DELETE FROM nodes WHERE id=?", (nid,))
-        self.db.execute("DELETE FROM fts WHERE rowid=?", (nid,))
-        self.db.execute("DELETE FROM node_entities WHERE node_id=?", (nid,))
-        self.db.execute("DELETE FROM edges WHERE src=? OR dst=?", (nid, nid))
-        self.db.execute("DELETE FROM pending WHERE node_id=?", (nid,))
-        self.db.execute("DELETE FROM flags WHERE node_id=? OR other_id=?", (nid, nid))
-        self.db.execute("DELETE FROM usage WHERE node_id=?", (nid,))
-        for t in ("judged", "pair_queue"):
-            self.db.execute(f"DELETE FROM {t} WHERE a=? OR b=?", (nid, nid))
-        for it in self.synth_items():       # a proposal that mentions a deleted note is void
-            if nid in it["node_ids"]:
-                self.db.execute("UPDATE synth SET status='dismissed' WHERE id=?", (it["id"],))
-        self.db.commit()
+        with self.db.tx():
+            self.db.execute("DELETE FROM nodes WHERE id=?", (nid,))
+            self.db.execute("DELETE FROM fts WHERE rowid=?", (nid,))
+            self.db.execute("DELETE FROM node_entities WHERE node_id=?", (nid,))
+            self.db.execute("DELETE FROM edges WHERE src=? OR dst=?", (nid, nid))
+            self.db.execute("DELETE FROM pending WHERE node_id=?", (nid,))
+            self.db.execute("DELETE FROM flags WHERE node_id=? OR other_id=?", (nid, nid))
+            self.db.execute("DELETE FROM usage WHERE node_id=?", (nid,))
+            for t in ("judged", "pair_queue"):
+                self.db.execute(f"DELETE FROM {t} WHERE a=? OR b=?", (nid, nid))
+            for it in self.synth_items():       # a proposal that mentions a deleted note is void
+                if nid in it["node_ids"]:
+                    self.db.execute("UPDATE synth SET status='dismissed' WHERE id=?", (it["id"],))
         self.index.remove(nid)
 
     @staticmethod
@@ -308,7 +315,7 @@ class Store:
     def bump_usage(self, ids) -> None:
         """Count a note as useful once more (the prompt hook injected it, or recall judged it relevant)."""
         now = time.time()
-        with self.db:
+        with self.db.tx():
             self.db.executemany("INSERT INTO usage(node_id, hits, last_hit) VALUES(?, 1, ?) "
                                 "ON CONFLICT(node_id) DO UPDATE SET hits = hits + 1, last_hit = excluded.last_hit",
                                 [(i, now) for i in ids])
@@ -360,8 +367,8 @@ class Store:
     # -- edges -----------------------------------------------------------------
     def add_edge(self, src: int, dst: int, kind: str, weight: float = 1.0) -> None:
         assert kind in EDGE_KINDS
-        self.db.execute("INSERT OR REPLACE INTO edges VALUES(?,?,?,?)", (src, dst, kind, weight))
-        self.db.commit()
+        with self.db.tx():
+            self.db.execute("INSERT OR REPLACE INTO edges VALUES(?,?,?,?)", (src, dst, kind, weight))
 
     def neighbors(self, nid: int, kinds: list[str]) -> list[tuple[Edge, int]]:
         """Undirected traversal; returns (edge, other_node_id)."""
@@ -376,8 +383,8 @@ class Store:
 
     # -- degraded-mode queue -----------------------------------------------------
     def queue_pending(self, nid: int, reason: str) -> None:
-        self.db.execute("INSERT OR REPLACE INTO pending VALUES(?,?)", (nid, reason))
-        self.db.commit()
+        with self.db.tx():
+            self.db.execute("INSERT OR REPLACE INTO pending VALUES(?,?)", (nid, reason))
 
     def pending(self, reason: str | None = None) -> list[int]:
         if reason:
@@ -387,8 +394,8 @@ class Store:
         return [r[0] for r in rows]
 
     def clear_pending(self, nid: int) -> None:
-        self.db.execute("DELETE FROM pending WHERE node_id=?", (nid,))
-        self.db.commit()
+        with self.db.tx():
+            self.db.execute("DELETE FROM pending WHERE node_id=?", (nid,))
 
     # -- meta / consolidation state ----------------------------------------------
     def meta_get(self, key: str, default: int = 0) -> int:
@@ -400,36 +407,47 @@ class Store:
         return r["value"] if r else None
 
     def meta_set_text(self, key: str, value: str) -> None:
-        self.db.execute("INSERT OR REPLACE INTO meta VALUES(?,?)", (key, value))
-        self.db.commit()
+        with self.db.tx():
+            self.db.execute("INSERT OR REPLACE INTO meta VALUES(?,?)", (key, value))
 
     def meta_set(self, key: str, value: int) -> None:
-        self.db.execute("INSERT OR REPLACE INTO meta VALUES(?,?)", (key, str(value)))
-        self.db.commit()
+        with self.db.tx():
+            self.db.execute("INSERT OR REPLACE INTO meta VALUES(?,?)", (key, str(value)))
 
-    def bump_writes(self) -> int:
-        n = self.meta_get("writes_since_consolidation") + 1
-        self.meta_set("writes_since_consolidation", n)
+    def meta_add(self, key: str, delta: int) -> int:
+        """Atomic counter update (several processes share these counters); never goes below zero."""
+        with self.db.tx():
+            n = max(0, self.meta_get(key) + delta)
+            self.db.execute("INSERT OR REPLACE INTO meta VALUES(?,?)", (key, str(n)))
         return n
 
+    def meta_raise(self, key: str, value: int) -> None:
+        """Monotonic watermark: keeps the larger of the stored and the given value."""
+        with self.db.tx():
+            self.db.execute("INSERT OR REPLACE INTO meta VALUES(?,?)", (key, str(max(self.meta_get(key), value))))
+
+    def bump_writes(self) -> int:
+        return self.meta_add("writes_since_consolidation", 1)
+
     def add_flag(self, nid: int, flag: str, other: int, p: float) -> None:
-        self.db.execute("INSERT OR REPLACE INTO flags VALUES(?,?,?,?)", (nid, flag, other, p))
-        self.db.commit()
+        with self.db.tx():
+            self.db.execute("INSERT OR REPLACE INTO flags VALUES(?,?,?,?)", (nid, flag, other, p))
 
     def flagged(self, *flags: str) -> set[int]:
         q = ",".join("?" * len(flags))
         return {r[0] for r in self.db.execute(f"SELECT node_id FROM flags WHERE flag IN ({q})", flags)}
 
     def clear_flags(self, *flags: str) -> None:
-        self.db.execute(f"DELETE FROM flags WHERE flag IN ({','.join('?' * len(flags))})", flags)
-        self.db.commit()
+        with self.db.tx():
+            self.db.execute(f"DELETE FROM flags WHERE flag IN ({','.join('?' * len(flags))})", flags)
 
     def set_pinned(self, nid: int, pinned: bool = True) -> None:
         """A pinned note is one the user marked as always relevant: SessionStart injects it first."""
         if pinned:
             self.add_flag(nid, "pinned", nid, 1.0)
         else:
-            self.db.execute("DELETE FROM flags WHERE node_id=? AND flag='pinned'", (nid,)); self.db.commit()
+            with self.db.tx():
+                self.db.execute("DELETE FROM flags WHERE node_id=? AND flag='pinned'", (nid,))
 
     def pinned(self) -> set[int]:
         return self.flagged("pinned")
@@ -444,36 +462,37 @@ class Store:
     # -- consolidation pairs: which pairs were judged, and which co-retrieved pairs still wait for a judgement ----
     def mark_judged(self, a: int, b: int) -> None:
         a, b = sorted((a, b))
-        self.db.execute("INSERT OR IGNORE INTO judged VALUES(?,?)", (a, b))
-        self.db.execute("DELETE FROM pair_queue WHERE a=? AND b=?", (a, b))
-        self.db.commit()
+        with self.db.tx():
+            self.db.execute("INSERT OR IGNORE INTO judged VALUES(?,?)", (a, b))
+            self.db.execute("DELETE FROM pair_queue WHERE a=? AND b=?", (a, b))
 
     def queue_pairs(self, pairs: list[tuple[int, int]], max_size: int) -> int:
         """Queue pairs not judged yet (up to `max_size` waiting in total). Returns how many were added."""
-        room, added = max_size - self.db.execute("SELECT COUNT(*) FROM pair_queue").fetchone()[0], 0
-        for a, b in pairs:
-            a, b = sorted((a, b))
-            if added >= room or self.db.execute("SELECT 1 FROM judged WHERE a=? AND b=?", (a, b)).fetchone():
-                continue
-            added += self.db.execute("INSERT OR IGNORE INTO pair_queue VALUES(?,?)", (a, b)).rowcount
-        self.db.commit()
+        with self.db.tx():
+            room, added = max_size - self.db.execute("SELECT COUNT(*) FROM pair_queue").fetchone()[0], 0
+            for a, b in pairs:
+                a, b = sorted((a, b))
+                if added >= room or self.db.execute("SELECT 1 FROM judged WHERE a=? AND b=?", (a, b)).fetchone():
+                    continue
+                added += self.db.execute("INSERT OR IGNORE INTO pair_queue VALUES(?,?)", (a, b)).rowcount
         return added
 
     def queued_pairs(self, limit: int) -> list[tuple[int, int]]:
         return [(r["a"], r["b"]) for r in self.db.execute("SELECT a, b FROM pair_queue ORDER BY rowid LIMIT ?", (limit,))]
 
     def clear_judged(self) -> None:
-        self.db.execute("DELETE FROM judged"); self.db.execute("DELETE FROM pair_queue"); self.db.commit()
+        with self.db.tx():
+            self.db.execute("DELETE FROM judged"); self.db.execute("DELETE FROM pair_queue")
 
     # -- System-Two synthesis queue ----------------------------------------------
     def add_synth(self, kind: str, node_ids: list[int], p: float) -> int | None:
         ids = json.dumps(sorted(node_ids))
-        if self.db.execute("SELECT 1 FROM synth WHERE kind=? AND node_ids=? AND status='pending'",
-                           (kind, ids)).fetchone():
-            return None
-        cur = self.db.execute("INSERT INTO synth(kind,node_ids,p,created) VALUES(?,?,?,?)",
-                              (kind, ids, p, time.time()))
-        self.db.commit()
+        with self.db.tx():
+            if self.db.execute("SELECT 1 FROM synth WHERE kind=? AND node_ids=? AND status='pending'",
+                               (kind, ids)).fetchone():
+                return None
+            cur = self.db.execute("INSERT INTO synth(kind,node_ids,p,created) VALUES(?,?,?,?)",
+                                  (kind, ids, p, time.time()))
         return cur.lastrowid
 
     def synth_items(self, status: str = "pending") -> list[dict]:
@@ -486,5 +505,5 @@ class Store:
                 "status": r["status"]} if r else None
 
     def synth_close(self, sid: int, status: str, result_id: int | None = None) -> None:
-        self.db.execute("UPDATE synth SET status=?, result_id=? WHERE id=?", (status, result_id, sid))
-        self.db.commit()
+        with self.db.tx():
+            self.db.execute("UPDATE synth SET status=?, result_id=? WHERE id=?", (status, result_id, sid))
