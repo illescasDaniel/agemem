@@ -1,0 +1,2245 @@
+{
+  "model": "vega",
+  "revision": "42ac8d4fa9efb61f96e53d80962cf28f6dfe667e",
+  "device": "cuda",
+  "device_name": "NVIDIA GeForce RTX 4070 Laptop GPU",
+  "threads": 8,
+  "torch": "2.11.0+cu130",
+  "repeats": 5,
+  "load_seconds": 3.665990735997184,
+  "warmup": "one complete suite",
+  "timing_scope": "in-process request including rendering, tokenization, inference and response construction; excludes load and network",
+  "request_count": 95,
+  "question_count": 250,
+  "median_request_seconds": 0.08158810900204116,
+  "mean_request_seconds": 0.08670284321043781,
+  "p95_request_seconds": 0.16238935790061043,
+  "seconds_per_suite": [
+    1.7028642499863054,
+    1.5492139490015688,
+    1.610323969998717,
+    1.6194191470021906,
+    1.7549487890028104
+  ],
+  "correct_per_suite": [
+    31,
+    31,
+    31,
+    31,
+    31
+  ],
+  "predictions": [
+    {
+      "case": "durable",
+      "question_key": "decision",
+      "prediction": true,
+      "p": 0.998815034095187,
+      "expected": [
+        true,
+        0.5
+      ],
+      "correct": true,
+      "answer": {
+        "probs": {
+          "False": 0.0011849659048128965,
+          "True": 0.998815034095187
+        },
+        "confidence": 0.998815034095187,
+        "prediction_set": [
+          true
+        ],
+        "abstain": false,
+        "unbound": false,
+        "settle_steps": 12,
+        "energy": -2.7980048656463623,
+        "adapter": null,
+        "gate": 1.206313754664734e-05,
+        "boolean": 0.998815034095187,
+        "noul": 0.998815034095187
+      }
+    },
+    {
+      "case": "durable",
+      "question_key": "status",
+      "prediction": false,
+      "p": 0.007529263126057678,
+      "expected": [
+        false,
+        0.85
+      ],
+      "correct": true,
+      "answer": {
+        "probs": {
+          "False": 0.9924707368739423,
+          "True": 0.007529263126057678
+        },
+        "confidence": 0.9924707368739423,
+        "prediction_set": [
+          false
+        ],
+        "abstain": false,
+        "unbound": false,
+        "settle_steps": 12,
+        "energy": -1.9764715433120728,
+        "adapter": null,
+        "gate": 1.1942605851800181e-05,
+        "boolean": 0.007529263126057678,
+        "noul": 0.007529263126057678
+      }
+    },
+    {
+      "case": "durable",
+      "question_key": "injection",
+      "prediction": false,
+      "p": 0.0005887293286748088,
+      "expected": [
+        false,
+        0.5
+      ],
+      "correct": true,
+      "answer": {
+        "probs": {
+          "False": 0.9994112706713251,
+          "True": 0.0005887293286748088
+        },
+        "confidence": 0.9994112706713251,
+        "prediction_set": [
+          false
+        ],
+        "abstain": false,
+        "unbound": false,
+        "settle_steps": 12,
+        "energy": -2.1096367835998535,
+        "adapter": null,
+        "gate": 5.295836217555916e-06,
+        "boolean": 0.0005887293286748088,
+        "noul": 0.0005887293286748088
+      }
+    },
+    {
+      "case": "work-status",
+      "question_key": "status",
+      "prediction": false,
+      "p": 0.4466681674199214,
+      "expected": [
+        true,
+        0.85
+      ],
+      "correct": false,
+      "answer": {
+        "probs": {
+          "False": 0.5533318325800787,
+          "True": 0.4466681674199214
+        },
+        "confidence": 0.5533318325800787,
+        "prediction_set": [
+          false,
+          true
+        ],
+        "abstain": true,
+        "unbound": false,
+        "settle_steps": 12,
+        "energy": -0.892906904220581,
+        "adapter": null,
+        "gate": 8.732869173400104e-05,
+        "boolean": 0.4466681674199214,
+        "noul": 0.4466681674199214
+      }
+    },
+    {
+      "case": "work-status",
+      "question_key": "injection",
+      "prediction": false,
+      "p": 0.01012466857493536,
+      "expected": [
+        false,
+        0.5
+      ],
+      "correct": true,
+      "answer": {
+        "probs": {
+          "False": 0.9898753314250647,
+          "True": 0.01012466857493536
+        },
+        "confidence": 0.9898753314250647,
+        "prediction_set": [
+          false
+        ],
+        "abstain": false,
+        "unbound": false,
+        "settle_steps": 12,
+        "energy": -2.0265705585479736,
+        "adapter": null,
+        "gate": 6.9545126279990654e-06,
+        "boolean": 0.01012466857493536,
+        "noul": 0.01012466857493536
+      }
+    },
+    {
+      "case": "injection",
+      "question_key": "injection",
+      "prediction": true,
+      "p": 0.8591066862588483,
+      "expected": [
+        true,
+        0.5
+      ],
+      "correct": true,
+      "answer": {
+        "probs": {
+          "False": 0.14089331374115172,
+          "True": 0.8591066862588483
+        },
+        "confidence": 0.8591066862588483,
+        "prediction_set": [
+          true
+        ],
+        "abstain": false,
+        "unbound": false,
+        "settle_steps": 12,
+        "energy": -1.3049347400665283,
+        "adapter": null,
+        "gate": 7.760036169202067e-06,
+        "boolean": 0.8591066862588483,
+        "noul": 0.8591066862588483
+      }
+    },
+    {
+      "case": "relevance",
+      "question_key": "item_0",
+      "prediction": false,
+      "p": 0.019850193801584867,
+      "expected": [
+        true,
+        0.3
+      ],
+      "correct": false,
+      "answer": {
+        "probs": {
+          "False": 0.9801498061984152,
+          "True": 0.019850193801584867
+        },
+        "confidence": 0.9801498061984152,
+        "prediction_set": [
+          false
+        ],
+        "abstain": false,
+        "unbound": false,
+        "settle_steps": 12,
+        "energy": -2.232715606689453,
+        "adapter": null,
+        "gate": 1.1786352843046188e-05,
+        "boolean": 0.019850193801584867,
+        "noul": 0.019850193801584867
+      }
+    },
+    {
+      "case": "relevance",
+      "question_key": "item_1",
+      "prediction": false,
+      "p": 0.0021547500074053016,
+      "expected": [
+        false,
+        0.3
+      ],
+      "correct": true,
+      "answer": {
+        "probs": {
+          "False": 0.9978452499925947,
+          "True": 0.0021547500074053016
+        },
+        "confidence": 0.9978452499925947,
+        "prediction_set": [
+          false
+        ],
+        "abstain": false,
+        "unbound": false,
+        "settle_steps": 12,
+        "energy": -2.6435739994049072,
+        "adapter": null,
+        "gate": 8.719312063476536e-06,
+        "boolean": 0.0021547500074053016,
+        "noul": 0.0021547500074053016
+      }
+    },
+    {
+      "case": "missing-evidence",
+      "question_key": "evidence_sufficient",
+      "prediction": false,
+      "p": 0.02633859941116813,
+      "expected": [
+        false,
+        0.3
+      ],
+      "correct": true,
+      "answer": {
+        "probs": {
+          "False": 0.973661400588832,
+          "True": 0.02633859941116813
+        },
+        "confidence": 0.973661400588832,
+        "prediction_set": [
+          false
+        ],
+        "abstain": false,
+        "unbound": false,
+        "settle_steps": 12,
+        "energy": -1.6309115886688232,
+        "adapter": null,
+        "gate": 4.7499488573521376e-06,
+        "boolean": 0.02633859941116813,
+        "noul": 0.02633859941116813
+      }
+    },
+    {
+      "case": "missing-evidence",
+      "question_key": "missing_evidence",
+      "prediction": false,
+      "p": 0.004721423894586525,
+      "expected": [
+        true,
+        0.7
+      ],
+      "correct": false,
+      "answer": {
+        "probs": {
+          "False": 0.9952785761054135,
+          "True": 0.004721423894586525
+        },
+        "confidence": 0.9952785761054135,
+        "prediction_set": [
+          false
+        ],
+        "abstain": false,
+        "unbound": false,
+        "settle_steps": 12,
+        "energy": -2.5002081394195557,
+        "adapter": null,
+        "gate": 1.6190556380024645e-06,
+        "boolean": 0.004721423894586525,
+        "noul": 0.004721423894586525
+      }
+    },
+    {
+      "case": "replacement",
+      "question_key": "pair_0_same_question",
+      "prediction": true,
+      "p": 0.7153761292469698,
+      "expected": [
+        true,
+        0.5
+      ],
+      "correct": true,
+      "answer": {
+        "probs": {
+          "False": 0.2846238707530302,
+          "True": 0.7153761292469698
+        },
+        "confidence": 0.7153761292469698,
+        "prediction_set": [
+          true
+        ],
+        "abstain": false,
+        "unbound": false,
+        "settle_steps": 12,
+        "energy": -1.700477123260498,
+        "adapter": null,
+        "gate": 2.8638523872359656e-06,
+        "boolean": 0.7153761292469698,
+        "noul": 0.7153761292469698
+      }
+    },
+    {
+      "case": "replacement",
+      "question_key": "pair_0_different_answer",
+      "prediction": false,
+      "p": 0.3202765110312258,
+      "expected": [
+        true,
+        0.5
+      ],
+      "correct": false,
+      "answer": {
+        "probs": {
+          "False": 0.6797234889687742,
+          "True": 0.3202765110312258
+        },
+        "confidence": 0.6797234889687742,
+        "prediction_set": [
+          false
+        ],
+        "abstain": false,
+        "unbound": false,
+        "settle_steps": 12,
+        "energy": -1.2894290685653687,
+        "adapter": null,
+        "gate": 4.732306479127146e-06,
+        "boolean": 0.3202765110312258,
+        "noul": 0.3202765110312258
+      }
+    },
+    {
+      "case": "replacement",
+      "question_key": "pair_0_outdated",
+      "prediction": false,
+      "p": 0.17407108895912435,
+      "expected": [
+        true,
+        0.5
+      ],
+      "correct": false,
+      "answer": {
+        "probs": {
+          "False": 0.8259289110408756,
+          "True": 0.17407108895912435
+        },
+        "confidence": 0.8259289110408756,
+        "prediction_set": [
+          false
+        ],
+        "abstain": false,
+        "unbound": false,
+        "settle_steps": 12,
+        "energy": -1.8022737503051758,
+        "adapter": null,
+        "gate": 3.4770976071740733e-06,
+        "boolean": 0.17407108895912435,
+        "noul": 0.17407108895912435
+      }
+    },
+    {
+      "case": "replacement",
+      "question_key": "pair_0_new_reports_change",
+      "prediction": true,
+      "p": 0.9752918200353083,
+      "expected": [
+        true,
+        0.5
+      ],
+      "correct": true,
+      "answer": {
+        "probs": {
+          "False": 0.02470817996469172,
+          "True": 0.9752918200353083
+        },
+        "confidence": 0.9752918200353083,
+        "prediction_set": [
+          true
+        ],
+        "abstain": false,
+        "unbound": false,
+        "settle_steps": 12,
+        "energy": -2.161314010620117,
+        "adapter": null,
+        "gate": 1.9103539671050385e-05,
+        "boolean": 0.9752918200353083,
+        "noul": 0.9752918200353083
+      }
+    },
+    {
+      "case": "replacement",
+      "question_key": "pair_0_candidate_reports_change",
+      "prediction": true,
+      "p": 0.9686055998981159,
+      "expected": [
+        false,
+        0.5
+      ],
+      "correct": false,
+      "answer": {
+        "probs": {
+          "False": 0.03139440010188418,
+          "True": 0.9686055998981159
+        },
+        "confidence": 0.9686055998981159,
+        "prediction_set": [
+          true
+        ],
+        "abstain": false,
+        "unbound": false,
+        "settle_steps": 12,
+        "energy": -2.1942873001098633,
+        "adapter": null,
+        "gate": 1.624190372240264e-05,
+        "boolean": 0.9686055998981159,
+        "noul": 0.9686055998981159
+      }
+    },
+    {
+      "case": "replacement",
+      "question_key": "pair_0_new_covers",
+      "prediction": true,
+      "p": 0.8043641075173141,
+      "expected": [
+        false,
+        0.5
+      ],
+      "correct": false,
+      "answer": {
+        "probs": {
+          "False": 0.19563589248268579,
+          "True": 0.8043641075173141
+        },
+        "confidence": 0.8043641075173141,
+        "prediction_set": [
+          true
+        ],
+        "abstain": false,
+        "unbound": false,
+        "settle_steps": 12,
+        "energy": -1.6302008628845215,
+        "adapter": null,
+        "gate": 3.192000576746068e-06,
+        "boolean": 0.8043641075173141,
+        "noul": 0.8043641075173141
+      }
+    },
+    {
+      "case": "replacement",
+      "question_key": "pair_0_candidate_covers",
+      "prediction": true,
+      "p": 0.5298829042308862,
+      "expected": [
+        false,
+        0.5
+      ],
+      "correct": false,
+      "answer": {
+        "probs": {
+          "False": 0.47011709576911376,
+          "True": 0.5298829042308862
+        },
+        "confidence": 0.5298829042308862,
+        "prediction_set": [
+          false,
+          true
+        ],
+        "abstain": true,
+        "unbound": false,
+        "settle_steps": 12,
+        "energy": -0.9703564643859863,
+        "adapter": null,
+        "gate": 4.844834165851353e-06,
+        "boolean": 0.5298829042308862,
+        "noul": 0.5298829042308862
+      }
+    },
+    {
+      "case": "replacement",
+      "question_key": "pair_0_link_usefulness",
+      "prediction": true,
+      "p": 0.5897645834851808,
+      "expected": [
+        true,
+        0.5
+      ],
+      "correct": true,
+      "answer": {
+        "probs": {
+          "False": 0.4102354165148192,
+          "True": 0.5897645834851808
+        },
+        "confidence": 0.5897645834851808,
+        "prediction_set": [
+          true
+        ],
+        "abstain": true,
+        "unbound": false,
+        "settle_steps": 12,
+        "energy": -0.9682595729827881,
+        "adapter": null,
+        "gate": 1.0925789865723345e-05,
+        "boolean": 0.5897645834851808,
+        "noul": 0.5897645834851808
+      }
+    },
+    {
+      "case": "replacement",
+      "question_key": "pair_0_pattern",
+      "prediction": false,
+      "p": 0.1316281012829697,
+      "expected": [
+        false,
+        0.5
+      ],
+      "correct": true,
+      "answer": {
+        "probs": {
+          "False": 0.8683718987170304,
+          "True": 0.1316281012829697
+        },
+        "confidence": 0.8683718987170304,
+        "prediction_set": [
+          false
+        ],
+        "abstain": false,
+        "unbound": false,
+        "settle_steps": 12,
+        "energy": -1.7860897779464722,
+        "adapter": null,
+        "gate": 1.8361146430834197e-05,
+        "boolean": 0.1316281012829697,
+        "noul": 0.1316281012829697
+      }
+    },
+    {
+      "case": "choice",
+      "question_key": "route",
+      "prediction": "coder",
+      "p": null,
+      "expected": "coder",
+      "correct": true,
+      "answer": {
+        "probs": {
+          "coder": 0.7365096985430442,
+          "reviewer": 0.26349030145695584
+        },
+        "confidence": 0.7365096985430442,
+        "prediction_set": [
+          "coder",
+          "reviewer"
+        ],
+        "abstain": false,
+        "unbound": false,
+        "settle_steps": 12,
+        "energy": -1.090569019317627,
+        "adapter": null,
+        "gate": 6.351603133225581e-06,
+        "choice": "coder"
+      }
+    },
+    {
+      "case": "procedure",
+      "question_key": "procedural",
+      "prediction": true,
+      "p": 0.8718968790267486,
+      "expected": [
+        true,
+        0.5
+      ],
+      "correct": true,
+      "answer": {
+        "probs": {
+          "False": 0.1281031209732515,
+          "True": 0.8718968790267486
+        },
+        "confidence": 0.8718968790267486,
+        "prediction_set": [
+          true
+        ],
+        "abstain": false,
+        "unbound": false,
+        "settle_steps": 12,
+        "energy": -2.204749345779419,
+        "adapter": null,
+        "gate": 2.837979991454631e-06,
+        "boolean": 0.8718968790267486,
+        "noul": 0.8718968790267486
+      }
+    },
+    {
+      "case": "procedure",
+      "question_key": "status",
+      "prediction": false,
+      "p": 0.06469380320316917,
+      "expected": [
+        false,
+        0.85
+      ],
+      "correct": true,
+      "answer": {
+        "probs": {
+          "False": 0.9353061967968308,
+          "True": 0.06469380320316917
+        },
+        "confidence": 0.9353061967968308,
+        "prediction_set": [
+          false
+        ],
+        "abstain": false,
+        "unbound": false,
+        "settle_steps": 12,
+        "energy": -2.08090877532959,
+        "adapter": null,
+        "gate": 4.775007982971147e-05,
+        "boolean": 0.06469380320316917,
+        "noul": 0.06469380320316917
+      }
+    },
+    {
+      "case": "procedure",
+      "question_key": "injection",
+      "prediction": false,
+      "p": 0.002331863722754959,
+      "expected": [
+        false,
+        0.5
+      ],
+      "correct": true,
+      "answer": {
+        "probs": {
+          "False": 0.997668136277245,
+          "True": 0.002331863722754959
+        },
+        "confidence": 0.997668136277245,
+        "prediction_set": [
+          false
+        ],
+        "abstain": false,
+        "unbound": false,
+        "settle_steps": 12,
+        "energy": -1.9965876340866089,
+        "adapter": null,
+        "gate": 5.788125690742163e-06,
+        "boolean": 0.002331863722754959,
+        "noul": 0.002331863722754959
+      }
+    },
+    {
+      "case": "preference",
+      "question_key": "preference",
+      "prediction": false,
+      "p": 0.13834024490570082,
+      "expected": [
+        true,
+        0.5
+      ],
+      "correct": false,
+      "answer": {
+        "probs": {
+          "False": 0.8616597550942992,
+          "True": 0.13834024490570082
+        },
+        "confidence": 0.8616597550942992,
+        "prediction_set": [
+          false
+        ],
+        "abstain": false,
+        "unbound": false,
+        "settle_steps": 12,
+        "energy": -1.5855216979980469,
+        "adapter": null,
+        "gate": 8.809486757854756e-07,
+        "boolean": 0.13834024490570082,
+        "noul": 0.13834024490570082
+      }
+    },
+    {
+      "case": "preference",
+      "question_key": "status",
+      "prediction": false,
+      "p": 0.0018803339143254165,
+      "expected": [
+        false,
+        0.85
+      ],
+      "correct": true,
+      "answer": {
+        "probs": {
+          "False": 0.9981196660856747,
+          "True": 0.0018803339143254165
+        },
+        "confidence": 0.9981196660856747,
+        "prediction_set": [
+          false
+        ],
+        "abstain": false,
+        "unbound": false,
+        "settle_steps": 12,
+        "energy": -2.048337697982788,
+        "adapter": null,
+        "gate": 7.4820968620770145e-06,
+        "boolean": 0.0018803339143254165,
+        "noul": 0.0018803339143254165
+      }
+    },
+    {
+      "case": "preference",
+      "question_key": "injection",
+      "prediction": false,
+      "p": 0.013946623401572947,
+      "expected": [
+        false,
+        0.5
+      ],
+      "correct": true,
+      "answer": {
+        "probs": {
+          "False": 0.9860533765984271,
+          "True": 0.013946623401572947
+        },
+        "confidence": 0.9860533765984271,
+        "prediction_set": [
+          false
+        ],
+        "abstain": false,
+        "unbound": false,
+        "settle_steps": 12,
+        "energy": -1.2956701517105103,
+        "adapter": null,
+        "gate": 4.198514943709597e-06,
+        "boolean": 0.013946623401572947,
+        "noul": 0.013946623401572947
+      }
+    },
+    {
+      "case": "convention",
+      "question_key": "convention",
+      "prediction": false,
+      "p": 0.04226469006272841,
+      "expected": [
+        true,
+        0.5
+      ],
+      "correct": false,
+      "answer": {
+        "probs": {
+          "False": 0.9577353099372715,
+          "True": 0.04226469006272841
+        },
+        "confidence": 0.9577353099372715,
+        "prediction_set": [
+          false
+        ],
+        "abstain": false,
+        "unbound": false,
+        "settle_steps": 12,
+        "energy": -2.1366865634918213,
+        "adapter": null,
+        "gate": 4.712458576250356e-06,
+        "boolean": 0.04226469006272841,
+        "noul": 0.04226469006272841
+      }
+    },
+    {
+      "case": "convention",
+      "question_key": "status",
+      "prediction": false,
+      "p": 0.008358885264826562,
+      "expected": [
+        false,
+        0.85
+      ],
+      "correct": true,
+      "answer": {
+        "probs": {
+          "False": 0.9916411147351735,
+          "True": 0.008358885264826562
+        },
+        "confidence": 0.9916411147351735,
+        "prediction_set": [
+          false
+        ],
+        "abstain": false,
+        "unbound": false,
+        "settle_steps": 12,
+        "energy": -2.0086965560913086,
+        "adapter": null,
+        "gate": 1.9169237930327654e-05,
+        "boolean": 0.008358885264826562,
+        "noul": 0.008358885264826562
+      }
+    },
+    {
+      "case": "convention",
+      "question_key": "injection",
+      "prediction": true,
+      "p": 0.5551092846284564,
+      "expected": [
+        false,
+        0.5
+      ],
+      "correct": false,
+      "answer": {
+        "probs": {
+          "False": 0.44489071537154357,
+          "True": 0.5551092846284564
+        },
+        "confidence": 0.5551092846284564,
+        "prediction_set": [
+          false,
+          true
+        ],
+        "abstain": true,
+        "unbound": false,
+        "settle_steps": 12,
+        "energy": -0.7231903672218323,
+        "adapter": null,
+        "gate": 4.211499799566809e-06,
+        "boolean": 0.5551092846284564,
+        "noul": 0.5551092846284564
+      }
+    },
+    {
+      "case": "pending-task",
+      "question_key": "decision",
+      "prediction": false,
+      "p": 0.29114147480707403,
+      "expected": [
+        false,
+        0.5
+      ],
+      "correct": true,
+      "answer": {
+        "probs": {
+          "False": 0.708858525192926,
+          "True": 0.29114147480707403
+        },
+        "confidence": 0.708858525192926,
+        "prediction_set": [
+          false
+        ],
+        "abstain": false,
+        "unbound": false,
+        "settle_steps": 12,
+        "energy": -1.6684701442718506,
+        "adapter": null,
+        "gate": 7.712324986641761e-06,
+        "boolean": 0.29114147480707403,
+        "noul": 0.29114147480707403
+      }
+    },
+    {
+      "case": "pending-task",
+      "question_key": "status",
+      "prediction": false,
+      "p": 0.4616008286654418,
+      "expected": [
+        true,
+        0.85
+      ],
+      "correct": false,
+      "answer": {
+        "probs": {
+          "False": 0.5383991713345583,
+          "True": 0.4616008286654418
+        },
+        "confidence": 0.5383991713345583,
+        "prediction_set": [
+          false,
+          true
+        ],
+        "abstain": true,
+        "unbound": false,
+        "settle_steps": 12,
+        "energy": -1.0549118518829346,
+        "adapter": null,
+        "gate": 3.742806438822299e-05,
+        "boolean": 0.4616008286654418,
+        "noul": 0.4616008286654418
+      }
+    },
+    {
+      "case": "pending-task",
+      "question_key": "injection",
+      "prediction": false,
+      "p": 0.0006692588106526611,
+      "expected": [
+        false,
+        0.5
+      ],
+      "correct": true,
+      "answer": {
+        "probs": {
+          "False": 0.9993307411893473,
+          "True": 0.0006692588106526611
+        },
+        "confidence": 0.9993307411893473,
+        "prediction_set": [
+          false
+        ],
+        "abstain": false,
+        "unbound": false,
+        "settle_steps": 12,
+        "energy": -2.291733980178833,
+        "adapter": null,
+        "gate": 3.5694836242328165e-06,
+        "boolean": 0.0006692588106526611,
+        "noul": 0.0006692588106526611
+      }
+    },
+    {
+      "case": "dated-fix",
+      "question_key": "bugfix",
+      "prediction": true,
+      "p": 0.5831651550777032,
+      "expected": [
+        true,
+        0.5
+      ],
+      "correct": true,
+      "answer": {
+        "probs": {
+          "False": 0.41683484492229683,
+          "True": 0.5831651550777032
+        },
+        "confidence": 0.5831651550777032,
+        "prediction_set": [
+          true
+        ],
+        "abstain": true,
+        "unbound": false,
+        "settle_steps": 12,
+        "energy": -1.0162709951400757,
+        "adapter": null,
+        "gate": 7.077752570694429e-07,
+        "boolean": 0.5831651550777032,
+        "noul": 0.5831651550777032
+      }
+    },
+    {
+      "case": "dated-fix",
+      "question_key": "status",
+      "prediction": false,
+      "p": 0.03665117509405439,
+      "expected": [
+        false,
+        0.85
+      ],
+      "correct": true,
+      "answer": {
+        "probs": {
+          "False": 0.9633488249059455,
+          "True": 0.03665117509405439
+        },
+        "confidence": 0.9633488249059455,
+        "prediction_set": [
+          false
+        ],
+        "abstain": false,
+        "unbound": false,
+        "settle_steps": 12,
+        "energy": -2.0177323818206787,
+        "adapter": null,
+        "gate": 1.9016835722140968e-05,
+        "boolean": 0.03665117509405439,
+        "noul": 0.03665117509405439
+      }
+    },
+    {
+      "case": "dated-fix",
+      "question_key": "injection",
+      "prediction": false,
+      "p": 0.0009755395214040167,
+      "expected": [
+        false,
+        0.5
+      ],
+      "correct": true,
+      "answer": {
+        "probs": {
+          "False": 0.9990244604785959,
+          "True": 0.0009755395214040167
+        },
+        "confidence": 0.9990244604785959,
+        "prediction_set": [
+          false
+        ],
+        "abstain": false,
+        "unbound": false,
+        "settle_steps": 12,
+        "energy": -2.100404977798462,
+        "adapter": null,
+        "gate": 4.284283932065591e-06,
+        "boolean": 0.0009755395214040167,
+        "noul": 0.0009755395214040167
+      }
+    },
+    {
+      "case": "directory-evidence",
+      "question_key": "item_0",
+      "prediction": true,
+      "p": 0.7751235476716207,
+      "expected": [
+        true,
+        0.3
+      ],
+      "correct": true,
+      "answer": {
+        "probs": {
+          "False": 0.22487645232837938,
+          "True": 0.7751235476716207
+        },
+        "confidence": 0.7751235476716207,
+        "prediction_set": [
+          true
+        ],
+        "abstain": false,
+        "unbound": false,
+        "settle_steps": 12,
+        "energy": -1.4210145473480225,
+        "adapter": null,
+        "gate": 1.8363090930506587e-05,
+        "boolean": 0.7751235476716207,
+        "noul": 0.7751235476716207
+      }
+    },
+    {
+      "case": "directory-evidence",
+      "question_key": "item_1",
+      "prediction": true,
+      "p": 0.652353570425329,
+      "expected": [
+        false,
+        0.3
+      ],
+      "correct": false,
+      "answer": {
+        "probs": {
+          "False": 0.3476464295746709,
+          "True": 0.652353570425329
+        },
+        "confidence": 0.652353570425329,
+        "prediction_set": [
+          true
+        ],
+        "abstain": false,
+        "unbound": false,
+        "settle_steps": 12,
+        "energy": -1.2705193758010864,
+        "adapter": null,
+        "gate": 7.70497354096733e-06,
+        "boolean": 0.652353570425329,
+        "noul": 0.652353570425329
+      }
+    },
+    {
+      "case": "directory-evidence",
+      "question_key": "item_2",
+      "prediction": true,
+      "p": 0.4902366349307996,
+      "expected": [
+        false,
+        0.3
+      ],
+      "correct": false,
+      "answer": {
+        "probs": {
+          "False": 0.5097633650692004,
+          "True": 0.4902366349307996
+        },
+        "confidence": 0.5097633650692004,
+        "prediction_set": [
+          false,
+          true
+        ],
+        "abstain": true,
+        "unbound": false,
+        "settle_steps": 12,
+        "energy": -1.2348140478134155,
+        "adapter": null,
+        "gate": 5.119555225974182e-06,
+        "boolean": 0.4902366349307996,
+        "noul": 0.4902366349307996
+      }
+    },
+    {
+      "case": "directory-evidence",
+      "question_key": "item_3",
+      "prediction": true,
+      "p": 0.56103772957511,
+      "expected": [
+        true,
+        0.3
+      ],
+      "correct": true,
+      "answer": {
+        "probs": {
+          "False": 0.43896227042489,
+          "True": 0.56103772957511
+        },
+        "confidence": 0.56103772957511,
+        "prediction_set": [
+          false,
+          true
+        ],
+        "abstain": true,
+        "unbound": false,
+        "settle_steps": 12,
+        "energy": -1.3704025745391846,
+        "adapter": null,
+        "gate": 1.582633012731094e-05,
+        "boolean": 0.56103772957511,
+        "noul": 0.56103772957511
+      }
+    },
+    {
+      "case": "complete-port",
+      "question_key": "evidence_sufficient",
+      "prediction": true,
+      "p": 0.9424893767900328,
+      "expected": [
+        true,
+        0.3
+      ],
+      "correct": true,
+      "answer": {
+        "probs": {
+          "False": 0.057510623209967325,
+          "True": 0.9424893767900328
+        },
+        "confidence": 0.9424893767900328,
+        "prediction_set": [
+          true
+        ],
+        "abstain": false,
+        "unbound": true,
+        "settle_steps": 12,
+        "energy": -0.10663342475891113,
+        "adapter": null,
+        "gate": 6.637417300225934e-06,
+        "boolean": 0.9424893767900328,
+        "noul": 0.9424893767900328
+      }
+    },
+    {
+      "case": "complete-port",
+      "question_key": "missing_evidence",
+      "prediction": false,
+      "p": 0.6994245325368716,
+      "expected": [
+        false,
+        0.7
+      ],
+      "correct": true,
+      "answer": {
+        "probs": {
+          "False": 0.3005754674631284,
+          "True": 0.6994245325368716
+        },
+        "confidence": 0.6994245325368716,
+        "prediction_set": [
+          true
+        ],
+        "abstain": false,
+        "unbound": true,
+        "settle_steps": 12,
+        "energy": 1.2582309246063232,
+        "adapter": null,
+        "gate": 1.1319027635181556e-06,
+        "boolean": 0.6994245325368716,
+        "noul": 0.6994245325368716
+      }
+    },
+    {
+      "case": "complete-alias-cause",
+      "question_key": "evidence_sufficient",
+      "prediction": false,
+      "p": 0.21492639774530722,
+      "expected": [
+        true,
+        0.3
+      ],
+      "correct": false,
+      "answer": {
+        "probs": {
+          "False": 0.7850736022546928,
+          "True": 0.21492639774530722
+        },
+        "confidence": 0.7850736022546928,
+        "prediction_set": [
+          false
+        ],
+        "abstain": false,
+        "unbound": false,
+        "settle_steps": 12,
+        "energy": -1.439745545387268,
+        "adapter": null,
+        "gate": 5.720092758565443e-06,
+        "boolean": 0.21492639774530722,
+        "noul": 0.21492639774530722
+      }
+    },
+    {
+      "case": "complete-alias-cause",
+      "question_key": "missing_evidence",
+      "prediction": false,
+      "p": 0.0291646864335469,
+      "expected": [
+        false,
+        0.7
+      ],
+      "correct": true,
+      "answer": {
+        "probs": {
+          "False": 0.970835313566453,
+          "True": 0.0291646864335469
+        },
+        "confidence": 0.970835313566453,
+        "prediction_set": [
+          false
+        ],
+        "abstain": false,
+        "unbound": false,
+        "settle_steps": 12,
+        "energy": -2.335923671722412,
+        "adapter": null,
+        "gate": 1.3623381391880685e-06,
+        "boolean": 0.0291646864335469,
+        "noul": 0.0291646864335469
+      }
+    },
+    {
+      "case": "complete-alias-cause",
+      "question_key": "multi_hop",
+      "prediction": false,
+      "p": 0.06689586749263762,
+      "expected": [
+        true,
+        0.5
+      ],
+      "correct": false,
+      "answer": {
+        "probs": {
+          "False": 0.9331041325073623,
+          "True": 0.06689586749263762
+        },
+        "confidence": 0.9331041325073623,
+        "prediction_set": [
+          false
+        ],
+        "abstain": false,
+        "unbound": false,
+        "settle_steps": 12,
+        "energy": -1.4963535070419312,
+        "adapter": null,
+        "gate": 1.9008328422387422e-07,
+        "boolean": 0.06689586749263762,
+        "noul": 0.06689586749263762
+      }
+    },
+    {
+      "case": "review-choice",
+      "question_key": "route",
+      "prediction": "coder",
+      "p": null,
+      "expected": "reviewer",
+      "correct": false,
+      "answer": {
+        "probs": {
+          "coder": 0.5268420026455358,
+          "reviewer": 0.47315799735446423
+        },
+        "confidence": 0.5268420026455358,
+        "prediction_set": [
+          "coder",
+          "reviewer"
+        ],
+        "abstain": true,
+        "unbound": true,
+        "settle_steps": 12,
+        "energy": 0.5824971199035645,
+        "adapter": null,
+        "gate": 1.708924537524581e-05,
+        "choice": "coder"
+      }
+    },
+    {
+      "case": "causal-direction",
+      "question_key": "pair_0_semantic",
+      "prediction": true,
+      "p": 0.9612420823563327,
+      "expected": [
+        true,
+        0.5
+      ],
+      "correct": true,
+      "answer": {
+        "probs": {
+          "False": 0.038757917643667386,
+          "True": 0.9612420823563327
+        },
+        "confidence": 0.9612420823563327,
+        "prediction_set": [
+          true
+        ],
+        "abstain": false,
+        "unbound": false,
+        "settle_steps": 12,
+        "energy": -2.1800825595855713,
+        "adapter": null,
+        "gate": 1.426440348950564e-06,
+        "boolean": 0.9612420823563327,
+        "noul": 0.9612420823563327
+      }
+    },
+    {
+      "case": "causal-direction",
+      "question_key": "pair_0_candidate_causes_new",
+      "prediction": true,
+      "p": 0.6233913110989597,
+      "expected": [
+        true,
+        0.5
+      ],
+      "correct": true,
+      "answer": {
+        "probs": {
+          "False": 0.37660868890104027,
+          "True": 0.6233913110989597
+        },
+        "confidence": 0.6233913110989597,
+        "prediction_set": [
+          true
+        ],
+        "abstain": false,
+        "unbound": false,
+        "settle_steps": 12,
+        "energy": -1.7841298580169678,
+        "adapter": null,
+        "gate": 2.699479864531895e-06,
+        "boolean": 0.6233913110989597,
+        "noul": 0.6233913110989597
+      }
+    },
+    {
+      "case": "causal-direction",
+      "question_key": "pair_0_new_causes_candidate",
+      "prediction": false,
+      "p": 0.3221653534300401,
+      "expected": [
+        false,
+        0.5
+      ],
+      "correct": true,
+      "answer": {
+        "probs": {
+          "False": 0.67783464656996,
+          "True": 0.3221653534300401
+        },
+        "confidence": 0.67783464656996,
+        "prediction_set": [
+          false
+        ],
+        "abstain": false,
+        "unbound": false,
+        "settle_steps": 12,
+        "energy": -1.7431623935699463,
+        "adapter": null,
+        "gate": 2.6324414648115635e-06,
+        "boolean": 0.3221653534300401,
+        "noul": 0.3221653534300401
+      }
+    },
+    {
+      "case": "unresolved-conflict",
+      "question_key": "contradiction",
+      "prediction": false,
+      "p": 0.37161212635355656,
+      "expected": [
+        true,
+        0.5
+      ],
+      "correct": false,
+      "answer": {
+        "probs": {
+          "False": 0.6283878736464433,
+          "True": 0.37161212635355656
+        },
+        "confidence": 0.6283878736464433,
+        "prediction_set": [
+          false
+        ],
+        "abstain": false,
+        "unbound": false,
+        "settle_steps": 12,
+        "energy": -1.0011733770370483,
+        "adapter": null,
+        "gate": 1.1858766129080323e-06,
+        "boolean": 0.37161212635355656,
+        "noul": 0.37161212635355656
+      }
+    },
+    {
+      "case": "resolved-conflict",
+      "question_key": "contradiction",
+      "prediction": true,
+      "p": 0.6571659843273536,
+      "expected": [
+        false,
+        0.5
+      ],
+      "correct": false,
+      "answer": {
+        "probs": {
+          "False": 0.34283401567264643,
+          "True": 0.6571659843273536
+        },
+        "confidence": 0.6571659843273536,
+        "prediction_set": [
+          true
+        ],
+        "abstain": false,
+        "unbound": false,
+        "settle_steps": 12,
+        "energy": -1.0392647981643677,
+        "adapter": null,
+        "gate": 3.843065314867999e-06,
+        "boolean": 0.6571659843273536,
+        "noul": 0.6571659843273536
+      }
+    }
+  ],
+  "rows": [
+    {
+      "run": 1,
+      "case": "durable",
+      "seconds": 0.09493183599988697,
+      "questions": 3,
+      "correct": 3,
+      "usage": null
+    },
+    {
+      "run": 1,
+      "case": "work-status",
+      "seconds": 0.06745928500095033,
+      "questions": 2,
+      "correct": 1,
+      "usage": null
+    },
+    {
+      "run": 1,
+      "case": "injection",
+      "seconds": 0.04370900099820574,
+      "questions": 1,
+      "correct": 1,
+      "usage": null
+    },
+    {
+      "run": 1,
+      "case": "relevance",
+      "seconds": 0.042819557998882374,
+      "questions": 2,
+      "correct": 1,
+      "usage": null
+    },
+    {
+      "run": 1,
+      "case": "missing-evidence",
+      "seconds": 0.04542263800249202,
+      "questions": 2,
+      "correct": 1,
+      "usage": null
+    },
+    {
+      "run": 1,
+      "case": "replacement",
+      "seconds": 0.26635051799894427,
+      "questions": 9,
+      "correct": 4,
+      "usage": null
+    },
+    {
+      "run": 1,
+      "case": "choice",
+      "seconds": 0.04760533599983319,
+      "questions": 1,
+      "correct": 1,
+      "usage": null
+    },
+    {
+      "run": 1,
+      "case": "procedure",
+      "seconds": 0.12276707999990322,
+      "questions": 3,
+      "correct": 3,
+      "usage": null
+    },
+    {
+      "run": 1,
+      "case": "preference",
+      "seconds": 0.1276659409995773,
+      "questions": 3,
+      "correct": 2,
+      "usage": null
+    },
+    {
+      "run": 1,
+      "case": "convention",
+      "seconds": 0.10868373699850054,
+      "questions": 3,
+      "correct": 1,
+      "usage": null
+    },
+    {
+      "run": 1,
+      "case": "pending-task",
+      "seconds": 0.10982759599937708,
+      "questions": 3,
+      "correct": 2,
+      "usage": null
+    },
+    {
+      "run": 1,
+      "case": "dated-fix",
+      "seconds": 0.11602546299764072,
+      "questions": 3,
+      "correct": 3,
+      "usage": null
+    },
+    {
+      "run": 1,
+      "case": "directory-evidence",
+      "seconds": 0.08667266499833204,
+      "questions": 4,
+      "correct": 2,
+      "usage": null
+    },
+    {
+      "run": 1,
+      "case": "complete-port",
+      "seconds": 0.06324514699736028,
+      "questions": 2,
+      "correct": 2,
+      "usage": null
+    },
+    {
+      "run": 1,
+      "case": "complete-alias-cause",
+      "seconds": 0.08640747100071167,
+      "questions": 3,
+      "correct": 1,
+      "usage": null
+    },
+    {
+      "run": 1,
+      "case": "review-choice",
+      "seconds": 0.05842893999943044,
+      "questions": 1,
+      "correct": 0,
+      "usage": null
+    },
+    {
+      "run": 1,
+      "case": "causal-direction",
+      "seconds": 0.08824359699792694,
+      "questions": 3,
+      "correct": 3,
+      "usage": null
+    },
+    {
+      "run": 1,
+      "case": "unresolved-conflict",
+      "seconds": 0.06374040999799035,
+      "questions": 1,
+      "correct": 0,
+      "usage": null
+    },
+    {
+      "run": 1,
+      "case": "resolved-conflict",
+      "seconds": 0.06285803100035992,
+      "questions": 1,
+      "correct": 0,
+      "usage": null
+    },
+    {
+      "run": 2,
+      "case": "durable",
+      "seconds": 0.10926804699920467,
+      "questions": 3,
+      "correct": 3,
+      "usage": null
+    },
+    {
+      "run": 2,
+      "case": "work-status",
+      "seconds": 0.0795888950015069,
+      "questions": 2,
+      "correct": 1,
+      "usage": null
+    },
+    {
+      "run": 2,
+      "case": "injection",
+      "seconds": 0.043662485000822926,
+      "questions": 1,
+      "correct": 1,
+      "usage": null
+    },
+    {
+      "run": 2,
+      "case": "relevance",
+      "seconds": 0.04278719300054945,
+      "questions": 2,
+      "correct": 1,
+      "usage": null
+    },
+    {
+      "run": 2,
+      "case": "missing-evidence",
+      "seconds": 0.06183410800076672,
+      "questions": 2,
+      "correct": 1,
+      "usage": null
+    },
+    {
+      "run": 2,
+      "case": "replacement",
+      "seconds": 0.28479108800092945,
+      "questions": 9,
+      "correct": 4,
+      "usage": null
+    },
+    {
+      "run": 2,
+      "case": "choice",
+      "seconds": 0.02850917300020228,
+      "questions": 1,
+      "correct": 1,
+      "usage": null
+    },
+    {
+      "run": 2,
+      "case": "procedure",
+      "seconds": 0.1014318249981443,
+      "questions": 3,
+      "correct": 3,
+      "usage": null
+    },
+    {
+      "run": 2,
+      "case": "preference",
+      "seconds": 0.09834351199970115,
+      "questions": 3,
+      "correct": 2,
+      "usage": null
+    },
+    {
+      "run": 2,
+      "case": "convention",
+      "seconds": 0.09975792199838907,
+      "questions": 3,
+      "correct": 1,
+      "usage": null
+    },
+    {
+      "run": 2,
+      "case": "pending-task",
+      "seconds": 0.10790893800003687,
+      "questions": 3,
+      "correct": 2,
+      "usage": null
+    },
+    {
+      "run": 2,
+      "case": "dated-fix",
+      "seconds": 0.10173641499932273,
+      "questions": 3,
+      "correct": 3,
+      "usage": null
+    },
+    {
+      "run": 2,
+      "case": "directory-evidence",
+      "seconds": 0.08083673900182475,
+      "questions": 4,
+      "correct": 2,
+      "usage": null
+    },
+    {
+      "run": 2,
+      "case": "complete-port",
+      "seconds": 0.04909101399971405,
+      "questions": 2,
+      "correct": 2,
+      "usage": null
+    },
+    {
+      "run": 2,
+      "case": "complete-alias-cause",
+      "seconds": 0.0774452650002786,
+      "questions": 3,
+      "correct": 1,
+      "usage": null
+    },
+    {
+      "run": 2,
+      "case": "review-choice",
+      "seconds": 0.024340421998203965,
+      "questions": 1,
+      "correct": 0,
+      "usage": null
+    },
+    {
+      "run": 2,
+      "case": "causal-direction",
+      "seconds": 0.08446512799855554,
+      "questions": 3,
+      "correct": 3,
+      "usage": null
+    },
+    {
+      "run": 2,
+      "case": "unresolved-conflict",
+      "seconds": 0.0371832170021662,
+      "questions": 1,
+      "correct": 0,
+      "usage": null
+    },
+    {
+      "run": 2,
+      "case": "resolved-conflict",
+      "seconds": 0.03623256300124922,
+      "questions": 1,
+      "correct": 0,
+      "usage": null
+    },
+    {
+      "run": 3,
+      "case": "durable",
+      "seconds": 0.09644800999740255,
+      "questions": 3,
+      "correct": 3,
+      "usage": null
+    },
+    {
+      "run": 3,
+      "case": "work-status",
+      "seconds": 0.07784913999785203,
+      "questions": 2,
+      "correct": 1,
+      "usage": null
+    },
+    {
+      "run": 3,
+      "case": "injection",
+      "seconds": 0.06649850900066667,
+      "questions": 1,
+      "correct": 1,
+      "usage": null
+    },
+    {
+      "run": 3,
+      "case": "relevance",
+      "seconds": 0.050895559001219226,
+      "questions": 2,
+      "correct": 1,
+      "usage": null
+    },
+    {
+      "run": 3,
+      "case": "missing-evidence",
+      "seconds": 0.04484083100032876,
+      "questions": 2,
+      "correct": 1,
+      "usage": null
+    },
+    {
+      "run": 3,
+      "case": "replacement",
+      "seconds": 0.24341066400302225,
+      "questions": 9,
+      "correct": 4,
+      "usage": null
+    },
+    {
+      "run": 3,
+      "case": "choice",
+      "seconds": 0.03939871799957473,
+      "questions": 1,
+      "correct": 1,
+      "usage": null
+    },
+    {
+      "run": 3,
+      "case": "procedure",
+      "seconds": 0.09676807999858283,
+      "questions": 3,
+      "correct": 3,
+      "usage": null
+    },
+    {
+      "run": 3,
+      "case": "preference",
+      "seconds": 0.0960059259996342,
+      "questions": 3,
+      "correct": 2,
+      "usage": null
+    },
+    {
+      "run": 3,
+      "case": "convention",
+      "seconds": 0.09548308100056602,
+      "questions": 3,
+      "correct": 1,
+      "usage": null
+    },
+    {
+      "run": 3,
+      "case": "pending-task",
+      "seconds": 0.10681284000020241,
+      "questions": 3,
+      "correct": 2,
+      "usage": null
+    },
+    {
+      "run": 3,
+      "case": "dated-fix",
+      "seconds": 0.10846482499982812,
+      "questions": 3,
+      "correct": 3,
+      "usage": null
+    },
+    {
+      "run": 3,
+      "case": "directory-evidence",
+      "seconds": 0.08650851999846054,
+      "questions": 4,
+      "correct": 2,
+      "usage": null
+    },
+    {
+      "run": 3,
+      "case": "complete-port",
+      "seconds": 0.06328086099892971,
+      "questions": 2,
+      "correct": 2,
+      "usage": null
+    },
+    {
+      "run": 3,
+      "case": "complete-alias-cause",
+      "seconds": 0.08365137500004494,
+      "questions": 3,
+      "correct": 1,
+      "usage": null
+    },
+    {
+      "run": 3,
+      "case": "review-choice",
+      "seconds": 0.0600336800016521,
+      "questions": 1,
+      "correct": 0,
+      "usage": null
+    },
+    {
+      "run": 3,
+      "case": "causal-direction",
+      "seconds": 0.08799986400117632,
+      "questions": 3,
+      "correct": 3,
+      "usage": null
+    },
+    {
+      "run": 3,
+      "case": "unresolved-conflict",
+      "seconds": 0.06326004700167687,
+      "questions": 1,
+      "correct": 0,
+      "usage": null
+    },
+    {
+      "run": 3,
+      "case": "resolved-conflict",
+      "seconds": 0.042713439997896785,
+      "questions": 1,
+      "correct": 0,
+      "usage": null
+    },
+    {
+      "run": 4,
+      "case": "durable",
+      "seconds": 0.09596137199696386,
+      "questions": 3,
+      "correct": 3,
+      "usage": null
+    },
+    {
+      "run": 4,
+      "case": "work-status",
+      "seconds": 0.07410952400095994,
+      "questions": 2,
+      "correct": 1,
+      "usage": null
+    },
+    {
+      "run": 4,
+      "case": "injection",
+      "seconds": 0.04650844000207144,
+      "questions": 1,
+      "correct": 1,
+      "usage": null
+    },
+    {
+      "run": 4,
+      "case": "relevance",
+      "seconds": 0.04647581099925446,
+      "questions": 2,
+      "correct": 1,
+      "usage": null
+    },
+    {
+      "run": 4,
+      "case": "missing-evidence",
+      "seconds": 0.04869539799983613,
+      "questions": 2,
+      "correct": 1,
+      "usage": null
+    },
+    {
+      "run": 4,
+      "case": "replacement",
+      "seconds": 0.26206460100002005,
+      "questions": 9,
+      "correct": 4,
+      "usage": null
+    },
+    {
+      "run": 4,
+      "case": "choice",
+      "seconds": 0.05873458499991102,
+      "questions": 1,
+      "correct": 1,
+      "usage": null
+    },
+    {
+      "run": 4,
+      "case": "procedure",
+      "seconds": 0.11417382099898532,
+      "questions": 3,
+      "correct": 3,
+      "usage": null
+    },
+    {
+      "run": 4,
+      "case": "preference",
+      "seconds": 0.11472080699968501,
+      "questions": 3,
+      "correct": 2,
+      "usage": null
+    },
+    {
+      "run": 4,
+      "case": "convention",
+      "seconds": 0.11486357399917324,
+      "questions": 3,
+      "correct": 1,
+      "usage": null
+    },
+    {
+      "run": 4,
+      "case": "pending-task",
+      "seconds": 0.11813859500034596,
+      "questions": 3,
+      "correct": 2,
+      "usage": null
+    },
+    {
+      "run": 4,
+      "case": "dated-fix",
+      "seconds": 0.11670803800006979,
+      "questions": 3,
+      "correct": 3,
+      "usage": null
+    },
+    {
+      "run": 4,
+      "case": "directory-evidence",
+      "seconds": 0.09202872999958345,
+      "questions": 4,
+      "correct": 2,
+      "usage": null
+    },
+    {
+      "run": 4,
+      "case": "complete-port",
+      "seconds": 0.0501528220011096,
+      "questions": 2,
+      "correct": 2,
+      "usage": null
+    },
+    {
+      "run": 4,
+      "case": "complete-alias-cause",
+      "seconds": 0.07920271500188392,
+      "questions": 3,
+      "correct": 1,
+      "usage": null
+    },
+    {
+      "run": 4,
+      "case": "review-choice",
+      "seconds": 0.02718648299924098,
+      "questions": 1,
+      "correct": 0,
+      "usage": null
+    },
+    {
+      "run": 4,
+      "case": "causal-direction",
+      "seconds": 0.08158810900204116,
+      "questions": 3,
+      "correct": 3,
+      "usage": null
+    },
+    {
+      "run": 4,
+      "case": "unresolved-conflict",
+      "seconds": 0.038483649001136655,
+      "questions": 1,
+      "correct": 0,
+      "usage": null
+    },
+    {
+      "run": 4,
+      "case": "resolved-conflict",
+      "seconds": 0.0396220729999186,
+      "questions": 1,
+      "correct": 0,
+      "usage": null
+    },
+    {
+      "run": 5,
+      "case": "durable",
+      "seconds": 0.11567963000197778,
+      "questions": 3,
+      "correct": 3,
+      "usage": null
+    },
+    {
+      "run": 5,
+      "case": "work-status",
+      "seconds": 0.08482305299912696,
+      "questions": 2,
+      "correct": 1,
+      "usage": null
+    },
+    {
+      "run": 5,
+      "case": "injection",
+      "seconds": 0.06769321599858813,
+      "questions": 1,
+      "correct": 1,
+      "usage": null
+    },
+    {
+      "run": 5,
+      "case": "relevance",
+      "seconds": 0.0610474940003769,
+      "questions": 2,
+      "correct": 1,
+      "usage": null
+    },
+    {
+      "run": 5,
+      "case": "missing-evidence",
+      "seconds": 0.06346059700081241,
+      "questions": 2,
+      "correct": 1,
+      "usage": null
+    },
+    {
+      "run": 5,
+      "case": "replacement",
+      "seconds": 0.29248501999973087,
+      "questions": 9,
+      "correct": 4,
+      "usage": null
+    },
+    {
+      "run": 5,
+      "case": "choice",
+      "seconds": 0.028190128999995068,
+      "questions": 1,
+      "correct": 1,
+      "usage": null
+    },
+    {
+      "run": 5,
+      "case": "procedure",
+      "seconds": 0.11678249800024787,
+      "questions": 3,
+      "correct": 3,
+      "usage": null
+    },
+    {
+      "run": 5,
+      "case": "preference",
+      "seconds": 0.11654317399734282,
+      "questions": 3,
+      "correct": 2,
+      "usage": null
+    },
+    {
+      "run": 5,
+      "case": "convention",
+      "seconds": 0.11711156499950448,
+      "questions": 3,
+      "correct": 1,
+      "usage": null
+    },
+    {
+      "run": 5,
+      "case": "pending-task",
+      "seconds": 0.11187568500099587,
+      "questions": 3,
+      "correct": 2,
+      "usage": null
+    },
+    {
+      "run": 5,
+      "case": "dated-fix",
+      "seconds": 0.10837087199979578,
+      "questions": 3,
+      "correct": 3,
+      "usage": null
+    },
+    {
+      "run": 5,
+      "case": "directory-evidence",
+      "seconds": 0.08734013099820004,
+      "questions": 4,
+      "correct": 2,
+      "usage": null
+    },
+    {
+      "run": 5,
+      "case": "complete-port",
+      "seconds": 0.06331162900096388,
+      "questions": 2,
+      "correct": 2,
+      "usage": null
+    },
+    {
+      "run": 5,
+      "case": "complete-alias-cause",
+      "seconds": 0.08689104299992323,
+      "questions": 3,
+      "correct": 1,
+      "usage": null
+    },
+    {
+      "run": 5,
+      "case": "review-choice",
+      "seconds": 0.05821383100192179,
+      "questions": 1,
+      "correct": 0,
+      "usage": null
+    },
+    {
+      "run": 5,
+      "case": "causal-direction",
+      "seconds": 0.09307986400017398,
+      "questions": 3,
+      "correct": 3,
+      "usage": null
+    },
+    {
+      "run": 5,
+      "case": "unresolved-conflict",
+      "seconds": 0.042095362001418835,
+      "questions": 1,
+      "correct": 0,
+      "usage": null
+    },
+    {
+      "run": 5,
+      "case": "resolved-conflict",
+      "seconds": 0.039953996001713676,
+      "questions": 1,
+      "correct": 0,
+      "usage": null
+    }
+  ]
+}

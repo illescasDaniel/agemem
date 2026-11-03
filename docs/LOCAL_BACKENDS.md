@@ -68,3 +68,5 @@ cascade accepted none. Across calibration plus final, cascade required 29/32
 hosted question fallbacks and saved only 3.22% of input tokens. These are small
 controlled fixtures with supplied candidate code, not independently human-labeled
 or end-to-end coding tasks.
+
+For the decision-probe results and the reasons for supporting QSIV locally, see [Decision model evaluation](DECISION_MODEL_EVALUATION.md).

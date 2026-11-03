@@ -9,7 +9,7 @@ from pathlib import Path
 
 from agemem.deciders import HostedJev, QSIVDecider, CascadingDecider
 from agemem.notes.decider import ChoiceQ
-from jevmem.questions import consolidation_questions, lite_escalation_questions, relevance_questions, typing_questions, relation_questions, stop_questions
+from agemem.notes.questions import consolidation_questions, lite_escalation_questions, relevance_questions, typing_questions, relation_questions, stop_questions
 
 
 def cases(expanded=False):

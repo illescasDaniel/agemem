@@ -1,0 +1,694 @@
+{
+  "model": "djinn-san/QSIV",
+  "runtime": "fp8",
+  "repeats": 5,
+  "warmup": "one complete suite, including lazy worker startup",
+  "timing_scope": "QSIVDecider.ask in-process caller, including worker transport and inference; excludes load and network",
+  "request_count": 95,
+  "question_count": 250,
+  "median_request_seconds": 0.010354881997045595,
+  "mean_request_seconds": 0.012979368441990932,
+  "p95_request_seconds": 0.032293387101526586,
+  "seconds_per_suite": [
+    0.2666713019971212,
+    0.24219567199543235,
+    0.2404668360031792,
+    0.24177531699751853,
+    0.24193087499588728
+  ],
+  "correct_per_suite": [
+    42,
+    42,
+    42,
+    42,
+    42
+  ],
+  "rows": [
+    {
+      "run": 1,
+      "case": "durable",
+      "questions": 3,
+      "seconds": 0.016589008999289945,
+      "correct": 3
+    },
+    {
+      "run": 1,
+      "case": "work-status",
+      "questions": 2,
+      "seconds": 0.010193844998866552,
+      "correct": 1
+    },
+    {
+      "run": 1,
+      "case": "injection",
+      "questions": 1,
+      "seconds": 0.0063747579988557845,
+      "correct": 1
+    },
+    {
+      "run": 1,
+      "case": "relevance",
+      "questions": 2,
+      "seconds": 0.030376268001418794,
+      "correct": 2
+    },
+    {
+      "run": 1,
+      "case": "missing-evidence",
+      "questions": 2,
+      "seconds": 0.010240788000373868,
+      "correct": 1
+    },
+    {
+      "run": 1,
+      "case": "replacement",
+      "questions": 9,
+      "seconds": 0.03738304700164008,
+      "correct": 8
+    },
+    {
+      "run": 1,
+      "case": "choice",
+      "questions": 1,
+      "seconds": 0.004724180998891825,
+      "correct": 1
+    },
+    {
+      "run": 1,
+      "case": "procedure",
+      "questions": 3,
+      "seconds": 0.016690418000507634,
+      "correct": 3
+    },
+    {
+      "run": 1,
+      "case": "preference",
+      "questions": 3,
+      "seconds": 0.016560467000090284,
+      "correct": 3
+    },
+    {
+      "run": 1,
+      "case": "convention",
+      "questions": 3,
+      "seconds": 0.016507592001289595,
+      "correct": 3
+    },
+    {
+      "run": 1,
+      "case": "pending-task",
+      "questions": 3,
+      "seconds": 0.01638467700104229,
+      "correct": 3
+    },
+    {
+      "run": 1,
+      "case": "dated-fix",
+      "questions": 3,
+      "seconds": 0.016532659999938915,
+      "correct": 2
+    },
+    {
+      "run": 1,
+      "case": "directory-evidence",
+      "questions": 4,
+      "seconds": 0.010339519001718145,
+      "correct": 4
+    },
+    {
+      "run": 1,
+      "case": "complete-port",
+      "questions": 2,
+      "seconds": 0.010175939998589456,
+      "correct": 2
+    },
+    {
+      "run": 1,
+      "case": "complete-alias-cause",
+      "questions": 3,
+      "seconds": 0.016497911998158088,
+      "correct": 2
+    },
+    {
+      "run": 1,
+      "case": "review-choice",
+      "questions": 1,
+      "seconds": 0.004706615996838082,
+      "correct": 1
+    },
+    {
+      "run": 1,
+      "case": "causal-direction",
+      "questions": 3,
+      "seconds": 0.016494452000188176,
+      "correct": 1
+    },
+    {
+      "run": 1,
+      "case": "unresolved-conflict",
+      "questions": 1,
+      "seconds": 0.0049456130000180565,
+      "correct": 1
+    },
+    {
+      "run": 1,
+      "case": "resolved-conflict",
+      "questions": 1,
+      "seconds": 0.004953539999405621,
+      "correct": 0
+    },
+    {
+      "run": 2,
+      "case": "durable",
+      "questions": 3,
+      "seconds": 0.016538317999220453,
+      "correct": 3
+    },
+    {
+      "run": 2,
+      "case": "work-status",
+      "questions": 2,
+      "seconds": 0.010083951001433888,
+      "correct": 1
+    },
+    {
+      "run": 2,
+      "case": "injection",
+      "questions": 1,
+      "seconds": 0.00651733199993032,
+      "correct": 1
+    },
+    {
+      "run": 2,
+      "case": "relevance",
+      "questions": 2,
+      "seconds": 0.006372558000293793,
+      "correct": 2
+    },
+    {
+      "run": 2,
+      "case": "missing-evidence",
+      "questions": 2,
+      "seconds": 0.01018881499840063,
+      "correct": 1
+    },
+    {
+      "run": 2,
+      "case": "replacement",
+      "questions": 9,
+      "seconds": 0.037311027001123875,
+      "correct": 8
+    },
+    {
+      "run": 2,
+      "case": "choice",
+      "questions": 1,
+      "seconds": 0.004706275001808535,
+      "correct": 1
+    },
+    {
+      "run": 2,
+      "case": "procedure",
+      "questions": 3,
+      "seconds": 0.016488436001964146,
+      "correct": 3
+    },
+    {
+      "run": 2,
+      "case": "preference",
+      "questions": 3,
+      "seconds": 0.016644571998767788,
+      "correct": 3
+    },
+    {
+      "run": 2,
+      "case": "convention",
+      "questions": 3,
+      "seconds": 0.016593881999142468,
+      "correct": 3
+    },
+    {
+      "run": 2,
+      "case": "pending-task",
+      "questions": 3,
+      "seconds": 0.016532753998035332,
+      "correct": 3
+    },
+    {
+      "run": 2,
+      "case": "dated-fix",
+      "questions": 3,
+      "seconds": 0.01650593799786293,
+      "correct": 2
+    },
+    {
+      "run": 2,
+      "case": "directory-evidence",
+      "questions": 4,
+      "seconds": 0.010354881997045595,
+      "correct": 4
+    },
+    {
+      "run": 2,
+      "case": "complete-port",
+      "questions": 2,
+      "seconds": 0.010106734000146389,
+      "correct": 2
+    },
+    {
+      "run": 2,
+      "case": "complete-alias-cause",
+      "questions": 3,
+      "seconds": 0.016564020999794593,
+      "correct": 2
+    },
+    {
+      "run": 2,
+      "case": "review-choice",
+      "questions": 1,
+      "seconds": 0.004562554000585806,
+      "correct": 1
+    },
+    {
+      "run": 2,
+      "case": "causal-direction",
+      "questions": 3,
+      "seconds": 0.01656757000091602,
+      "correct": 1
+    },
+    {
+      "run": 2,
+      "case": "unresolved-conflict",
+      "questions": 1,
+      "seconds": 0.004789513001014711,
+      "correct": 1
+    },
+    {
+      "run": 2,
+      "case": "resolved-conflict",
+      "questions": 1,
+      "seconds": 0.004766539997945074,
+      "correct": 0
+    },
+    {
+      "run": 3,
+      "case": "durable",
+      "questions": 3,
+      "seconds": 0.01634115099659539,
+      "correct": 3
+    },
+    {
+      "run": 3,
+      "case": "work-status",
+      "questions": 2,
+      "seconds": 0.010014872997999191,
+      "correct": 1
+    },
+    {
+      "run": 3,
+      "case": "injection",
+      "questions": 1,
+      "seconds": 0.00627949699992314,
+      "correct": 1
+    },
+    {
+      "run": 3,
+      "case": "relevance",
+      "questions": 2,
+      "seconds": 0.006306057999609038,
+      "correct": 2
+    },
+    {
+      "run": 3,
+      "case": "missing-evidence",
+      "questions": 2,
+      "seconds": 0.009992477000196232,
+      "correct": 1
+    },
+    {
+      "run": 3,
+      "case": "replacement",
+      "questions": 9,
+      "seconds": 0.036766665001778165,
+      "correct": 8
+    },
+    {
+      "run": 3,
+      "case": "choice",
+      "questions": 1,
+      "seconds": 0.0045320979988900945,
+      "correct": 1
+    },
+    {
+      "run": 3,
+      "case": "procedure",
+      "questions": 3,
+      "seconds": 0.01640509699791437,
+      "correct": 3
+    },
+    {
+      "run": 3,
+      "case": "preference",
+      "questions": 3,
+      "seconds": 0.016418019000411732,
+      "correct": 3
+    },
+    {
+      "run": 3,
+      "case": "convention",
+      "questions": 3,
+      "seconds": 0.016556439000851242,
+      "correct": 3
+    },
+    {
+      "run": 3,
+      "case": "pending-task",
+      "questions": 3,
+      "seconds": 0.016552013999898918,
+      "correct": 3
+    },
+    {
+      "run": 3,
+      "case": "dated-fix",
+      "questions": 3,
+      "seconds": 0.016484061001392547,
+      "correct": 2
+    },
+    {
+      "run": 3,
+      "case": "directory-evidence",
+      "questions": 4,
+      "seconds": 0.010074507001263555,
+      "correct": 4
+    },
+    {
+      "run": 3,
+      "case": "complete-port",
+      "questions": 2,
+      "seconds": 0.010054002999822842,
+      "correct": 2
+    },
+    {
+      "run": 3,
+      "case": "complete-alias-cause",
+      "questions": 3,
+      "seconds": 0.016649132998281857,
+      "correct": 2
+    },
+    {
+      "run": 3,
+      "case": "review-choice",
+      "questions": 1,
+      "seconds": 0.00462763200266636,
+      "correct": 1
+    },
+    {
+      "run": 3,
+      "case": "causal-direction",
+      "questions": 3,
+      "seconds": 0.016571627002122113,
+      "correct": 1
+    },
+    {
+      "run": 3,
+      "case": "unresolved-conflict",
+      "questions": 1,
+      "seconds": 0.004914283003017772,
+      "correct": 1
+    },
+    {
+      "run": 3,
+      "case": "resolved-conflict",
+      "questions": 1,
+      "seconds": 0.004927202000544639,
+      "correct": 0
+    },
+    {
+      "run": 4,
+      "case": "durable",
+      "questions": 3,
+      "seconds": 0.016523213998880237,
+      "correct": 3
+    },
+    {
+      "run": 4,
+      "case": "work-status",
+      "questions": 2,
+      "seconds": 0.010231879001366906,
+      "correct": 1
+    },
+    {
+      "run": 4,
+      "case": "injection",
+      "questions": 1,
+      "seconds": 0.006429582001146628,
+      "correct": 1
+    },
+    {
+      "run": 4,
+      "case": "relevance",
+      "questions": 2,
+      "seconds": 0.006318189000012353,
+      "correct": 2
+    },
+    {
+      "run": 4,
+      "case": "missing-evidence",
+      "questions": 2,
+      "seconds": 0.009993614999984857,
+      "correct": 1
+    },
+    {
+      "run": 4,
+      "case": "replacement",
+      "questions": 9,
+      "seconds": 0.03724041299938108,
+      "correct": 8
+    },
+    {
+      "run": 4,
+      "case": "choice",
+      "questions": 1,
+      "seconds": 0.0046247949976532254,
+      "correct": 1
+    },
+    {
+      "run": 4,
+      "case": "procedure",
+      "questions": 3,
+      "seconds": 0.01653949100000318,
+      "correct": 3
+    },
+    {
+      "run": 4,
+      "case": "preference",
+      "questions": 3,
+      "seconds": 0.01654661900101928,
+      "correct": 3
+    },
+    {
+      "run": 4,
+      "case": "convention",
+      "questions": 3,
+      "seconds": 0.016553581001062412,
+      "correct": 3
+    },
+    {
+      "run": 4,
+      "case": "pending-task",
+      "questions": 3,
+      "seconds": 0.016505206996953348,
+      "correct": 3
+    },
+    {
+      "run": 4,
+      "case": "dated-fix",
+      "questions": 3,
+      "seconds": 0.01643158300066716,
+      "correct": 2
+    },
+    {
+      "run": 4,
+      "case": "directory-evidence",
+      "questions": 4,
+      "seconds": 0.010104623001097934,
+      "correct": 4
+    },
+    {
+      "run": 4,
+      "case": "complete-port",
+      "questions": 2,
+      "seconds": 0.010185126000578748,
+      "correct": 2
+    },
+    {
+      "run": 4,
+      "case": "complete-alias-cause",
+      "questions": 3,
+      "seconds": 0.01667854100014665,
+      "correct": 2
+    },
+    {
+      "run": 4,
+      "case": "review-choice",
+      "questions": 1,
+      "seconds": 0.004655255001125624,
+      "correct": 1
+    },
+    {
+      "run": 4,
+      "case": "causal-direction",
+      "questions": 3,
+      "seconds": 0.016521814999578055,
+      "correct": 1
+    },
+    {
+      "run": 4,
+      "case": "unresolved-conflict",
+      "questions": 1,
+      "seconds": 0.004886770999291912,
+      "correct": 1
+    },
+    {
+      "run": 4,
+      "case": "resolved-conflict",
+      "questions": 1,
+      "seconds": 0.004805017997568939,
+      "correct": 0
+    },
+    {
+      "run": 5,
+      "case": "durable",
+      "questions": 3,
+      "seconds": 0.016404870999394916,
+      "correct": 3
+    },
+    {
+      "run": 5,
+      "case": "work-status",
+      "questions": 2,
+      "seconds": 0.010053808997326996,
+      "correct": 1
+    },
+    {
+      "run": 5,
+      "case": "injection",
+      "questions": 1,
+      "seconds": 0.006382219999068184,
+      "correct": 1
+    },
+    {
+      "run": 5,
+      "case": "relevance",
+      "questions": 2,
+      "seconds": 0.006355245001032017,
+      "correct": 2
+    },
+    {
+      "run": 5,
+      "case": "missing-evidence",
+      "questions": 2,
+      "seconds": 0.009987483001168584,
+      "correct": 1
+    },
+    {
+      "run": 5,
+      "case": "replacement",
+      "questions": 9,
+      "seconds": 0.036922348001098726,
+      "correct": 8
+    },
+    {
+      "run": 5,
+      "case": "choice",
+      "questions": 1,
+      "seconds": 0.004735909002192784,
+      "correct": 1
+    },
+    {
+      "run": 5,
+      "case": "procedure",
+      "questions": 3,
+      "seconds": 0.016590735998761375,
+      "correct": 3
+    },
+    {
+      "run": 5,
+      "case": "preference",
+      "questions": 3,
+      "seconds": 0.01659641099831788,
+      "correct": 3
+    },
+    {
+      "run": 5,
+      "case": "convention",
+      "questions": 3,
+      "seconds": 0.016416001999459695,
+      "correct": 3
+    },
+    {
+      "run": 5,
+      "case": "pending-task",
+      "questions": 3,
+      "seconds": 0.016417213999375235,
+      "correct": 3
+    },
+    {
+      "run": 5,
+      "case": "dated-fix",
+      "questions": 3,
+      "seconds": 0.01660720400104765,
+      "correct": 2
+    },
+    {
+      "run": 5,
+      "case": "directory-evidence",
+      "questions": 4,
+      "seconds": 0.010394244000053732,
+      "correct": 4
+    },
+    {
+      "run": 5,
+      "case": "complete-port",
+      "questions": 2,
+      "seconds": 0.01014158399993903,
+      "correct": 2
+    },
+    {
+      "run": 5,
+      "case": "complete-alias-cause",
+      "questions": 3,
+      "seconds": 0.01664683499984676,
+      "correct": 2
+    },
+    {
+      "run": 5,
+      "case": "review-choice",
+      "questions": 1,
+      "seconds": 0.00479069999710191,
+      "correct": 1
+    },
+    {
+      "run": 5,
+      "case": "causal-direction",
+      "questions": 3,
+      "seconds": 0.01675283299846342,
+      "correct": 1
+    },
+    {
+      "run": 5,
+      "case": "unresolved-conflict",
+      "questions": 1,
+      "seconds": 0.004875932001596084,
+      "correct": 1
+    },
+    {
+      "run": 5,
+      "case": "resolved-conflict",
+      "questions": 1,
+      "seconds": 0.004859295000642305,
+      "correct": 0
+    }
+  ],
+  "client_init_seconds": 0.0007965539989527315
+}
