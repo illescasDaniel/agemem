@@ -6,6 +6,7 @@ import sys
 import tempfile
 import time
 import unittest
+from contextlib import closing
 from pathlib import Path
 
 from agemem.project import initialize
@@ -51,10 +52,10 @@ class ConcurrentProcessTests(unittest.TestCase):
         self.assertEqual(len(set(notes)), len(notes), "two processes were given the same note id")
         self.assertGreater(len(notes), WORKERS * ROUNDS // 2)
         local = self.root / ".agemem/local"
-        with sqlite3.connect(local / "sources.sqlite") as db:
+        with closing(sqlite3.connect(local / "sources.sqlite")) as db:
             stored = {r[0] for r in db.execute("SELECT id FROM sources WHERE kind='event'")}
         self.assertEqual(stored, set(sources))
-        with sqlite3.connect(local / "notes.sqlite") as db:
+        with closing(sqlite3.connect(local / "notes.sqlite")) as db:
             self.assertEqual(db.execute("PRAGMA integrity_check").fetchone()[0], "ok")
             self.assertEqual({r[0] for r in db.execute("SELECT id FROM nodes")}, set(notes))
             self.assertEqual(db.execute("SELECT COUNT(*) FROM fts").fetchone()[0], len(notes))

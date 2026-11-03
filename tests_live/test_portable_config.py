@@ -30,8 +30,11 @@ class Base(unittest.TestCase):
         self.base = Path(self.temp.name).resolve()
         self.root = self.base / "main"
         self.root.mkdir()
-        environment = patch.dict(os.environ, {"AGEMEM_CONFIG": str(self.base / "config.yaml"), "PATH": os.environ.get("PATH", ""),
-                                              "HOME": os.environ.get("HOME", str(Path.home()))}, clear=True)
+        variables = {"AGEMEM_CONFIG": str(self.base / "config.yaml"), "PATH": os.environ.get("PATH", ""),
+                     "HOME": str(self.base), "USERPROFILE": str(self.base)}
+        if "SYSTEMROOT" in os.environ:
+            variables["SYSTEMROOT"] = os.environ["SYSTEMROOT"]
+        environment = patch.dict(os.environ, variables, clear=True)
         environment.start()
         self.addCleanup(environment.stop)
         git(self.root, "init", "-q", "-b", "main")

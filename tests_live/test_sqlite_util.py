@@ -27,7 +27,9 @@ class SqliteUtilTests(unittest.TestCase):
         self.assertGreaterEqual(BUSY_TIMEOUT_MS, 30000)
         self.assertEqual(db.execute("PRAGMA synchronous").fetchone()[0], 1)    # NORMAL
         self.assertEqual(db.execute("PRAGMA foreign_keys").fetchone()[0], 0)
-        self.assertEqual(connect(self.path, foreign_keys=True).execute("PRAGMA foreign_keys").fetchone()[0], 1)
+        foreign_db = connect(self.path, foreign_keys=True)
+        self.addCleanup(foreign_db.close)
+        self.assertEqual(foreign_db.execute("PRAGMA foreign_keys").fetchone()[0], 1)
 
     def test_wal_failure_falls_back_to_the_default_journal(self):
         real = sqlite_util.Connection.execute
@@ -45,6 +47,7 @@ class SqliteUtilTests(unittest.TestCase):
 
     def test_wal_that_stays_unavailable_returns_false_without_raising(self):
         db = sqlite3.connect(":memory:")
+        self.addCleanup(db.close)
         self.assertFalse(sqlite_util._enable_wal(db))     # in-memory databases answer "memory"
 
     def test_busy_wal_switch_is_retried(self):
