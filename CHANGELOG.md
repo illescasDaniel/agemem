@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.2.2] - 2026-11-04
+
+### Changed
+
+- New projects share downloaded embedding model files through the user data directory,
+  reducing duplicate downloads. Existing project-local model caches keep precedence,
+  and `AGEMEM_MODEL_CACHE` still overrides either location.
+- The user configuration template now includes Ollaya's local URL and `jevk5:4b`
+  model. Jev remains the default provider; explicit project Ollaya settings take
+  precedence over user-wide settings.
+- Document the expanded decision-model comparison, including Ollaya; benchmark
+  inputs and scripts remain in the repository and are excluded from distributions.
+
 ## [0.2.1] - 2026-10-29
 
 ### Fixed
