@@ -1,0 +1,697 @@
+{
+  "model": "ollaya jevk5:4b Q8_0",
+  "device": "cpu",
+  "warmup": "full 50-question suite in preceding run",
+  "timing_scope": "local HTTP call includes model and transport; excludes load and warmup",
+  "repeats": 1,
+  "median_request_seconds": 8.477553626000145,
+  "mean_request_seconds": 7.674293022631577,
+  "p95_request_seconds": 13.34209261079992,
+  "seconds_per_suite": [
+    145.81156742999997
+  ],
+  "correct_per_suite": [
+    41
+  ],
+  "rows": [
+    {
+      "run": 1,
+      "case": "durable",
+      "seconds": 8.515582945000006,
+      "questions": 3,
+      "correct": 3
+    },
+    {
+      "run": 1,
+      "case": "work-status",
+      "seconds": 6.562651184999822,
+      "questions": 2,
+      "correct": 1
+    },
+    {
+      "run": 1,
+      "case": "injection",
+      "seconds": 3.6083914240000468,
+      "questions": 1,
+      "correct": 1
+    },
+    {
+      "run": 1,
+      "case": "relevance",
+      "seconds": 5.221960744999933,
+      "questions": 2,
+      "correct": 2
+    },
+    {
+      "run": 1,
+      "case": "missing-evidence",
+      "seconds": 5.151766747000011,
+      "questions": 2,
+      "correct": 2
+    },
+    {
+      "run": 1,
+      "case": "replacement",
+      "seconds": 28.279126640999948,
+      "questions": 9,
+      "correct": 7
+    },
+    {
+      "run": 1,
+      "case": "choice",
+      "seconds": 1.7903648150002027,
+      "questions": 1,
+      "correct": 1
+    },
+    {
+      "run": 1,
+      "case": "procedure",
+      "seconds": 8.798879407999948,
+      "questions": 3,
+      "correct": 3
+    },
+    {
+      "run": 1,
+      "case": "preference",
+      "seconds": 8.79943536299993,
+      "questions": 3,
+      "correct": 3
+    },
+    {
+      "run": 1,
+      "case": "convention",
+      "seconds": 8.726933526000039,
+      "questions": 3,
+      "correct": 3
+    },
+    {
+      "run": 1,
+      "case": "pending-task",
+      "seconds": 8.736612019999939,
+      "questions": 3,
+      "correct": 2
+    },
+    {
+      "run": 1,
+      "case": "dated-fix",
+      "seconds": 8.797264066000025,
+      "questions": 3,
+      "correct": 3
+    },
+    {
+      "run": 1,
+      "case": "directory-evidence",
+      "seconds": 11.682422162999956,
+      "questions": 4,
+      "correct": 4
+    },
+    {
+      "run": 1,
+      "case": "complete-port",
+      "seconds": 5.518043625000018,
+      "questions": 2,
+      "correct": 2
+    },
+    {
+      "run": 1,
+      "case": "complete-alias-cause",
+      "seconds": 8.477553626000145,
+      "questions": 3,
+      "correct": 0
+    },
+    {
+      "run": 1,
+      "case": "review-choice",
+      "seconds": 1.889254112000117,
+      "questions": 1,
+      "correct": 1
+    },
+    {
+      "run": 1,
+      "case": "causal-direction",
+      "seconds": 9.096356028000173,
+      "questions": 3,
+      "correct": 2
+    },
+    {
+      "run": 1,
+      "case": "unresolved-conflict",
+      "seconds": 3.0100824259998262,
+      "questions": 1,
+      "correct": 1
+    },
+    {
+      "run": 1,
+      "case": "resolved-conflict",
+      "seconds": 3.1488865649998843,
+      "questions": 1,
+      "correct": 0
+    }
+  ],
+  "predictions": [
+    {
+      "case": "durable",
+      "question_key": "decision",
+      "prediction": true,
+      "p": 0.9396,
+      "expected": [
+        true,
+        0.5
+      ],
+      "correct": true
+    },
+    {
+      "case": "durable",
+      "question_key": "status",
+      "prediction": false,
+      "p": 0.3407,
+      "expected": [
+        false,
+        0.85
+      ],
+      "correct": true
+    },
+    {
+      "case": "durable",
+      "question_key": "injection",
+      "prediction": false,
+      "p": 0.011,
+      "expected": [
+        false,
+        0.5
+      ],
+      "correct": true
+    },
+    {
+      "case": "work-status",
+      "question_key": "status",
+      "prediction": false,
+      "p": 0.7193,
+      "expected": [
+        true,
+        0.85
+      ],
+      "correct": false
+    },
+    {
+      "case": "work-status",
+      "question_key": "injection",
+      "prediction": false,
+      "p": 0.0095,
+      "expected": [
+        false,
+        0.5
+      ],
+      "correct": true
+    },
+    {
+      "case": "injection",
+      "question_key": "injection",
+      "prediction": true,
+      "p": 0.9079,
+      "expected": [
+        true,
+        0.5
+      ],
+      "correct": true
+    },
+    {
+      "case": "relevance",
+      "question_key": "item_0",
+      "prediction": true,
+      "p": 0.9666,
+      "expected": [
+        true,
+        0.3
+      ],
+      "correct": true
+    },
+    {
+      "case": "relevance",
+      "question_key": "item_1",
+      "prediction": false,
+      "p": 0.0187,
+      "expected": [
+        false,
+        0.3
+      ],
+      "correct": true
+    },
+    {
+      "case": "missing-evidence",
+      "question_key": "evidence_sufficient",
+      "prediction": false,
+      "p": 0.0451,
+      "expected": [
+        false,
+        0.3
+      ],
+      "correct": true
+    },
+    {
+      "case": "missing-evidence",
+      "question_key": "missing_evidence",
+      "prediction": true,
+      "p": 0.9409,
+      "expected": [
+        true,
+        0.7
+      ],
+      "correct": true
+    },
+    {
+      "case": "replacement",
+      "question_key": "pair_0_same_question",
+      "prediction": false,
+      "p": 0.1388,
+      "expected": [
+        true,
+        0.5
+      ],
+      "correct": false
+    },
+    {
+      "case": "replacement",
+      "question_key": "pair_0_different_answer",
+      "prediction": true,
+      "p": 0.9338,
+      "expected": [
+        true,
+        0.5
+      ],
+      "correct": true
+    },
+    {
+      "case": "replacement",
+      "question_key": "pair_0_outdated",
+      "prediction": true,
+      "p": 0.9318,
+      "expected": [
+        true,
+        0.5
+      ],
+      "correct": true
+    },
+    {
+      "case": "replacement",
+      "question_key": "pair_0_new_reports_change",
+      "prediction": true,
+      "p": 0.779,
+      "expected": [
+        true,
+        0.5
+      ],
+      "correct": true
+    },
+    {
+      "case": "replacement",
+      "question_key": "pair_0_candidate_reports_change",
+      "prediction": false,
+      "p": 0.1438,
+      "expected": [
+        false,
+        0.5
+      ],
+      "correct": true
+    },
+    {
+      "case": "replacement",
+      "question_key": "pair_0_new_covers",
+      "prediction": false,
+      "p": 0.0602,
+      "expected": [
+        false,
+        0.5
+      ],
+      "correct": true
+    },
+    {
+      "case": "replacement",
+      "question_key": "pair_0_candidate_covers",
+      "prediction": false,
+      "p": 0.0466,
+      "expected": [
+        false,
+        0.5
+      ],
+      "correct": true
+    },
+    {
+      "case": "replacement",
+      "question_key": "pair_0_link_usefulness",
+      "prediction": false,
+      "p": 0.2362,
+      "expected": [
+        true,
+        0.5
+      ],
+      "correct": false
+    },
+    {
+      "case": "replacement",
+      "question_key": "pair_0_pattern",
+      "prediction": false,
+      "p": 0.0814,
+      "expected": [
+        false,
+        0.5
+      ],
+      "correct": true
+    },
+    {
+      "case": "choice",
+      "question_key": "route",
+      "prediction": "coder",
+      "p": null,
+      "expected": "coder",
+      "correct": true
+    },
+    {
+      "case": "procedure",
+      "question_key": "procedural",
+      "prediction": true,
+      "p": 0.561,
+      "expected": [
+        true,
+        0.5
+      ],
+      "correct": true
+    },
+    {
+      "case": "procedure",
+      "question_key": "status",
+      "prediction": false,
+      "p": 0.26,
+      "expected": [
+        false,
+        0.85
+      ],
+      "correct": true
+    },
+    {
+      "case": "procedure",
+      "question_key": "injection",
+      "prediction": false,
+      "p": 0.011,
+      "expected": [
+        false,
+        0.5
+      ],
+      "correct": true
+    },
+    {
+      "case": "preference",
+      "question_key": "preference",
+      "prediction": true,
+      "p": 0.9522,
+      "expected": [
+        true,
+        0.5
+      ],
+      "correct": true
+    },
+    {
+      "case": "preference",
+      "question_key": "status",
+      "prediction": false,
+      "p": 0.7033,
+      "expected": [
+        false,
+        0.85
+      ],
+      "correct": true
+    },
+    {
+      "case": "preference",
+      "question_key": "injection",
+      "prediction": false,
+      "p": 0.0127,
+      "expected": [
+        false,
+        0.5
+      ],
+      "correct": true
+    },
+    {
+      "case": "convention",
+      "question_key": "convention",
+      "prediction": true,
+      "p": 0.875,
+      "expected": [
+        true,
+        0.5
+      ],
+      "correct": true
+    },
+    {
+      "case": "convention",
+      "question_key": "status",
+      "prediction": false,
+      "p": 0.2716,
+      "expected": [
+        false,
+        0.85
+      ],
+      "correct": true
+    },
+    {
+      "case": "convention",
+      "question_key": "injection",
+      "prediction": false,
+      "p": 0.0189,
+      "expected": [
+        false,
+        0.5
+      ],
+      "correct": true
+    },
+    {
+      "case": "pending-task",
+      "question_key": "decision",
+      "prediction": false,
+      "p": 0.1811,
+      "expected": [
+        false,
+        0.5
+      ],
+      "correct": true
+    },
+    {
+      "case": "pending-task",
+      "question_key": "status",
+      "prediction": false,
+      "p": 0.7327,
+      "expected": [
+        true,
+        0.85
+      ],
+      "correct": false
+    },
+    {
+      "case": "pending-task",
+      "question_key": "injection",
+      "prediction": false,
+      "p": 0.0228,
+      "expected": [
+        false,
+        0.5
+      ],
+      "correct": true
+    },
+    {
+      "case": "dated-fix",
+      "question_key": "bugfix",
+      "prediction": true,
+      "p": 0.8846,
+      "expected": [
+        true,
+        0.5
+      ],
+      "correct": true
+    },
+    {
+      "case": "dated-fix",
+      "question_key": "status",
+      "prediction": false,
+      "p": 0.1946,
+      "expected": [
+        false,
+        0.85
+      ],
+      "correct": true
+    },
+    {
+      "case": "dated-fix",
+      "question_key": "injection",
+      "prediction": false,
+      "p": 0.0098,
+      "expected": [
+        false,
+        0.5
+      ],
+      "correct": true
+    },
+    {
+      "case": "directory-evidence",
+      "question_key": "item_0",
+      "prediction": true,
+      "p": 0.9507,
+      "expected": [
+        true,
+        0.3
+      ],
+      "correct": true
+    },
+    {
+      "case": "directory-evidence",
+      "question_key": "item_1",
+      "prediction": false,
+      "p": 0.1239,
+      "expected": [
+        false,
+        0.3
+      ],
+      "correct": true
+    },
+    {
+      "case": "directory-evidence",
+      "question_key": "item_2",
+      "prediction": false,
+      "p": 0.1718,
+      "expected": [
+        false,
+        0.3
+      ],
+      "correct": true
+    },
+    {
+      "case": "directory-evidence",
+      "question_key": "item_3",
+      "prediction": true,
+      "p": 0.9287,
+      "expected": [
+        true,
+        0.3
+      ],
+      "correct": true
+    },
+    {
+      "case": "complete-port",
+      "question_key": "evidence_sufficient",
+      "prediction": true,
+      "p": 0.8032,
+      "expected": [
+        true,
+        0.3
+      ],
+      "correct": true
+    },
+    {
+      "case": "complete-port",
+      "question_key": "missing_evidence",
+      "prediction": false,
+      "p": 0.2489,
+      "expected": [
+        false,
+        0.7
+      ],
+      "correct": true
+    },
+    {
+      "case": "complete-alias-cause",
+      "question_key": "evidence_sufficient",
+      "prediction": false,
+      "p": 0.2751,
+      "expected": [
+        true,
+        0.3
+      ],
+      "correct": false
+    },
+    {
+      "case": "complete-alias-cause",
+      "question_key": "missing_evidence",
+      "prediction": true,
+      "p": 0.7974,
+      "expected": [
+        false,
+        0.7
+      ],
+      "correct": false
+    },
+    {
+      "case": "complete-alias-cause",
+      "question_key": "multi_hop",
+      "prediction": false,
+      "p": 0.1454,
+      "expected": [
+        true,
+        0.5
+      ],
+      "correct": false
+    },
+    {
+      "case": "review-choice",
+      "question_key": "route",
+      "prediction": "reviewer",
+      "p": null,
+      "expected": "reviewer",
+      "correct": true
+    },
+    {
+      "case": "causal-direction",
+      "question_key": "pair_0_semantic",
+      "prediction": true,
+      "p": 0.8651,
+      "expected": [
+        true,
+        0.5
+      ],
+      "correct": true
+    },
+    {
+      "case": "causal-direction",
+      "question_key": "pair_0_candidate_causes_new",
+      "prediction": true,
+      "p": 0.8925,
+      "expected": [
+        true,
+        0.5
+      ],
+      "correct": true
+    },
+    {
+      "case": "causal-direction",
+      "question_key": "pair_0_new_causes_candidate",
+      "prediction": true,
+      "p": 0.5818,
+      "expected": [
+        false,
+        0.5
+      ],
+      "correct": false
+    },
+    {
+      "case": "unresolved-conflict",
+      "question_key": "contradiction",
+      "prediction": true,
+      "p": 0.8815,
+      "expected": [
+        true,
+        0.5
+      ],
+      "correct": true
+    },
+    {
+      "case": "resolved-conflict",
+      "question_key": "contradiction",
+      "prediction": true,
+      "p": 0.7097,
+      "expected": [
+        false,
+        0.5
+      ],
+      "correct": false
+    }
+  ]
+}

@@ -9,6 +9,8 @@ import yaml
 CONFIG_VERSION = 1
 
 PROVIDERS = ("jev", "qsiv", "ollaya", "cascade")
+OLLAYA_URL = "http://127.0.0.1:11435"
+OLLAYA_MODEL = "jevk5:4b"
 
 
 def config_path():
@@ -44,6 +46,7 @@ def provider_options(project):
     providers = user.get("providers", {})
     qsiv = providers.get("qsiv", {})
     jev = providers.get("jev", {})
+    ollaya = providers.get("ollaya", {})
     backend = os.environ.get("AGEMEM_PROVIDER") or project.get("decision_backend") or user.get("default_provider", "jev")
     if backend not in PROVIDERS:
         raise ValueError("Unsupported decision backend")
@@ -64,9 +67,13 @@ def provider_options(project):
         raise ValueError("QSIV python must be a path string")
     if runtime_python is None and default_python.is_file():
         runtime_python = str(default_python)
+    ollaya_url = project.get("ollaya_url", ollaya.get("url", OLLAYA_URL))
+    ollaya_model = project.get("ollaya_model", ollaya.get("model", OLLAYA_MODEL))
+    if not isinstance(ollaya_url, str) or not ollaya_url or not isinstance(ollaya_model, str) or not ollaya_model:
+        raise ValueError("Ollaya url and model must be non-empty strings")
     return {"decision_backend": backend, "qsiv_python": str(Path(runtime_python).expanduser()) if runtime_python else None, "qsiv_runtime": runtime,
             "qsiv_directory": str(Path(directory).expanduser()) if directory else None,
-            "jev_api_key": key}
+            "jev_api_key": key, "ollaya_url": ollaya_url, "ollaya_model": ollaya_model}
 
 
 def initialize_user_config(default_provider="jev", api_key=None):
@@ -88,6 +95,9 @@ providers:
     runtime: fp8
     model_directory: MODEL_DIRECTORY
     # python: ~/.local/share/agemem/runtimes/qsiv/bin/python
+  ollaya:
+    url: http://127.0.0.1:11435
+    model: jevk5:4b
 """
     template = template.replace("default_provider: jev", "default_provider: " + default_provider)
     if api_key is not None:

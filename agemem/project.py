@@ -7,12 +7,12 @@ import subprocess
 import uuid
 from pathlib import Path
 
-from .config import provider_options
+from .config import OLLAYA_MODEL, OLLAYA_URL, provider_options
 
 DEFAULTS = {"schema_version": 1, "decision_backend": "jev", "retrieval": "hybrid",
             "embedder": "BAAI/bge-small-en-v1.5", "context_budget": 1800,
             "qsiv_directory": None, "qsiv_runtime": "fp8", "raw_rag_directory": None,
-            "ollaya_url": "http://127.0.0.1:11435", "ollaya_model": "jevk5:4b", "cascade_min_confidence": 0.9}
+            "ollaya_url": OLLAYA_URL, "ollaya_model": OLLAYA_MODEL, "cascade_min_confidence": 0.9}
 BANK = {
     "activeContext.md": "# Active context\n\n## Current focus\n\nDescribe the active task.\n\n## Blockers\n\nNone recorded.\n\n## Next steps\n\nRecord the exact next step when work stops.\n",
     "progress.md": "# Progress\n\n## Open\n\n- [ ] Record the current task.\n\n## Done\n",
@@ -106,7 +106,7 @@ def initialize(directory, retrieval="hybrid", embedder="BAAI/bge-small-en-v1.5")
     created = []
     config = inside(root, folder / "config.json")
     if not config.exists():
-        project_defaults = {key: value for key, value in DEFAULTS.items() if key not in ("decision_backend", "qsiv_directory", "qsiv_runtime")}
+        project_defaults = {key: value for key, value in DEFAULTS.items() if key not in ("decision_backend", "qsiv_directory", "qsiv_runtime", "ollaya_url", "ollaya_model")}
         config.write_text(json.dumps({**project_defaults, "project_id": uuid.uuid4().hex, "retrieval": retrieval,
                                       "embedder": embedder}, indent=2) + "\n")
         created.append(str(config.relative_to(root)))

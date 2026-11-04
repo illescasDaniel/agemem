@@ -30,12 +30,48 @@ class ConfigurationTests(unittest.TestCase):
         result = initialize_user_config()
         self.assertTrue(result["created"])
         self.assertEqual(load_user_config()["version"], 1)
+        self.assertEqual(load_user_config()["default_provider"], "jev")
+        self.assertEqual(load_user_config()["providers"]["ollaya"],
+                         {"url": "http://127.0.0.1:11435", "model": "jevk5:4b"})
         self.assertIn("Options: jev, qsiv, cascade", config_path().read_text())
         if os.name != "nt":
             self.assertEqual(stat.S_IMODE(config_path().stat().st_mode), 0o600)
         self.write_user("default_provider: qsiv\n")
         self.assertFalse(initialize_user_config()["created"])
         self.assertEqual(provider_options({})["decision_backend"], "qsiv")
+
+    def test_ollaya_yaml_defaults_and_explicit_project_overrides(self):
+        initialize_user_config()
+        initialize(self.root, "bm25", "hash")
+        saved_path = self.root / ".agemem/config.json"
+        saved = json.loads(saved_path.read_text())
+        self.assertNotIn("ollaya_url", saved)
+        self.assertNotIn("ollaya_model", saved)
+        self.assertEqual(configuration(self.root)["decision_backend"], "jev")
+        self.assertEqual(configuration(self.root)["ollaya_model"], "jevk5:4b")
+
+        self.write_user("default_provider: ollaya\nproviders:\n  ollaya:\n    url: http://localhost:12345\n    model: custom:model\n")
+        options = configuration(self.root)
+        self.assertEqual((options["decision_backend"], options["ollaya_url"], options["ollaya_model"]),
+                         ("ollaya", "http://localhost:12345", "custom:model"))
+        from agemem.engine import Engine
+        engine = Engine(self.root)
+        try:
+            decider = engine._decision()
+            self.assertEqual((decider.local_url, decider.model), ("http://localhost:12345", "custom:model"))
+        finally:
+            engine.close()
+        saved.update(ollaya_url="http://127.0.0.1:9999", ollaya_model="project:model")
+        saved_path.write_text(json.dumps(saved))
+        options = configuration(self.root)
+        self.assertEqual((options["ollaya_url"], options["ollaya_model"]),
+                         ("http://127.0.0.1:9999", "project:model"))
+
+    def test_ollaya_options_must_be_nonempty_strings(self):
+        for field, value in (("url", "null"), ("model", "123"), ("model", "''")):
+            self.write_user(f"providers:\n  ollaya:\n    {field}: {value}\n")
+            with self.assertRaisesRegex(ValueError, "Ollaya url and model"):
+                provider_options({})
 
     def test_schema_version_validation_and_legacy_compatibility(self):
         for version in ("2", "0", "true", "1.0", '"1"', "null"):

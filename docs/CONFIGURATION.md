@@ -20,6 +20,9 @@ providers:
     runtime: fp8
     model_directory: ~/.local/share/agemem/models/qsiv
     # python: ~/.local/share/agemem/runtimes/qsiv/bin/python
+  ollaya:
+    url: http://127.0.0.1:11435
+    model: jevk5:4b
 ```
 
 `version` is the configuration schema version, independent of the package version.
@@ -40,6 +43,14 @@ Provider precedence is `AGEMEM_PROVIDER`, an explicit project
 Existing projects preserve their explicit provider. New `agemem init` projects
 omit provider fields and follow the global provider. Remove an old project's
 `decision_backend` field to follow the global setting.
+
+To use a running local Ollaya service, set `default_provider: ollaya` and
+adjust `providers.ollaya.url` or `providers.ollaya.model` if needed. The URL
+must point to a loopback host. Explicit project `ollaya_url` and `ollaya_model`
+values override the corresponding YAML values. Older projects may already have
+these fields set to the original defaults; remove them from `.agemem/config.json`
+if the project should follow the user-wide settings. Existing user configs are
+not rewritten; add the `ollaya` section manually if you want to customize it.
 
 QSIV model path precedence is `AGEMEM_QSIV_DIR`, project `qsiv_directory`,
 then user `providers.qsiv.model_directory`. The runtime is project

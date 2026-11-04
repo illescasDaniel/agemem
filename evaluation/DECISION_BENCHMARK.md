@@ -25,6 +25,16 @@ The QSIV run starts its worker lazily, so `client_init_seconds` is not model
 load time. The EmbeddingGemma script records a single run rather than the
 five-run timing protocol.
 
+The Ollaya result was collected separately with Ollaya 0.10.0 and its local
+`jevk5:4b` Q8_0 model (weights SHA-256
+`aea433883bc7ed399f2fbd539e53d2eac7caf71a946fe6650995a413979d4a30`).
+The full suite ran on CPU, followed by one warmed timing pass, not five. The
+server fell back to CPU because the GPU was already in use. Its local HTTP
+request timing includes transport; the Ollaya thread count was not fixed.
+Both passes returned the same 41/50 predictions. The raw full-suite and warmed
+timing outputs are in `decision-results/ollaya-jevk5-*-cpu.json`. The main
+runner supports `--backend ollaya --suite expanded` with a running local service.
+
 For repeatability, the model revisions used were:
 
 | Model | Revision |

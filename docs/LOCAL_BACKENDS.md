@@ -27,13 +27,24 @@ inference remains unvalidated.
 
 ## ollaya
 
-With the user's existing ollaya server and installed model:
+With the user's existing Ollaya server and installed model, select it in the
+private user configuration:
+
+```yaml
+default_provider: ollaya
+providers:
+  ollaya:
+    url: http://127.0.0.1:11435
+    model: jevk5:4b
+```
+
+Explicit project settings override the user-wide options:
 
 ```json
 {"decision_backend":"ollaya","ollaya_url":"http://127.0.0.1:11435","ollaya_model":"jevk5:4b"}
 ```
 
-The endpoint must be loopback. Hosted keys are never forwarded to it. This uses the TypeSafe-compatible ollaya endpoint, not a generic Ollama chat endpoint. The existing service was left running; the model loaded for benchmarking was unloaded afterward. Initial synthetic result: 17/20, 7 requests, 3,810 input tokens.
+The endpoint must be loopback. Hosted keys are never forwarded to it. This uses the TypeSafe-compatible Ollaya endpoint, not a generic Ollama chat endpoint. On the expanded synthetic probe, `jevk5:4b` scored 41/50; see [Decision model evaluation](DECISION_MODEL_EVALUATION.md) for the comparison and its limits.
 
 ## Confidence cascade
 

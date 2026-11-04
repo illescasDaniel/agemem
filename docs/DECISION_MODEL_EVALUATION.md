@@ -33,6 +33,7 @@ its top predictions anyway, to use the same rule as the other models.
 | UltraBERT 380M Curation | 43/50 | 43/50 | 652 / 1,730 ms | 26 / 78 ms |
 | QSIV FP8 | — | 42/50 | — | 10 / 32 ms |
 | Strands Decider 2B Qwen3.5 v1 | 42/50 | 42/50 | 3,844 / 7,150 ms | 144 / 257 ms |
+| Ollaya jevk5:4b Q8_0 | 41/50 | — | 8,478 / 13,342 ms* | — |
 | Strands Hobson v19 | 40/50 | 40/50 | 3,609 / 7,057 ms | 153 / 269 ms |
 | Open-Jev 2B | 39/50 | 39/50 | 3,458 / 7,502 ms | 109 / 279 ms |
 | Laya typed-decisions | 35/50 | 35/50 | 883 / 1,805 ms | 34 / 49 ms |
@@ -49,9 +50,18 @@ four questions right, UltraBERT alone got five right, both got 38 right and
 both missed three. A difference of one on 50 questions does not establish a
 winner.
 
+Ollaya and QSIV made different errors: Ollaya alone answered four questions
+correctly, QSIV alone answered five correctly, both got 37 right and both
+missed four. Ollaya's result used the local `jevk5:4b` Q8_0 model on CPU; GPU
+memory was in use, so Ollaya fell back to CPU. The timing marked * is from one
+warmed pass (19 requests), rather than the five passes used for most models.
+Its p95 is especially sensitive to this small sample. It includes loopback
+HTTP, uses Ollaya's own runtime and thread settings, and does not measure GPU
+speed. The warm pass repeated the 41/50 result with identical predictions.
+
 ## Timing method
 
-The repeated measurements used an Intel i9-13900HX CPU with eight PyTorch
+Except for the one-pass Ollaya result noted above, the repeated measurements used an Intel i9-13900HX CPU with eight PyTorch
 threads and an NVIDIA RTX 4070 Laptop GPU with 8 GiB VRAM. After one full suite
 of warm-up, each model ran the 19 requests five times, sequentially: 95 request
 samples covering 250 question answers. Median and linearly interpolated p95 are
