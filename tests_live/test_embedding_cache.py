@@ -11,14 +11,17 @@ from agemem.project import initialize
 class EmbeddingCacheTests(unittest.TestCase):
     def test_shared_cache_legacy_fallback_and_explicit_override(self):
         with tempfile.TemporaryDirectory() as folder:
-            root = Path(folder)
+            root = Path(folder).resolve()
             project = root / "project"
             project.mkdir()
             initialize(project, "bm25", "hash")
             shared = root / "data/agemem/models/embeddings"
             legacy = project / ".agemem/local/models"
             with patch.dict(os.environ, {"XDG_DATA_HOME": str(root / "data"),
-                                         "XDG_CONFIG_HOME": str(root / "config")}, clear=True):
+                                         "XDG_CONFIG_HOME": str(root / "config"),
+                                         "PATH": os.environ.get("PATH", ""),
+                                         "USERPROFILE": os.environ.get("USERPROFILE", str(Path.home())),
+                                         "SYSTEMROOT": os.environ.get("SYSTEMROOT", "")}, clear=True):
                 engine = Engine(project, offline=True)
                 self.assertEqual(engine.embedder.cache, shared)
                 engine.db.close()
