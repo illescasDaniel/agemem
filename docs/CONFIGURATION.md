@@ -109,6 +109,18 @@ The memory service can run locally while the coding agent using it still uses
 a hosted model. Local source retrieval also requires cached embedding and
 reranker models; see [RAW-RAG setup](RAW_RAG.md).
 
+Embedding model files are shared across projects by default in
+`$XDG_DATA_HOME/agemem/models/embeddings` (`~/.local/share/agemem/models/embeddings`
+when `XDG_DATA_HOME` is unset), alongside the QSIV model directory. Set
+`AGEMEM_MODEL_CACHE` to override this path. For compatibility, an existing
+project with `.agemem/local/models` continues to use that local cache. To use
+the shared cache in that project, set `AGEMEM_MODEL_CACHE` to the shared path
+or move its local cache after copying its contents into the shared directory.
+Copy the entire cache, including its `blobs` directory, so relative links work.
+This cache stores
+model files; project memory, source evidence and vector databases remain local
+to their respective projects. The override also applies to the RAW-RAG reranker.
+
 Production QSIV requires a compatible NVIDIA GPU. FP8 setup supports Linux x86_64
 and compute capability8.9 or newer; setup rejects missing/older hardware before
 installing or downloading. Doctor checks CUDA and device capability, and inference
