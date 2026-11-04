@@ -80,7 +80,11 @@ class Engine:
           CREATE TABLE IF NOT EXISTS manifests(branch TEXT PRIMARY KEY, ids TEXT, indexed_at TEXT);
           CREATE TABLE IF NOT EXISTS vectors(id TEXT PRIMARY KEY, vector BLOB);
         """)
-        cache = Path(os.environ.get("AGEMEM_MODEL_CACHE", str(self.local / "models"))).expanduser()
+        shared = Path(os.environ.get("XDG_DATA_HOME", str(Path.home() / ".local/share"))) / "agemem/models/embeddings"
+        legacy = self.local / "models"
+        # Keep existing project caches working offline, including custom models.
+        default_cache = legacy if legacy.is_dir() else shared
+        cache = Path(os.environ.get("AGEMEM_MODEL_CACHE", str(default_cache))).expanduser()
         self.embedder = Embeddings(self.config["embedder"], cache, offline, self.db)
         self.decider = decider
         self.notes = None
