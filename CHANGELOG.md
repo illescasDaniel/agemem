@@ -1,5 +1,17 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+
+- The suggested project instructions in `docs/AGENT_INTEGRATION.md` were revised: what memory is
+  for, keeping `activeContext.md` to intent, blockers and the exact next step, marking confidence
+  and what was verified, correcting stale notes on read, keeping conflicting claims under a
+  `CONFLICT:` line, plain write style without secrets, and one topic file per agent when several
+  work in parallel. Existing projects need to re-copy the block to benefit.
+- New projects get a reworded `memory/activeContext.md` template that asks for intent and the next
+  step, not state that can be read from git or code. Existing bank files are never changed.
+
 ## [0.2.2] - 2026-11-04
 
 ### Changed

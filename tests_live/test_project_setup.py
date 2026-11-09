@@ -24,6 +24,11 @@ class ProjectSetupTests(unittest.TestCase):
         (self.root / "example.py").write_text('print("example")\n')
         subprocess.run(["git", "-C", str(self.root), "add", "example.py"], check=True)
 
+    def test_new_active_context_template_keeps_re_derivable_state_out(self):
+        initialize_project(self.root, "cursor", "bm25", "hash", True)
+        text = (self.root / "memory/activeContext.md").read_text()
+        self.assertIn("Do not copy state you can re-read from git or code.", text)
+
     def test_fresh_and_repeated_setup_preserve_settings_bank_and_registration(self):
         first = initialize_project(self.root, "cursor", "bm25", "hash", True)
         self.assertTrue(first["user_config"]["created"])
