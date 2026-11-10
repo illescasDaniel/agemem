@@ -126,7 +126,7 @@ class IndexIncludesTopicFilesTests(unittest.TestCase):
             engine = Engine(root, offline=True)
             try:
                 engine.index()
-                self.assertTrue(any("memory/payments.md" in record.source for record in engine._records()))
+                self.assertTrue(any("memory/payments.md" in record.source.replace("\\", "/") for record in engine._records()))
             finally:
                 engine.close()
 
