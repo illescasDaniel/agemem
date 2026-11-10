@@ -1,6 +1,23 @@
 # Changelog
 
-## [Unreleased]
+## [0.3.0] - 2026-11-10
+
+### Added
+
+- `project_memory_pending`, `project_memory_resolve` and `project_memory_dismiss` MCP tools. Consolidation
+  already queued conflicts and repeated patterns for the agent, but nothing could read or answer the
+  queue. Resolving writes one dated note through the same screens as `project_memory_remember`, links it to
+  the originals and flags conflicting originals as merged; dismissing closes the item. No existing note is deleted.
+- `agemem maintain --pending` prints the queue without starting a decision provider.
+- An end-of-session wrap-up routine in `docs/AGENT_INTEGRATION.md` and a copyable
+  `docs/memory-wrapup/SKILL.md` (not installed by agemem).
+
+### Fixed
+
+- The consolidation instructions no longer name `memory_forget`, `memory_resolve` and `memory_dismiss`,
+  which did not exist; they name the real `project_memory_*` tools.
+- Resolving while the decision provider is unavailable no longer leaves a hidden, unscreened note behind:
+  it fails, rolls back that one note and leaves the item pending.
 
 ## [0.2.3] - 2026-11-10
 

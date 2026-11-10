@@ -1,7 +1,7 @@
 # Lifecycle hooks
 
 Agemem supports command hooks for Claude Code and current Codex clients. These
-complement the five MCP tools; project setup installs them by default for selected
+complement the eight MCP tools; project setup installs them by default for selected
 Claude Code and Codex clients. They do not install the original
 jev-mem hooks or skill. Cursor hook integration is not implemented.
 

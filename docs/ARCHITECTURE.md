@@ -11,7 +11,10 @@ versioned compatibility commitment or a published release.
 The [PlantUML sources](diagrams/README.md) are editable and rendered locally.
 
 Current public tools are `project_memory_recall`, `project_memory_remember`,
-`project_memory_capture`, `project_memory_index` and `project_memory_maintain`.
+`project_memory_capture`, `project_memory_index`, `project_memory_maintain`,
+`project_memory_pending`, `project_memory_resolve` and `project_memory_dismiss`.
+The last three let the agent settle the conflicts and patterns that consolidation
+queued; resolving adds one note and flags the originals, and no existing note is deleted.
 Capture/remember calls are explicit; the server does not automatically record
 conversations. MCP configuration is project-scoped and installed explicitly.
 

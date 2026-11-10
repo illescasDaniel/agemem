@@ -55,7 +55,8 @@ def main():
     p.add_argument("query")
     p.add_argument("--budget", type=int)
     p.add_argument("--history", action="store_true", help="Also search older file snapshots on this branch")
-    sub.add_parser("maintain", help="Screen pending notes and run jev-mem consolidation")
+    p = sub.add_parser("maintain", help="Screen pending notes and run jev-mem consolidation")
+    p.add_argument("--pending", action="store_true", help="Only list the queued conflicts and patterns; no provider, no changes")
     sub.add_parser("mcp", help="Run the project's MCP server over stdio")
     p = sub.add_parser("mcp-install", help="Register this project with a coding client")
     p.add_argument("--client", choices=["codex", "cursor", "claude-code"], help="Prompt when omitted")
@@ -115,6 +116,8 @@ def main():
                     result = engine.remember(args.text, args.source_id, args.shared)
                 elif args.command == "recall":
                     result = engine.recall(args.query, args.budget, args.history)
+                elif args.pending:
+                    result = engine.pending()
                 else:
                     result = engine.maintain()
             finally:

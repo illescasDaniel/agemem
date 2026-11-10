@@ -111,11 +111,16 @@ class Engine:
                 self.decider = Disabled() if self.offline else HostedJev(api_key=self.config.get("jev_api_key"))
         return self.decider
 
-    def _notes(self):
+    def _store(self):
+        """The notes store alone: no decision provider is built or started."""
         if self.notes is None:
             self.notes = Store(str(self.local / "notes.sqlite"), embedder=self.embedder, index="matrix")
             if self.notes.meta_text("embedder") != self.embedder.spec:
                 raise ValueError("Existing notes use another embedder; restore config before opening them")
+        return self.notes
+
+    def _notes(self):
+        self._store()
         cfg = Config()  # Preserve jev-mem's defaults, not the earlier bounded pilot profile.
         decider = self._decision()
         return self.notes, Writer(self.notes, decider, cfg), Retriever(self.notes, decider, cfg)
@@ -212,6 +217,20 @@ class Engine:
         flushed = writer.flush_pending()
         report = Consolidator(store, self._decision(), writer, Config()).run()
         return {"flushed": flushed, "consolidation": asdict(report)}
+
+    def pending(self, limit=10):
+        """Queued conflict/promote items for the agent to settle: {"items": [...], "total": n}. Read-only; no provider."""
+        return Consolidator(self._store(), None, None).pending(limit)
+
+    def resolve(self, item_id, text):
+        """Settle one queued item with one dated statement; {"ok": True, "node_id": n} or {"ok": False, "error": str}."""
+        store, writer, _ = self._notes()
+        return Consolidator(store, self._decision(), writer, Config()).resolve(
+            item_id, text, timestamp=now(), branch=self.branch, commit=self.commit)
+
+    def dismiss(self, item_id):
+        """Close one queued item without writing a note; {"ok": True} or {"ok": False, "error": str}."""
+        return Consolidator(self._store(), None, None).dismiss(item_id)
 
     def _decision_usage(self):
         """Snapshot physical attempts; MCP may reuse a decider across requests."""

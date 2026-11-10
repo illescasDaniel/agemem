@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Pending queue · agemem Track B</title>
+<style>
+/* Tokens. Light by default; dark follows the system. Colour never carries meaning alone: every colour has a text label. */
+:root{color-scheme:light;--ink:#172b3a;--muted:#405766;--line:#b8c8ce;--accent:#126451;--paper:#fff;--wash:#edf4f3;--page:#f4f7f8;--link:#075a80;--focus:#a34b00;
+--c-teal:#14b8a6;--c-vio:#8b5cf6;--c-pink:#ec4899;--c-amb:#f59e0b;--c-grn:#22c55e;--c-blue:#3b82f6;--c-fail:#f43f5e}
+@media screen and (prefers-color-scheme:dark){:root{color-scheme:dark;--ink:#e4edf1;--muted:#a7bbc5;--line:#34505c;--accent:#4fe0b6;--paper:#16232b;--wash:#1b2d36;--page:#0d171c;--link:#84cff5;--focus:#ffb36b}}
+*{box-sizing:border-box}body{margin:0;background:var(--page);color:var(--ink);font:1rem/1.6 system-ui,sans-serif}
+a{color:var(--link)}a:focus-visible,button:focus-visible,select:focus-visible,summary:focus-visible,.scroll:focus-visible{outline:3px solid var(--focus);outline-offset:3px}
+header,main,footer{max-width:68rem;margin:auto;padding:1.5rem}header{padding-top:2.5rem}
+h1{font-size:clamp(1.9rem,6vw,3rem);line-height:1.1;margin:.5rem 0 1rem;background:linear-gradient(90deg,color-mix(in srgb,var(--c-teal) 55%,var(--ink)),var(--c-vio) 55%,var(--c-pink));-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:800}
+h2{line-height:1.25;color:color-mix(in srgb,var(--sc,var(--c-teal)) 60%,var(--ink))}p,li{max-width:75ch}code{overflow-wrap:anywhere}
+.badge{display:inline-block;border:1px solid var(--c-teal);background:color-mix(in srgb,var(--c-teal) 18%,transparent);color:color-mix(in srgb,var(--c-teal) 35%,var(--ink));border-radius:2rem;padding:.2rem .7rem;font-size:.9rem;font-weight:650}
+.note{border-left:4px solid var(--c-teal);padding:.7rem 1rem;background:color-mix(in srgb,var(--c-teal) 10%,transparent)}
+section{background:var(--paper);border:1px solid var(--line);border-left:5px solid var(--sc,var(--c-teal));border-radius:.75rem;padding:clamp(1rem,3vw,2rem);margin-bottom:1.2rem;scroll-margin-top:1rem}
+.rep{margin:2rem 0 1rem;padding-bottom:.3rem;border-bottom:3px solid var(--c-teal)}
+nav.sub{display:flex;flex-wrap:wrap;gap:.6rem;margin:0 0 1rem}nav.sub a{text-decoration:none;font-weight:600;padding:.15rem .6rem;border-radius:2rem;background:color-mix(in srgb,var(--c-blue) 14%,transparent)}
+/* Tabs: without JavaScript every panel stays visible. */
+.tabs{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:1.5rem}
+.tabs button{font:inherit;font-weight:700;cursor:pointer;padding:.5rem 1rem;border-radius:.6rem .6rem 0 0;border:2px solid var(--line);border-bottom:0;background:color-mix(in srgb,var(--c-blue) 8%,var(--paper));color:var(--ink)}
+.tabs button[aria-selected=true]{background:var(--paper);border-color:var(--c-teal);box-shadow:inset 0 4px 0 var(--c-teal)}
+.st{font-size:.72rem;font-weight:650;padding:.05rem .5rem;border-radius:2rem;margin-left:.3rem;border:1.5px solid var(--cc)}
+.st.ok{--cc:var(--c-grn);background:color-mix(in srgb,var(--c-grn) 16%,transparent)}.st.wait{--cc:var(--c-amb);background:color-mix(in srgb,var(--c-amb) 18%,transparent)}.st.todo{--cc:var(--c-vio);border-style:dashed}
+/* Chips: text label plus colour and line style. */
+.chip{display:inline-block;font-size:.8rem;font-weight:650;padding:.05rem .6rem;border-radius:2rem;border:1.5px solid var(--cc);background:color-mix(in srgb,var(--cc) 16%,transparent);margin:0 .4rem .3rem 0}
+.chip.chg{--cc:var(--c-amb)}.chip.ex{--cc:var(--c-blue)}.chip.new{--cc:var(--c-grn)}.chip.def{--cc:var(--c-vio);border-style:dashed}.chip.fail{--cc:var(--c-fail);border-style:dashed}
+.scroll{overflow:auto}table{border-collapse:collapse;width:100%;text-align:left;font-size:.95rem}th,td{padding:.6rem;border-bottom:1px solid var(--line);vertical-align:top;min-width:6rem}
+thead th{border-bottom:2px solid color-mix(in srgb,var(--sc,var(--c-teal)) 60%,transparent)}caption{text-align:left;font-weight:650;padding:.5rem 0}
+details{border-top:1px solid var(--line);padding:.6rem 0}summary{cursor:pointer;font-weight:650}pre{overflow:auto;white-space:pre-wrap;background:color-mix(in srgb,var(--c-teal) 6%,var(--paper));padding:1rem;border-radius:.4rem}
+.gwt{border-left:4px solid var(--c-vio);padding-left:.8rem;margin:.4rem 0;border-top:0}
+label{display:block;font-weight:650}select{font:inherit;padding:.5rem;max-width:100%;margin:.5rem 0}.sim{border:1px solid var(--c-vio);background:color-mix(in srgb,var(--c-vio) 8%,transparent);padding:.8rem 1rem;border-radius:.4rem}.simnote{font-size:.85rem;opacity:.8}
+/* Diagrams */
+.dg{display:block;width:100%;color:var(--ink);max-width:none}.dg .t{font-size:11px;fill:currentColor}.dg .h{font-size:12px;font-weight:650;fill:currentColor}.dg .tag{font-size:10px;font-weight:700;fill:currentColor}.dg .f{font-size:11px;font-weight:700;fill:color-mix(in srgb,var(--c-fail) 70%,var(--ink))}
+.dg .hd{fill:color-mix(in srgb,var(--c-teal) 22%,var(--paper));stroke:var(--c-teal);stroke-width:2}.dg .fr{fill:color-mix(in srgb,var(--c-fail) 7%,transparent);stroke:var(--c-fail);stroke-width:1.5;stroke-dasharray:6 3}
+.dg .n{fill:var(--paper);stroke:currentColor;stroke-width:1.5}.dg .n.ex{fill:color-mix(in srgb,var(--c-blue) 14%,var(--paper));stroke:var(--c-blue)}.dg .n.chg{fill:color-mix(in srgb,var(--c-amb) 20%,var(--paper));stroke:var(--c-amb);stroke-width:3.5}
+.dg .n.new{fill:color-mix(in srgb,var(--c-grn) 16%,var(--paper));stroke:var(--c-grn);stroke-width:2}.dg .n.def{fill:color-mix(in srgb,var(--c-vio) 12%,var(--paper));stroke:var(--c-vio);stroke-width:2;stroke-dasharray:5 3}
+@media(max-width:38rem){header,main,footer{padding:1rem}}
+@media print{body{background:#fff;color:#000;font-size:10pt}.tabs,nav.sub{display:none}.tabpanel[hidden]{display:block!important}section{break-inside:avoid}details>*{display:block!important}details::details-content{content-visibility:visible;display:block}h1{color:#000;background:none}}
+@media (max-width:600px){table.cards,table.cards tbody,table.cards tr,table.cards td,table.cards th{display:block;min-width:0}table.cards caption{display:block}table.cards thead{position:absolute;clip:rect(0 0 0 0);width:1px;height:1px;overflow:hidden}table.cards tr{border:1px solid var(--line,#8884);border-radius:6px;margin:6px 0;padding:4px 8px}table.cards td,table.cards th{border-bottom:0;padding:.15rem 0;overflow-wrap:anywhere}table.cards td::before{content:attr(data-label) ": ";font-weight:650}table.cards th[scope=row]{font-size:1.05em}}
+@media (max-width:600px){.dg{min-width:34rem}}
+</style>
+<!-- Compact copy of the look for inline chat rendering. Inert in the page (media "not all"); scripts/inline_view.py enables it. Uses the host theme variables when present. -->
+<style data-inline media="not all">
+:root{--teal:#14b8a6;--vio:#8b5cf6;--amb:#f59e0b;--grn:#22c55e;--blue:#3b82f6;--fail:#f43f5e;--c-teal:var(--teal);--c-vio:var(--vio);--c-pink:#ec4899;--c-amb:var(--amb);--c-grn:var(--grn);--c-blue:var(--blue);--c-fail:var(--fail)}
+html,body{background:transparent;color:var(--foreground,inherit);font:14px/1.5 var(--font-sans,system-ui);margin:0}*{box-sizing:border-box}code,pre{font-family:var(--font-mono,monospace);font-size:12px}
+pre{white-space:pre-wrap;background:var(--code-background,transparent);border:1px solid var(--border,#8884);border-radius:6px;padding:8px}
+section{border:1px solid var(--border,#8884);border-left:5px solid var(--sc,var(--c-teal));border-radius:8px;padding:6px 14px;margin:8px 0;background:var(--card,transparent)}
+h2{font-size:15px;margin:6px 0;color:color-mix(in srgb,var(--sc,var(--c-teal)) 65%,var(--foreground,currentColor))}h3{font-size:13px;margin:8px 0 4px}
+.chip{display:inline-block;font-size:11px;font-weight:650;padding:0 8px;border-radius:99px;border:1.5px solid var(--cc);background:color-mix(in srgb,var(--cc) 15%,transparent);margin:0 4px 3px 0}
+.chg{--cc:var(--amb)}.ex{--cc:var(--blue)}.new{--cc:var(--grn)}.def{--cc:var(--vio);border-style:dashed}.fail{--cc:var(--fail);border-style:dashed}
+table{border-collapse:collapse;width:100%;font-size:12.5px}td,th{padding:4px 6px;border-bottom:1px solid var(--border,#8884);text-align:left;vertical-align:top}caption{text-align:left;font-weight:650}
+.scroll{overflow:auto}details{margin:3px 0}summary{cursor:pointer;font-weight:650}.gwt{border-left:3px solid var(--vio);padding-left:8px}.big>summary{font-size:14px;padding:6px 0}
+.note{border-left:4px solid var(--teal);padding:4px 10px;background:color-mix(in srgb,var(--teal) 10%,transparent)}.simnote{font-size:12px;opacity:.75}
+.dg{display:block;color:var(--foreground,inherit);max-width:100%}.dg .t{font-size:11px;fill:currentColor}.dg .h{font-size:12px;font-weight:650;fill:currentColor}.dg .tag{font-size:10px;font-weight:700;fill:currentColor}.dg .f{font-size:11px;font-weight:700;fill:var(--fail)}
+.dg .hd{fill:color-mix(in srgb,var(--teal) 22%,transparent);stroke:var(--teal);stroke-width:2}.dg .fr{fill:color-mix(in srgb,var(--fail) 7%,transparent);stroke:var(--fail);stroke-width:1.5;stroke-dasharray:6 3}
+.dg .n{fill:var(--card,transparent);stroke:currentColor;stroke-width:1.5}.dg .n.ex{fill:color-mix(in srgb,var(--blue) 14%,transparent);stroke:var(--blue)}.dg .n.chg{fill:color-mix(in srgb,var(--amb) 20%,transparent);stroke:var(--amb);stroke-width:3}
+.dg .n.new{fill:color-mix(in srgb,var(--grn) 16%,transparent);stroke:var(--grn);stroke-width:2}.dg .n.def{fill:color-mix(in srgb,var(--vio) 12%,transparent);stroke:var(--vio);stroke-width:2;stroke-dasharray:5 3}
+@media (max-width:600px){table.cards,table.cards tbody,table.cards tr,table.cards td,table.cards th{display:block;min-width:0}table.cards caption{display:block}table.cards thead{position:absolute;clip:rect(0 0 0 0);width:1px;height:1px;overflow:hidden}table.cards tr{border:1px solid var(--line,#8884);border-radius:6px;margin:6px 0;padding:4px 8px}table.cards td,table.cards th{border-bottom:0;padding:.15rem 0;overflow-wrap:anywhere}table.cards td::before{content:attr(data-label) ": ";font-weight:650}table.cards th[scope=row]{font-size:1.05em}}
+@media (max-width:600px){.dg{min-width:34rem}}
+</style>
+</head>
+<body>
+<header>
+<span class="badge">Track B · design, spec and architecture approved · built, QA done and graded PASS · awaiting your review</span>
+<h1>Work the pending-queue</h1>
+<p>Consolidation already notices notes that clash or repeat a pattern and queues them for the agent to settle, but nothing can read or answer that queue. This feature gives the agent three MCP tools to list, resolve and dismiss queued items, adds a read-only CLI view, corrects the instruction text that names tools that do not exist, and documents an end-of-session wrap-up routine.</p>
+<p class="note"><strong>Review only.</strong> One file, one tab per phase. Every interaction is a <strong>Simulation</strong>; no note is written. Approval happens in chat, never on this page.</p>
+<div class="tabs" role="tablist" aria-label="Phases">
+<button role="tab" id="t-design" aria-controls="p-design" aria-selected="true" data-p="design">Design <span class="st ok">approved</span></button>
+<button role="tab" id="t-spec" aria-controls="p-spec" aria-selected="false" tabindex="-1" data-p="spec">Spec <span class="st ok">approved</span></button>
+<button role="tab" id="t-arch" aria-controls="p-arch" aria-selected="false" tabindex="-1" data-p="arch">Architecture <span class="st ok">approved</span></button>
+<button role="tab" id="t-build" aria-controls="p-build" aria-selected="false" tabindex="-1" data-p="build">Build <span class="st ok">done</span></button>
+<button role="tab" id="t-qa" aria-controls="p-qa" aria-selected="false" tabindex="-1" data-p="qa">QA <span class="st ok">done</span></button>
+<button role="tab" id="t-grade" aria-controls="p-grade" aria-selected="false" tabindex="-1" data-p="grade">Grade <span class="st ok">PASS</span></button>
+<button role="tab" id="t-appr" aria-controls="p-appr" aria-selected="false" tabindex="-1" data-p="appr">Approvals <span class="st ok">3 of 3 gates</span></button>
+</div>
+</header>
+<main>
+
+<!-- ============ DESIGN ============ -->
+<div role="tabpanel" id="p-design" aria-labelledby="t-design" class="tabpanel">
+<nav class="sub skip-inline" aria-label="Design sections"><a href="#d-glance">At a glance</a><a href="#d-flow">Flow</a><a href="#d-paths">Explore paths</a><a href="#d-fail">Failures</a><a href="#d-dec">Decisions</a><a href="#d-scope">Scope</a></nav>
+<section id="d-glance" aria-labelledby="d-glance-t" style="--sc:var(--c-teal)"><h2 id="d-glance-t">At a glance</h2>
+<p><span class="chip new">added: project_memory_pending</span><span class="chip new">added: project_memory_resolve</span><span class="chip new">added: project_memory_dismiss</span><span class="chip new">added: maintain --pending</span><span class="chip chg">changed: instruction text</span><span class="chip ex">existing: Consolidator queue</span><span class="chip fail">F1 unknown item</span><span class="chip fail">F2 text refused</span><span class="chip fail">F3 provider down</span></p>
+<ul>
+<li><strong>Outcome:</strong> an agent at the end of a session can list the conflicts and patterns consolidation queued, settle each with one dated note or dismiss it, and the queue shrinks. No existing note is ever deleted; resolving only adds a note and flags the originals (a failed resolve removes only the note it just wrote).</li>
+<li><strong>Failure paths:</strong> F1 an id that is unknown or already closed returns <code>ok:false</code>; F2 a resolution text the screens refuse (empty, secret, injection, work-status) returns <code>ok:false</code> with the reason and leaves the item pending; F3 the decision provider is unavailable on resolve, so the call fails, the item stays pending and no half-written note is left behind.</li>
+<li><strong>Decisions to settle:</strong> tool names (<code>project_memory_*</code>, not the plan's shorthand <code>memory_*</code>); drop <code>memory_forget</code> from the text; a default listing cap; whether the roll-back in F3 is acceptable; how the wrap-up routine ships (docs only, or also a copyable SKILL.md).</li>
+<li><strong>Out of scope:</strong> a <code>memory_forget</code> tool, CLI resolve and dismiss, the <code>agemem dream</code> command (Track C), any change to the "Suggested project instructions" block.</li>
+</ul>
+<p class="note"><strong>Design approved 2026-11-10</strong>, with the recommendations for Q1–Q4 and the proposed values (10 items per listing, 0.3.0, roll-back on F3). The next gate is the Spec tab.</p>
+<p class="skip-inline"><a href="#d-flow">Detailed report ↓</a></p></section>
+<h2 class="rep">Detailed report</h2>
+
+<section id="d-flow" aria-labelledby="d-flow-t" style="--sc:var(--c-blue)"><h2 id="d-flow-t">Who decides what when an item is resolved?</h2>
+<div class="scroll" tabindex="0" role="region" aria-label="Scrollable diagram"><svg class="dg" viewBox="0 0 720 330" role="img" aria-labelledby="sq-t sq-d"><title id="sq-t">Resolving a queued item</title><desc id="sq-d">The agent lists pending items from the new pending tool, then calls the new resolve tool with one dated statement. The existing Consolidator screens the text through the Writer. On F1 an unknown item is refused. On F2 the screens refuse the text. On F3 the decision provider is unavailable, so the call fails and nothing visible is stored. Otherwise the new note is written, linked to the originals, the originals are flagged as merged and the item is closed.</desc>
+<defs><marker id="ar1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="context-stroke"/></marker></defs>
+<g stroke="currentColor" stroke-opacity=".35" stroke-dasharray="4 4"><path d="M110 40V325"/><path d="M360 40V325"/><path d="M610 40V325"/></g>
+<rect class="hd" x="30" y="8" width="160" height="32" rx="16"/><text class="h" x="110" y="29" text-anchor="middle">Agent · existing</text>
+<rect class="hd" x="260" y="8" width="200" height="32" rx="16"/><text class="h" x="360" y="29" text-anchor="middle">MCP tools · added</text>
+<rect class="hd" x="500" y="8" width="220" height="32" rx="16"/><text class="h" x="610" y="29" text-anchor="middle">Consolidator + Writer · existing</text>
+<g stroke="currentColor" stroke-width="1.6" fill="none" marker-end="url(#ar1)"><path d="M110 64H360"/><path d="M360 88H610"/><path d="M610 112H360"/><path d="M360 136H110"/><path d="M110 164H360"/><path d="M360 188H610"/><path d="M610 292H360"/><path d="M360 316H110"/></g>
+<text class="t" x="235" y="58" text-anchor="middle">1 pending</text><text class="t" x="485" y="82" text-anchor="middle">2 read queue</text><text class="t" x="485" y="106" text-anchor="middle">3 items</text><text class="t" x="235" y="130" text-anchor="middle">4 items + instruction</text>
+<text class="t" x="235" y="158" text-anchor="middle">5 resolve(id, text)</text><text class="t" x="485" y="182" text-anchor="middle">6 screen + write</text><text class="t" x="485" y="286" text-anchor="middle">7 note id, links, flags</text><text class="t" x="235" y="310" text-anchor="middle">8 ok:true + node_id</text>
+<rect class="fr" x="40" y="198" width="660" height="86" rx="6"/><text class="f" x="52" y="214">F1 unknown or closed id · F2 text refused · F3 provider unavailable</text>
+<g stroke="currentColor" stroke-width="1.6" stroke-dasharray="5 3" fill="none" marker-end="url(#ar1)"><path d="M610 236H360"/><path d="M360 262H110"/></g><text class="t" x="485" y="230" text-anchor="middle">refusal or error</text><text class="t" x="235" y="256" text-anchor="middle">ok:false + reason, item stays pending</text></svg></div>
+<p>Text equivalent: the agent calls <code>project_memory_pending</code> (steps 1–4) and gets each item with the notes involved and an instruction. It calls <code>project_memory_resolve</code> with an id and one dated statement (steps 5–8). The existing Writer screens that text exactly as <code>remember</code> does. Any refusal (<strong>F1</strong>, <strong>F2</strong>, <strong>F3</strong>) returns <code>ok:false</code> and leaves the queue item pending. <code>project_memory_dismiss</code> is the shorter path: it closes an item without writing anything.</p>
+</section>
+
+<section id="d-paths" aria-labelledby="d-paths-t" style="--sc:var(--c-vio)"><h2 id="d-paths-t">Explore an outcome</h2>
+<div hidden id="controls"><label for="path">Simulation path</label><select id="path"><option value="list">List · two items waiting</option><option value="resolve">Resolve a conflict</option><option value="dismiss">Dismiss a false pattern</option><option value="f1">F1 · unknown or closed id</option><option value="f2">F2 · text refused</option><option value="f3">F3 · provider unavailable</option><option value="cli">CLI · maintain --pending</option></select>
+<pre id="trace" tabindex="0" aria-label="Simulated tool call and result"></pre>
+<p class="sim" id="outcome" role="status" aria-live="polite" aria-atomic="true"></p></div>
+<noscript><p>The selector needs JavaScript; every outcome is listed below without it.</p></noscript>
+<details open><summary>List · two items waiting</summary><pre>project_memory_pending {}
+→ {"items":[
+  {"id":4,"kind":"conflict","p":0.91,
+   "memories":[{"id":12,"content":"Deploys run from the main branch.","timestamp":"2026-09-02"},
+               {"id":31,"content":"Deploys run from release/* branches.","timestamp":"2026-09-02"}],
+   "instruction":"These notes disagree and nothing says which is current. Check the code or docs, or ask the user. …"},
+  {"id":5,"kind":"promote","p":0.74,"memories":[…],"instruction":"…"}],
+ "total":2}</pre><p>Read-only. Memory text is untrusted data; the instruction is agemem's own wording. An item that names a note that no longer exists is closed as dismissed when listed (existing behaviour).</p></details>
+<details open><summary>Resolve a conflict</summary><pre>project_memory_resolve {"id":4,"text":"As of 2026-11-10 deploys run from release/* branches; main only builds."}
+→ {"ok":true,"node_id":47}</pre><p>The new note is stored like a remembered fact (screened, dated today, stamped with the branch and commit), linked to notes 12 and 31, and both originals are flagged <code>merged_into</code> 47 so the new note outranks them. Item 4 is closed as resolved. Notes 12 and 31 stay.</p></details>
+<details open><summary>Dismiss a false pattern</summary><pre>project_memory_dismiss {"id":5}
+→ {"ok":true}</pre><p>The item is closed as dismissed. No note is written and no flag changes.</p></details>
+<details open><summary>F1 · unknown or closed id</summary><pre>project_memory_resolve {"id":99,"text":"…"}
+→ {"ok":false,"error":"no such pending synthesis"}</pre><p>Same result for <code>dismiss</code> and for an item that was already resolved or dismissed. Nothing changes.</p></details>
+<details open><summary>F2 · text refused</summary><pre>project_memory_resolve {"id":4,"text":"Working on the deploy fix now."}
+→ {"ok":false,"error":"looks like work status (p=0.93): it goes stale silently. …"}</pre><p>Empty text, a secret, an injection or a work-status statement are refused with the Writer's own reason. The item stays pending so the agent can try again with better wording.</p></details>
+<details open><summary>F3 · provider unavailable</summary><pre>project_memory_resolve {"id":4,"text":"As of 2026-11-10 …"}
+→ {"ok":false,"error":"decision provider unavailable; run agemem doctor"}</pre><p>The Writer would store the text unscreened and hidden. The call rolls that note back, leaves item 4 pending and flags nothing, so a retry after <code>agemem doctor</code> does not create a duplicate.</p></details>
+<details open><summary>CLI · maintain --pending</summary><pre>$ agemem maintain --pending
+{"items":[{"id":4,"kind":"conflict","p":0.91,"memories":[…]}],"total":2}
+$ echo $?
+0</pre><p>Prints the same JSON as <code>project_memory_pending</code> and does nothing else: no decision provider is started and no hosted call is made, so it works offline.</p></details>
+<p class="simnote">Simulation: ids, text and scores are fixtures; no store is opened.</p>
+</section>
+
+<section id="d-fail" aria-labelledby="d-fail-t" style="--sc:var(--c-fail)"><h2 id="d-fail-t">Failure inventory</h2>
+<div class="scroll" tabindex="0" role="region" aria-label="Scrollable failure table"><table class="cards"><caption>Stable failure IDs; never renumber</caption><thead><tr><th scope="col">ID</th><th scope="col">Trigger</th><th scope="col">Visible result</th><th scope="col">State after</th><th scope="col">Recovery</th></tr></thead><tbody>
+<tr><th scope="row">F1</th><td data-label="Trigger">resolve or dismiss with an id that is unknown or already closed</td><td data-label="Visible result"><code>ok:false</code>, “no such pending synthesis”</td><td data-label="State after">Nothing read or changed</td><td data-label="Recovery">List again and use a current id</td></tr>
+<tr><th scope="row">F2</th><td data-label="Trigger">resolve text is empty, looks like a secret, trips the injection screen or reads as work status</td><td data-label="Visible result"><code>ok:false</code> with the Writer's reason</td><td data-label="State after">No note, no flag; item stays pending</td><td data-label="Recovery">Reword and retry, or dismiss</td></tr>
+<tr><th scope="row">F3</th><td data-label="Trigger">decision provider unavailable during resolve</td><td data-label="Visible result"><code>ok:false</code>, run <code>agemem doctor</code></td><td data-label="State after">No visible note (rolled back), no flag; item stays pending</td><td data-label="Recovery">Fix the provider, retry</td></tr>
+</tbody></table></div>
+<p>A queued item that names a deleted note is closed when listed; that is existing behaviour, not a failure of the new tools.</p></section>
+
+<section id="d-dec" aria-labelledby="d-dec-t" style="--sc:var(--c-amb)"><h2 id="d-dec-t">Proposed decisions</h2>
+<p>Proposals only; nothing is approved until you say so in chat.</p>
+<div class="scroll" tabindex="0" role="region" aria-label="Scrollable decisions table"><table><caption>Five decision areas</caption><thead><tr><th scope="col">Area</th><th scope="col">Proposal</th><th scope="col">Needs review</th></tr></thead><tbody>
+<tr><th scope="row">Success criteria</th><td>A listed item can be resolved or dismissed once; after that it no longer lists. Resolving writes exactly one note, links it to the originals and flags conflict originals <code>merged_into</code>. Instruction text names only tools that exist.</td><td>Confirm the three tool names <code>project_memory_pending</code>, <code>_resolve</code>, <code>_dismiss</code>.</td></tr>
+<tr><th scope="row">Failure handling and recovery</th><td>F1–F3 return <code>ok:false</code> and leave the item pending. F3 rolls back the hidden note so retries do not duplicate. Wrap-up never loops: it works each item once.</td><td>Is rolling back the unscreened note acceptable under “nothing is deleted”? It is agemem's own half-written note, never an existing one.</td></tr>
+<tr><th scope="row">Performance and resource budget</th><td>Listing reads the local queue and does not start the decision provider. A listing returns the oldest items first, 10 at a time, plus the total.</td><td>10 is a guess, not measured; confirm or give another number.</td></tr>
+<tr><th scope="row">Trust boundary and validation</th><td>Memory text in a listing is untrusted data. Resolve text passes the same secret, injection and work-status screens as <code>remember</code>. Resolved notes record <code>consolidation:&lt;id&gt;</code> as their source.</td><td>Confirm that a resolution is not trusted more than a remembered fact.</td></tr>
+<tr><th scope="row">Compatibility and rollout</th><td>Additive: three new tools, one new CLI flag; existing tools and the suggested instruction block stay unchanged, so projects need not re-copy anything. Ships as 0.3.0. Docs that say “five tools” are updated to eight.</td><td>Confirm 0.3.0 rather than 0.2.4.</td></tr>
+</tbody></table></div></section>
+
+<section id="d-scope" aria-labelledby="d-scope-t" style="--sc:var(--c-teal)"><h2 id="d-scope-t">Scope and open questions</h2>
+<p><strong>In scope:</strong> B1 the three tools and <code>maintain --pending</code>; B2 correct the instruction text; B3 a documented wrap-up routine. <strong>Out of scope:</strong> a delete or forget tool (it would break the “add and flag only” rule), CLI resolve and dismiss, <code>agemem dream</code>, changing the suggested project instructions.</p>
+<ol>
+<li><strong>Q1.</strong> The conflict text currently offers <code>memory_forget</code>. <em>Recommend: remove that option and tell the agent to resolve with one dated statement of the current fact, or dismiss if both can be true.</em></li>
+<li><strong>Q2.</strong> The instruction table has a <code>merge</code> kind that consolidation never queues. <em>Recommend: leave it, since removing it is unrelated.</em></li>
+<li><strong>Q3.</strong> B3 shape. <em>Recommend: a “End-of-session routine” section in <code>docs/AGENT_INTEGRATION.md</code> plus a copyable <code>memory-wrapup</code> SKILL.md kept in <code>docs/</code>; agemem does not install it.</em></li>
+<li><strong>Q4.</strong> Tool names. <em>Recommend <code>project_memory_pending/_resolve/_dismiss</code> to match the five existing tools.</em></li>
+</ol>
+<p>If an answer adds a failure path, a stable ID and walkthrough are added before asking for approval.</p></section>
+</div>
+
+<!-- ============ SPEC ============ -->
+<div role="tabpanel" id="p-spec" aria-labelledby="t-spec" class="tabpanel">
+<section id="s-glance" aria-labelledby="s-glance-t" style="--sc:var(--c-teal)"><h2 id="s-glance-t">At a glance</h2>
+<p class="note skip-inline"><strong>This tab is the spec</strong> and the single source of truth for Track B. No separate Markdown spec exists.</p>
+<ul>
+<li><strong>Contracts:</strong> C1 <code>project_memory_pending(limit=10)</code>; C2 <code>project_memory_resolve(id, text)</code>; C3 <code>project_memory_dismiss(id)</code>; C4 <code>agemem maintain --pending</code>; C5 instruction text; C6 resolve rolls back on provider failure; C7 docs and release notes.</li>
+<li><strong>Failures covered:</strong> <span class="chip fail">F1</span> S7, S8 <span class="chip fail">F2</span> S9 <span class="chip fail">F3</span> S10. Successes S1–S6, S11–S17.</li>
+<li><strong>Verification:</strong> real SQLite stores and a scripted decider for behaviour (S1–S10), a real stdio MCP session (S13), the real CLI in a subprocess (S12), text checks for docs and instruction strings (S11, S15, S16).</li>
+<li><strong>Changes from the design page:</strong> the CLI prints <code>items</code> (not <code>pending</code>) so it matches the tool exactly; the pending tool takes an optional <code>limit</code> (default 10, minimum 1). Both are wording-level; no behaviour or scope moved.</li>
+<li><strong>Decisions approved with the design:</strong> names, 10 items per listing, roll-back on F3, 0.3.0, docs plus a copyable SKILL.md.</li>
+</ul>
+<p class="note"><strong>Spec approved 2026-11-10.</strong> The next gate is the Architecture tab.</p></section>
+<h2 class="rep">Detailed report</h2>
+<section id="s-contracts" aria-labelledby="s-contracts-t" style="--sc:var(--c-teal)"><h2 id="s-contracts-t">Contracts and decisions</h2>
+<ol>
+<li><strong>C1 · <code>project_memory_pending(limit: int = 10)</code></strong> returns <code>{"items": [...], "total": N}</code>. <code>total</code> counts every pending item; <code>items</code> holds the oldest <code>limit</code> of them. Each item is <code>{id, kind, p, memories:[{id, content, timestamp}], instruction}</code>, as <code>Consolidator.pending()</code> builds it. <code>limit &lt; 1</code> is an error (<code>ValueError</code>, reported as a tool error). Read-only except that an item naming a deleted note is closed as dismissed (existing behaviour). It opens the notes store and never builds or starts a decision provider.</li>
+<li><strong>C2 · <code>project_memory_resolve(id: int, text: str)</code></strong> returns <code>{"ok": true, "node_id": n}</code> or <code>{"ok": false, "error": str}</code>; a refusal is a normal result, not a tool error. On success it writes one note through the Writer (same secret, injection and work-status screens as <code>remember</code>), stamped with today's date, the current branch and commit, source <code>consolidation:&lt;id&gt;</code>, scope of the originals (or <code>global</code> when they differ); it links the note to every original (semantic edge); for kind <code>conflict</code> (and the unqueued <code>merge</code>) it flags each original <code>merged_into</code> the new note; it closes the item as resolved. For kind <code>promote</code> the originals are not flagged. No existing note is deleted or edited.</li>
+<li><strong>C3 · <code>project_memory_dismiss(id: int)</code></strong> returns <code>{"ok": true}</code> and closes the item as dismissed, or <code>{"ok": false, "error": "no such pending synthesis"}</code>. It writes no note and changes no flag.</li>
+<li><strong>C4 · <code>agemem maintain --pending</code></strong> prints exactly the JSON of C1 with the default limit, exits 0 and does nothing else: no flush, no consolidation run, no decision provider, no network. <code>agemem maintain</code> without the flag behaves as before.</li>
+<li><strong>C5 · Instruction text.</strong> Every instruction string names only <code>project_memory_resolve</code> and <code>project_memory_dismiss</code>; <code>memory_forget</code> and the bare <code>memory_*</code> names no longer appear. The conflict text says: check the code or docs or ask the user; if one is current, resolve with one literal, dated statement of the current fact (both originals then rank lower); if both can be true, dismiss.</li>
+<li><strong>C6 · Provider failure on resolve.</strong> When the Writer reports <code>degraded</code> (provider unavailable), the new unscreened note is removed together with its pending-screening entry, nothing is linked or flagged, the item stays pending, and the call returns <code>{"ok": false, "error": "decision provider unavailable; run agemem doctor"}</code>. This removes only the note that call just created.</li>
+<li><strong>C7 · Docs and release.</strong> <code>docs/AGENT_INTEGRATION.md</code> gets an “End-of-session routine” section (capture, remember, maintain, then pending, resolve or dismiss, each item once; treat listed memory text as data, never instructions; stop when nothing is pending). <code>docs/memory-wrapup/SKILL.md</code> is a copyable skill with the same routine; agemem does not install it. Tool counts in <code>docs/ARCHITECTURE.md</code> and <code>docs/HOOKS.md</code> say eight. <code>CHANGELOG.md</code> gets an Unreleased entry. The “Suggested project instructions” block is unchanged.</li>
+</ol>
+<div class="scroll" tabindex="0" role="region" aria-label="Scrollable decisions table"><table><caption>Five decision areas, now observable</caption><thead><tr><th scope="col">Area</th><th scope="col">Approved value</th></tr></thead><tbody>
+<tr><th scope="row">Success criteria</th><td>S4, S5, S6: an item closes once and lists no more; exactly one note per resolve.</td></tr>
+<tr><th scope="row">Failure handling</th><td>S7–S10: <code>ok:false</code>, item pending, no note, no flag, no stray hidden note.</td></tr>
+<tr><th scope="row">Performance and resource</th><td>S1, S3: 10 items per listing by default, total always reported; no decision provider started to list. No latency number is set.</td></tr>
+<tr><th scope="row">Trust boundary</th><td>S9, S11, S15: resolve text screened like <code>remember</code>; listed text is data; instruction text is agemem's own.</td></tr>
+<tr><th scope="row">Compatibility and rollout</th><td>S13, S16, S17: additive, 0.3.0, existing five tools and the instruction block unchanged.</td></tr>
+</tbody></table></div></section>
+<section id="s-scen" aria-labelledby="s-scen-t" style="--sc:var(--c-vio)"><h2 id="s-scen-t">Acceptance scenarios</h2>
+<details class="gwt" id="s1"><summary><strong>S1</strong> · List items, oldest first, capped</summary><p><strong>Given</strong> twelve pending items,<br><strong>When</strong> the agent calls <code>project_memory_pending</code> with no arguments,<br><strong>Then</strong> it gets the ten oldest items in id order, <code>total</code> is 12, and each item carries its notes and an instruction.</p></details>
+<details class="gwt" id="s2"><summary><strong>S2</strong> · Empty queue</summary><p><strong>Given</strong> no pending items,<br><strong>When</strong> pending is called,<br><strong>Then</strong> the result is <code>{"items": [], "total": 0}</code>. A <code>limit</code> below 1 is an error and returns nothing.</p></details>
+<details class="gwt" id="s3"><summary><strong>S3</strong> · Listing needs no provider</summary><p><strong>Given</strong> offline mode, or a provider that raises when asked,<br><strong>When</strong> pending is called through the engine, MCP or CLI,<br><strong>Then</strong> it succeeds and the provider was never asked.</p></details>
+<details class="gwt" id="s4"><summary><strong>S4</strong> · Resolve a conflict</summary><p><strong>Given</strong> a pending <code>conflict</code> item over notes A and B,<br><strong>When</strong> the agent resolves it with a dated statement,<br><strong>Then</strong> the result is <code>ok:true</code> with a <code>node_id</code>; the new note exists with today's date, branch, commit and source <code>consolidation:&lt;id&gt;</code>; it is linked to A and B; A and B are flagged <code>merged_into</code> it and still exist; the item no longer lists.</p></details>
+<details class="gwt" id="s5"><summary><strong>S5</strong> · Resolve a promote item</summary><p><strong>Given</strong> a pending <code>promote</code> item,<br><strong>When</strong> it is resolved,<br><strong>Then</strong> the pattern note is written and linked to the episodes, the episodes get no <code>merged_into</code> flag, and the item closes.</p></details>
+<details class="gwt" id="s6"><summary><strong>S6</strong> · Dismiss</summary><p><strong>Given</strong> a pending item,<br><strong>When</strong> it is dismissed,<br><strong>Then</strong> the result is <code>ok:true</code>, the item no longer lists, no note is written and no flag changes.</p></details>
+<details class="gwt" id="s7"><summary><strong>S7</strong> · Resolve with an unknown or closed id (F1)</summary><p><strong>Given</strong> an id that never existed, or one already resolved or dismissed,<br><strong>When</strong> resolve is called,<br><strong>Then</strong> the result is <code>{"ok": false, "error": "no such pending synthesis"}</code> and the store is unchanged.</p></details>
+<details class="gwt" id="s8"><summary><strong>S8</strong> · Dismiss with an unknown or closed id (F1)</summary><p><strong>Given</strong> the same ids,<br><strong>When</strong> dismiss is called,<br><strong>Then</strong> the same <code>ok:false</code> result and the store is unchanged.</p></details>
+<details class="gwt" id="s9"><summary><strong>S9</strong> · Refused resolution text (F2)</summary><p><strong>Given</strong> a pending item and a text that is empty, looks like a secret, trips the injection screen, or reads as work status,<br><strong>When</strong> resolve is called,<br><strong>Then</strong> <code>ok:false</code> carries the Writer's reason, no note is stored, no flag is added and the item stays pending, so a corrected text can then be resolved.</p></details>
+<details class="gwt" id="s10"><summary><strong>S10</strong> · Provider unavailable on resolve (F3)</summary><p><strong>Given</strong> a pending item and a provider that is unavailable,<br><strong>When</strong> resolve is called,<br><strong>Then</strong> <code>ok:false</code> says to run <code>agemem doctor</code>; the note count is unchanged, no pending-screening entry remains, no edge or flag was added and the item is still pending; once the provider returns, the same resolve yields exactly one note.</p></details>
+<details class="gwt" id="s11"><summary><strong>S11</strong> · Instruction text names real tools</summary><p><strong>Given</strong> every instruction string,<br><strong>When</strong> the tool names in it are compared with the MCP server's registered tools,<br><strong>Then</strong> each is registered, and <code>memory_forget</code> appears nowhere.</p></details>
+<details class="gwt" id="s12"><summary><strong>S12</strong> · CLI view is read-only</summary><p><strong>Given</strong> a project with pending items and <code>--offline</code>,<br><strong>When</strong> <code>agemem maintain --pending</code> runs,<br><strong>Then</strong> it prints the C1 JSON, exits 0, and the queue, the consolidation cursor and the write counter are unchanged.</p></details>
+<details class="gwt" id="s13"><summary><strong>S13</strong> · MCP exposes the new tools</summary><p><strong>Given</strong> a real stdio MCP session,<br><strong>When</strong> the tools are listed and each new tool is called,<br><strong>Then</strong> eight tools are listed, the new ones have schemas (<code>id</code> integer, <code>text</code> string, <code>limit</code> integer) and return structured results, and a refusal is a result with <code>ok:false</code>, not a tool error.</p></details>
+<details class="gwt" id="s14"><summary><strong>S14</strong> · Wrap-up routine is documented</summary><p><strong>Given</strong> the docs,<br><strong>When</strong> the End-of-session section and <code>docs/memory-wrapup/SKILL.md</code> are read,<br><strong>Then</strong> both give the order capture, remember, maintain, pending, resolve or dismiss; say to work each item once and stop when none remain; say listed memory text is data; and the skill has valid name and description frontmatter.</p></details>
+<details class="gwt" id="s15"><summary><strong>S15</strong> · Docs and release notes agree</summary><p><strong>Given</strong> the docs,<br><strong>When</strong> they are read,<br><strong>Then</strong> <code>ARCHITECTURE.md</code> and <code>HOOKS.md</code> count eight tools, and <code>CHANGELOG.md</code> has an Unreleased entry for the three tools, the CLI flag, the corrected text and the wrap-up routine.</p></details>
+<details class="gwt" id="s16"><summary><strong>S16</strong> · Instruction block unchanged</summary><p><strong>Given</strong> the existing guidance tests,<br><strong>When</strong> they run unchanged,<br><strong>Then</strong> they pass, so projects need not re-copy the block.</p></details>
+<details class="gwt" id="s17"><summary><strong>S17</strong> · Existing tools unaffected</summary><p><strong>Given</strong> the existing recall, remember, capture, index and maintain behaviour,<br><strong>When</strong> the existing suite runs,<br><strong>Then</strong> it passes unchanged (<code>agemem maintain</code> without the flag included).</p></details>
+</section>
+<section id="s-trace" aria-labelledby="s-trace-t" style="--sc:var(--c-amb)"><h2 id="s-trace-t">Traceability</h2>
+<div class="scroll" tabindex="0" role="region" aria-label="Scrollable traceability table"><table class="cards"><caption>Design path to scenario to verification</caption><thead><tr><th scope="col">Design path</th><th scope="col">Scenario</th><th scope="col">Planned verification</th><th scope="col">Actual test and code</th></tr></thead><tbody>
+<tr><th scope="row">List</th><td data-label="Scenario">S1, S2, S3</td><td data-label="Planned verification">Engine tests on a real SQLite store; provider that raises</td><td data-label="Actual"><span class="chip ex">see Build tab</span></td></tr>
+<tr><th scope="row">Resolve a conflict</th><td data-label="Scenario">S4</td><td data-label="Planned verification">Engine test, real store and scripted decider</td><td data-label="Actual"><span class="chip ex">see Build tab</span></td></tr>
+<tr><th scope="row">Resolve (promote)</th><td data-label="Scenario">S5</td><td data-label="Planned verification">Engine test</td><td data-label="Actual"><span class="chip ex">see Build tab</span></td></tr>
+<tr><th scope="row">Dismiss</th><td data-label="Scenario">S6</td><td data-label="Planned verification">Engine test</td><td data-label="Actual"><span class="chip ex">see Build tab</span></td></tr>
+<tr><th scope="row">F1</th><td data-label="Scenario">S7, S8</td><td data-label="Planned verification">Engine tests, unknown and closed ids</td><td data-label="Actual"><span class="chip ex">see Build tab</span></td></tr>
+<tr><th scope="row">F2</th><td data-label="Scenario">S9</td><td data-label="Planned verification">Engine tests per refusal kind, then a corrected retry</td><td data-label="Actual"><span class="chip ex">see Build tab</span></td></tr>
+<tr><th scope="row">F3</th><td data-label="Scenario">S10</td><td data-label="Planned verification">Engine test with an unavailable then available decider</td><td data-label="Actual"><span class="chip ex">see Build tab</span></td></tr>
+<tr><th scope="row">CLI</th><td data-label="Scenario">S12</td><td data-label="Planned verification">Real CLI subprocess, offline</td><td data-label="Actual"><span class="chip ex">see Build tab</span></td></tr>
+<tr><th scope="row">Instruction text (B2)</th><td data-label="Scenario">S11</td><td data-label="Planned verification">Unit check against the registered tool names</td><td data-label="Actual"><span class="chip ex">see Build tab</span></td></tr>
+<tr><th scope="row">MCP surface</th><td data-label="Scenario">S13</td><td data-label="Planned verification">Real stdio MCP session</td><td data-label="Actual"><span class="chip ex">see Build tab</span></td></tr>
+<tr><th scope="row">Wrap-up routine (B3)</th><td data-label="Scenario">S14, S15</td><td data-label="Planned verification">Text checks on docs; manual read of the skill</td><td data-label="Actual"><span class="chip ex">see Build tab</span></td></tr>
+<tr><th scope="row">Compatibility</th><td data-label="Scenario">S16, S17</td><td data-label="Planned verification">Existing suite unchanged</td><td data-label="Actual"><span class="chip ex">see Build tab</span></td></tr>
+</tbody></table></div>
+<p>Every design failure ID (F1, F2, F3) maps to a scenario. A model that judges notes is scripted in tests; real provider behaviour is not exercised by this feature and stays unverified here.</p></section>
+</div>
+<div role="tabpanel" id="p-arch" aria-labelledby="t-arch" class="tabpanel">
+<section id="a-glance" aria-labelledby="a-glance-t" style="--sc:var(--c-pink)"><h2 id="a-glance-t">At a glance</h2>
+<ul>
+<li><strong>Assessment:</strong> no new types or ports. The feature adds three public methods on the existing <code>Engine</code> (stubbed now, see the diff below), widens two existing <code>Consolidator</code> signatures, and wires them to MCP and the CLI. <code>Writer</code> and <code>Store</code> are reused unchanged.</li>
+<li><strong>Key boundary:</strong> listing and dismissing touch only the <code>Store</code>; resolving also needs the <code>Writer</code> and so the decision provider. Engine gets a store-only accessor so that listing never builds a provider (S3, S12).</li>
+<li><strong>Test approach and order:</strong> write the tests for S1–S17 and watch them fail on <code>NotImplementedError</code> or on missing behaviour; then implement in five small chunks (Consolidator, Engine, MCP, CLI, docs).</li>
+<li><strong>Differs from design and spec:</strong> nothing in behaviour. One internal choice the spec left open: <code>Consolidator.pending</code> will return <code>{"items", "total"}</code> instead of a bare list; nothing calls it today.</li>
+</ul>
+<p class="note"><strong>Architecture approved 2026-11-10.</strong> Built below.</p></section>
+<h2 class="rep">Detailed report</h2>
+<section id="a-deps" aria-labelledby="a-deps-t" style="--sc:var(--c-blue)"><h2 id="a-deps-t">Dependencies and ownership</h2>
+<div class="scroll" tabindex="0" role="region" aria-label="Scrollable diagram"><svg class="dg" viewBox="0 0 720 230" role="img" aria-labelledby="dp-t dp-d"><title id="dp-t">Dependencies</title><desc id="dp-d">The changed MCP server and CLI call the changed Engine. The Engine calls the changed Consolidator. The Consolidator uses the existing Writer to screen and write the resolution, and the existing Store for the queue. Listing and dismissing reach only the Store; resolving also reaches the Writer and the decision provider.</desc>
+<defs><marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="context-stroke"/></marker></defs>
+<rect class="n chg" x="20" y="20" width="150" height="62" rx="8"/><text class="h" x="30" y="39">mcp.py + cli.py</text><text class="t" x="30" y="55">3 tools, --pending</text><text class="tag" x="30" y="72">CHANGED</text>
+<rect class="n chg" x="210" y="20" width="150" height="62" rx="8"/><text class="h" x="220" y="39">Engine</text><text class="t" x="220" y="55">pending, resolve, dismiss</text><text class="tag" x="220" y="72">CHANGED</text>
+<rect class="n chg" x="400" y="20" width="150" height="62" rx="8"/><text class="h" x="410" y="39">Consolidator</text><text class="t" x="410" y="55">pending(limit), resolve</text><text class="tag" x="410" y="72">CHANGED</text>
+<rect class="n ex" x="560" y="110" width="140" height="62" rx="8"/><text class="h" x="570" y="129">Writer</text><text class="t" x="570" y="145">screens, writes note</text><text class="tag" x="570" y="162">EXISTING</text>
+<rect class="n ex" x="400" y="110" width="140" height="62" rx="8"/><text class="h" x="410" y="129">Store</text><text class="t" x="410" y="145">synth queue, delete_node</text><text class="tag" x="410" y="162">EXISTING</text>
+<rect class="n def" x="20" y="110" width="150" height="62" rx="8"/><text class="h" x="30" y="129">docs + SKILL.md</text><text class="t" x="30" y="145">wrap-up routine</text><text class="tag" x="30" y="162">NEW · NOT CODE</text>
+<g stroke="currentColor" stroke-width="1.6" fill="none" marker-end="url(#ar2)"><path d="M170 51H210"/><path d="M360 51H400"/><path d="M470 82V110"/><path d="M520 82L620 110"/></g>
+<g transform="translate(14 212)"><rect class="n chg" x="0" y="-10" width="12" height="12" rx="3"/><text class="t" x="18" y="0">changed</text><rect class="n ex" x="90" y="-10" width="12" height="12" rx="3"/><text class="t" x="108" y="0">existing, unchanged</text><rect class="n def" x="240" y="-10" width="12" height="12" rx="3"/><text class="t" x="258" y="0">docs only, outside the package</text></g></svg></div>
+<p>Text equivalent: <code>mcp.py</code> and <code>cli.py</code> (changed) call <code>Engine</code> (changed), which calls <code>Consolidator</code> (changed). The Consolidator uses <code>Store</code> for the queue and, only for resolve, <code>Writer</code> (both existing). The docs and the skill are not code and depend on nothing.</p></section>
+<section id="a-plan" aria-labelledby="a-plan-t" style="--sc:var(--c-grn)"><h2 id="a-plan-t">Interfaces and phased plan</h2>
+<p><strong>Already added (stubs, no bodies)</strong> in <code>agemem/engine.py</code>; nothing is registered over MCP or the CLI yet, so they cannot be called by users:</p>
+<pre>+    def pending(self, limit=10):          # {"items": [...], "total": n}; read-only; no provider
++        raise NotImplementedError
++    def resolve(self, item_id, text):     # {"ok": True, "node_id": n} | {"ok": False, "error": str}
++        raise NotImplementedError
++    def dismiss(self, item_id):           # {"ok": True} | {"ok": False, "error": str}
++        raise NotImplementedError</pre>
+<p><strong>Planned signature changes (applied during implementation, not yet):</strong></p>
+<pre>consolidate.py
+-    def pending(self) -> list[dict]
++    def pending(self, limit: int | None = None) -> dict          # {"items": oldest `limit`, "total": all}
+-    def resolve(self, synth_id, text, scope=None) -> dict
++    def resolve(self, synth_id, text, scope=None, *, timestamp=None, branch=None, commit=None) -> dict
++        # if the Writer reports degraded: store.delete_node(res.node_id), return ok:false, leave item pending
+engine.py
++    def _store(self)      # opens notes.sqlite only; _notes() reuses it. pending/dismiss use this and never build a provider
+mcp.py
++    project_memory_pending(limit: int = 10), project_memory_resolve(id: int, text: str), project_memory_dismiss(id: int)
+cli.py
++    maintain --pending   # prints Engine.pending(); runs nothing else</pre>
+<p><strong>Ownership and trust:</strong> <code>Consolidator</code> owns the queue transitions and the “add and flag only” rule; <code>Writer</code> owns screening, so resolve text cannot skip it; <code>Engine</code> owns stamping (date, branch, commit) and the choice of store versus provider; MCP and CLI only translate. Listed memory text crosses the trust boundary as data and is never executed or interpolated into instructions. <strong>Migration:</strong> none; the <code>synth</code> table already exists. <strong>Rollback:</strong> revert the commit; no stored data changes shape.</p>
+<div class="scroll" tabindex="0" role="region" aria-label="Scrollable plan table"><table class="cards"><caption>Phases and the evidence each produces</caption><thead><tr><th scope="col">Phase</th><th scope="col">Work</th><th scope="col">Scenarios</th><th scope="col">Evidence</th></tr></thead><tbody>
+<tr><th scope="row">0</th><td data-label="Work">Write all tests first; run them red</td><td data-label="Scenarios">S1–S17</td><td data-label="Evidence">Failures are <code>NotImplementedError</code> or missing behaviour, not import or setup errors</td></tr>
+<tr><th scope="row">1</th><td data-label="Work">Consolidator: <code>pending(limit)</code>, <code>resolve</code> stamping and rollback, instruction text (B2)</td><td data-label="Scenarios">S4–S11</td><td data-label="Evidence">Store-level tests green</td></tr>
+<tr><th scope="row">2</th><td data-label="Work">Engine: <code>_store</code>, <code>pending</code>, <code>resolve</code>, <code>dismiss</code></td><td data-label="Scenarios">S1–S10</td><td data-label="Evidence">Engine tests green; provider-never-asked check</td></tr>
+<tr><th scope="row">3</th><td data-label="Work">MCP tools</td><td data-label="Scenarios">S13</td><td data-label="Evidence">Real stdio session</td></tr>
+<tr><th scope="row">4</th><td data-label="Work">CLI <code>maintain --pending</code></td><td data-label="Scenarios">S12</td><td data-label="Evidence">Real subprocess, offline</td></tr>
+<tr><th scope="row">5</th><td data-label="Work">Docs, SKILL.md, tool counts, changelog</td><td data-label="Scenarios">S14–S16</td><td data-label="Evidence">Text checks</td></tr>
+<tr><th scope="row">6</th><td data-label="Work">Quality gate</td><td data-label="Scenarios">S17</td><td data-label="Evidence"><code>uv run --no-sync python -m unittest discover -s tests_live -q</code> passes</td></tr>
+</tbody></table></div>
+<p><strong>Test approach:</strong> a scripted decider (a small fake that answers the typing, relation and consolidation questions, or raises <code>DeciderUnavailable</code> on demand) over real temporary SQLite stores, so queue, edges, flags and rollback are real; MCP and CLI tests start real processes. Real model behaviour is not exercised.</p></section>
+</div>
+<div role="tabpanel" id="p-build" aria-labelledby="t-build" class="tabpanel">
+<section id="b-glance" aria-labelledby="b-glance-t" style="--sc:var(--c-grn)"><h2 id="b-glance-t">At a glance</h2>
+<ul>
+<li><strong>Tests first:</strong> 16 tests for S1–S15 were written before the code. Run red, 12 failed or errored for behavioural reasons: 10 <code>NotImplementedError</code> from the stubbed Engine methods, the instruction-text test found <code>memory_forget</code>, the docs checks found no wrap-up files, and the MCP/CLI tests found no new tools or flag. None was an import or setup error. (One of my own test helpers used a wrong attribute name, <code>inputSchema</code> for <code>input_schema</code>, and one MCP assertion assumed structured content; both were test bugs fixed afterwards, not behaviour changes.)</li>
+<li><strong>After:</strong> <code>uv run --no-sync python -m unittest discover -s tests_live -q</code> → <strong>153 tests OK</strong> (137 before, plus 16).</li>
+<li><strong>Deviation from the spec wording:</strong> the three tools return their JSON as text content, like <code>remember</code>, <code>capture</code> and <code>maintain</code>, not as <code>structured_content</code> like <code>recall</code>. The data is identical and S13 passes; the spec's phrase “structured results” was loose. No behaviour moved.</li>
+<li><strong>Not verified:</strong> real decision-provider behaviour (tests script it); native Windows and macOS runs (CI covers them after a push); the page in a browser.</li>
+<li><strong>Uncommitted:</strong> nothing is committed or released.</li></ul></section>
+<h2 class="rep">Detailed report</h2>
+<section id="b-detail" aria-labelledby="b-detail-t" style="--sc:var(--c-blue)"><h2 id="b-detail-t">Evidence</h2>
+<div class="scroll" tabindex="0" role="region" aria-label="Scrollable traceability table"><table class="cards"><caption>Scenario to test and code</caption><thead><tr><th scope="col">Scenario</th><th scope="col">Test</th><th scope="col">Code</th></tr></thead><tbody>
+<tr><th scope="row">S1</th><td data-label="Test"><code>test_pending_queue.py:40</code></td><td data-label="Code"><code>consolidate.py</code> <code>pending</code>; <code>engine.py</code> <code>pending</code></td></tr>
+<tr><th scope="row">S2</th><td data-label="Test"><code>test_pending_queue.py:50</code></td><td data-label="Code">same, limit check</td></tr>
+<tr><th scope="row">S3</th><td data-label="Test"><code>test_pending_queue.py:57</code></td><td data-label="Code"><code>engine.py</code> <code>_store</code></td></tr>
+<tr><th scope="row">S4, S5</th><td data-label="Test"><code>:73</code>, <code>:90</code></td><td data-label="Code"><code>consolidate.py</code> <code>resolve</code> (stamping), <code>engine.py</code> <code>resolve</code></td></tr>
+<tr><th scope="row">S6, S8</th><td data-label="Test"><code>:142</code>, <code>:150</code></td><td data-label="Code"><code>engine.py</code> <code>dismiss</code></td></tr>
+<tr><th scope="row">S7 (F1)</th><td data-label="Test"><code>:132</code></td><td data-label="Code"><code>consolidate.py</code> <code>resolve</code></td></tr>
+<tr><th scope="row">S9 (F2)</th><td data-label="Test"><code>:99</code></td><td data-label="Code">Writer screens, unchanged</td></tr>
+<tr><th scope="row">S10 (F3)</th><td data-label="Test"><code>:116</code></td><td data-label="Code"><code>consolidate.py</code> <code>resolve</code> (rollback)</td></tr>
+<tr><th scope="row">S11</th><td data-label="Test"><code>:158</code>; <code>test_pending_surfaces.py:88</code></td><td data-label="Code"><code>consolidate.py</code> <code>_INSTRUCTION</code></td></tr>
+<tr><th scope="row">S12</th><td data-label="Test"><code>test_pending_surfaces.py:39</code></td><td data-label="Code"><code>cli.py</code> <code>--pending</code></td></tr>
+<tr><th scope="row">S13</th><td data-label="Test"><code>test_pending_surfaces.py:63</code></td><td data-label="Code"><code>mcp.py</code> three tools</td></tr>
+<tr><th scope="row">S14, S15</th><td data-label="Test"><code>test_pending_surfaces.py:94</code>, <code>:111</code></td><td data-label="Code"><code>docs/AGENT_INTEGRATION.md</code>, <code>docs/memory-wrapup/SKILL.md</code>, <code>ARCHITECTURE.md</code>, <code>HOOKS.md</code>, <code>CHANGELOG.md</code></td></tr>
+<tr><th scope="row">S16, S17</th><td data-label="Test">existing suite, unchanged</td><td data-label="Code">none touched</td></tr>
+</tbody></table></div>
+<p>Changed files: <code>agemem/engine.py</code>, <code>agemem/notes/consolidate.py</code>, <code>agemem/mcp.py</code>, <code>agemem/cli.py</code>, docs and changelog; new: <code>tests_live/test_pending_queue.py</code>, <code>tests_live/test_pending_surfaces.py</code>, <code>docs/memory-wrapup/SKILL.md</code>. The version stays 0.2.3; the 0.3.0 bump belongs to the release step.</p>
+<p>Implementation notes the spec left open: <code>Consolidator.pending</code> builds only the first <code>limit</code> items but counts all of them, so a queued item that names a deleted note beyond the page is counted until it is listed (<code>delete_node</code> already closes such items, so this should not occur in practice). <code>dismiss</code> and <code>pending</code> construct a <code>Consolidator</code> with no provider or writer, which they never use.</p></section>
+</div>
+<div role="tabpanel" id="p-qa" aria-labelledby="t-qa" class="tabpanel">
+<section id="q-glance" aria-labelledby="q-glance-t" style="--sc:var(--c-amb)"><h2 id="q-glance-t">At a glance</h2>
+<ul>
+<li><strong>Environment:</strong> a fresh QA agent in a 2 MB copy of the working tree, five temporary projects, <code>--offline</code>, the <code>bm25</code> and <code>hash</code> embedders, a real stdio MCP session, the real CLI, and the Python API with a scripted decider for the success paths. Two earlier attempts were blocked because a sandbox filled the disk; this run used a size-checked copy and stayed under 4 MB.</li>
+<li><strong>Result:</strong> S1–S15 and F1–F3 all <em>matched</em> the spec; 5 extra probes behaved as expected. No implementation or requirement defect.</li>
+<li><strong>Observations:</strong> listed items also carry a <code>node_ids</code> field and an unrounded <code>p</code>; the limit&lt;1 error text is the generic “agemem operation failed (ValueError)”; a rolled-back resolve uses up one note id (ids are never reused by design); <code>docs/MANUAL_TESTING.md</code> still said “five tools” (fixed afterwards).</li>
+<li><strong>Not run:</strong> S16 and S17 (the suite, run separately: 153 OK); F3 success over real MCP/CLI (an offline process has no provider, so only the failure was observed there); real model judgement; Windows and macOS; the page in a browser.</li></ul></section>
+<h2 class="rep">Detailed report</h2>
+<section id="q-detail" aria-labelledby="q-detail-t" style="--sc:var(--c-vio)"><h2 id="q-detail-t">Scenario runs</h2>
+<div class="scroll" tabindex="0" role="region" aria-label="Scrollable QA table"><table class="cards"><caption>Each scenario run for real</caption><thead><tr><th scope="col">Scenario</th><th scope="col">Steps</th><th scope="col">Observed</th><th scope="col">Result</th></tr></thead><tbody>
+<tr><th scope="row">S1</th><td data-label="Steps">12 items; MCP pending</td><td data-label="Observed">10 items, ids 1–10, total 12</td><td data-label="Result">matches</td></tr>
+<tr><th scope="row">S2</th><td data-label="Steps">empty queue; limit 0 and −5</td><td data-label="Observed"><code>{"items":[],"total":0}</code>; tool error for each limit</td><td data-label="Result">matches</td></tr>
+<tr><th scope="row">S3</th><td data-label="Steps">provider that raises</td><td data-label="Observed">pending and dismiss succeed, provider calls 0</td><td data-label="Result">matches</td></tr>
+<tr><th scope="row">S4</th><td data-label="Steps">resolve a conflict (scripted decider)</td><td data-label="Observed">note dated, branch main, source <code>consolidation:1</code>, linked, originals flagged and kept</td><td data-label="Result">matches</td></tr>
+<tr><th scope="row">S5</th><td data-label="Steps">resolve a promote item</td><td data-label="Observed">linked, episodes unflagged</td><td data-label="Result">matches</td></tr>
+<tr><th scope="row">S6</th><td data-label="Steps">dismiss</td><td data-label="Observed">ok, counts unchanged</td><td data-label="Result">matches</td></tr>
+<tr><th scope="row">S7, S8 (F1)</th><td data-label="Steps">ids 99, −1, closed, twice</td><td data-label="Observed">“no such pending synthesis”, store unchanged</td><td data-label="Result">matches</td></tr>
+<tr><th scope="row">S9 (F2)</th><td data-label="Steps">empty, secret (real MCP); status screen (scripted); retry</td><td data-label="Observed">refusal reasons returned, nothing stored, retry succeeded</td><td data-label="Result">matches</td></tr>
+<tr><th scope="row">S10 (F3)</th><td data-label="Steps">provider down then up</td><td data-label="Observed">ok:false “run agemem doctor”, counts unchanged, one note after retry</td><td data-label="Result">matches</td></tr>
+<tr><th scope="row">S11</th><td data-label="Steps">read instruction strings vs 8 tools</td><td data-label="Observed">only real tool names, no <code>memory_forget</code></td><td data-label="Result">matches</td></tr>
+<tr><th scope="row">S12</th><td data-label="Steps">CLI <code>maintain --pending</code> with file checksums</td><td data-label="Observed">exit 0, checksums unchanged</td><td data-label="Result">matches</td></tr>
+<tr><th scope="row">S13</th><td data-label="Steps">list and call tools over stdio</td><td data-label="Observed">8 tools, schemas as specified, refusals are results</td><td data-label="Result">matches</td></tr>
+<tr><th scope="row">S14, S15</th><td data-label="Steps">read docs and changelog</td><td data-label="Observed">routine, skill and counts present</td><td data-label="Result">matches</td></tr>
+<tr><th scope="row">extra ×5</th><td data-label="Steps">limit 1 and 1000, 140 KB text, negative id, <code>maintain</code> without flag</td><td data-label="Observed">capped with total; clean refusal; unchanged behaviour</td><td data-label="Result">extra</td></tr>
+</tbody></table></div>
+<p>Evidence is in the QA agent's scratch folder <code>.../scratchpad/qa/work/ev/</code>, which is temporary.</p></section>
+</div>
+<div role="tabpanel" id="p-grade" aria-labelledby="t-grade" class="tabpanel">
+<section id="g-glance" aria-labelledby="g-glance-t" style="--sc:var(--c-vio)"><h2 id="g-glance-t">At a glance</h2>
+<p><span class="chip def">round 1 of at most 2</span></p>
+<ul>
+<li><strong>Who graded:</strong> a fresh read-only reviewer (not the author). It ran the quality gate once (153 tests OK) and otherwise only read. No rule breach reported.</li>
+<li><strong>Verdict:</strong> PASS. Criteria 1–5 and 7 PASS; criterion 6 (scope and gate records) PARTIAL, for wording and record-keeping only.</li>
+<li><strong>Findings, all minor, all fixed after grading:</strong> (1) the module docstring said “nothing is deleted” though a failed resolve deletes the note it just wrote; (2) the page and changelog said “Nothing is ever deleted” beside the same rollback; (3) the <code>pending</code> docstring said closed items are “never counted”, while over-limit items are counted until listed. Wording now says “no existing note is deleted” and describes the counting. (4) approval hashes were not re-verified by the grader; see the note below.</li>
+<li><strong>Live check after grading (2026-11-10):</strong> over a real stdio MCP server with real QSIV (offline, GPU): pending listed seeded items; an injection text and a fake API token were refused and the item stayed pending; a conflict and a promote item resolved; a closed id was refused; dismiss worked. With the provider unreachable, resolve returned a clean tool error, listing still worked, and the note count and queue were unchanged. QSIV auto-resolved or ignored my natural conflicts without queueing, so the items were seeded directly.</li>
+<li><strong>Not verified:</strong> the page in a browser; the rollback path (provider degrades mid-resolve) over a real process; Windows and macOS; concurrency during the rollback; the relation-only degradation path of F3 (S10 tests the totally-down path).</li></ul></section>
+<h2 class="rep">Detailed report</h2>
+<section id="g-detail" aria-labelledby="g-detail-t" style="--sc:var(--c-blue)"><h2 id="g-detail-t">Criteria, scenario map and findings</h2>
+<div class="scroll" tabindex="0" role="region" aria-label="Scrollable grade table"><table class="cards"><caption>Criteria</caption><thead><tr><th scope="col">Criterion</th><th scope="col">Score</th><th scope="col">Evidence</th></tr></thead><tbody>
+<tr><th scope="row">1 Scenarios and failures covered</th><td data-label="Score">PASS</td><td data-label="Evidence">S1–S15 and F1–F3 each have a test and code; S16–S17 by the unchanged suite</td></tr>
+<tr><th scope="row">2 Five decision areas</th><td data-label="Score">PASS</td><td data-label="Evidence">names, limit 10, <code>limit&lt;1</code> error, rollback, <code>memory_forget</code> removed; 0.3.0 deferred to release</td></tr>
+<tr><th scope="row">3 Architecture and wiring</th><td data-label="Score">PASS</td><td data-label="Evidence"><code>_store()</code> keeps listing provider-free; Writer screening reused; no migration</td></tr>
+<tr><th scope="row">4 Test layer</th><td data-label="Score">PASS</td><td data-label="Evidence">real SQLite, real CLI subprocess and real stdio MCP; fakes only for decider answers; docs tests check text presence only</td></tr>
+<tr><th scope="row">5 Production matches design</th><td data-label="Score">PASS</td><td data-label="Evidence">no review-only controls shipped</td></tr>
+<tr><th scope="row">6 Scope and gate records</th><td data-label="Score">PARTIAL</td><td data-label="Evidence">wording of “nothing is deleted”; hashes unchecked (findings 1, 2, 4)</td></tr>
+<tr><th scope="row">7 Accessibility and quality</th><td data-label="Score">PASS</td><td data-label="Evidence">gate green; page not checked in a browser</td></tr>
+</tbody></table></div>
+<p><strong>Rollback scrutiny:</strong> the grader found it deletes only the note that call just created (<code>dedupe=False</code>, so it is never a pre-existing note), cleans that note's edges, flags and pending row, and runs before any edge or flag is added to the originals. Residue: one note id is skipped and the write counter is bumped. <strong>Hashes:</strong> the three recorded hashes identify each tab's content at its approval time, and the Design tab has since had a one-word wording fix (the CLI key); later tabs were added after approval, as expected. The grader did not recompute them.</p></section>
+</div>
+<div role="tabpanel" id="p-appr" aria-labelledby="t-appr" class="tabpanel">
+<section id="appr" aria-labelledby="appr-t" style="--sc:var(--c-grn)"><h2 id="appr-t">Approvals</h2>
+<p class="note">Only approvals received in chat are recorded here. A page control never approves a gate.</p>
+<div class="scroll" tabindex="0" role="region" aria-label="Scrollable approvals table"><table><caption>Gate approvals</caption><thead><tr><th scope="col">Gate</th><th scope="col">Date</th><th scope="col">Approved artifact</th><th scope="col">Approval in chat</th></tr></thead><tbody>
+<tr><th scope="row">Design</th><td>2026-11-10</td><td>Design tab, content hash <code>23d3169565</code> (identifies what was approved, not what the page shows today)</td><td>“Design approved and let's go with your recommendations”</td></tr><tr><th scope="row">Spec</th><td>2026-11-10</td><td>Spec tab, content hash <code>178159eeb7</code> (identifies what was approved, not what the page shows today)</td><td>“Spec approved”</td></tr><tr><th scope="row">Architecture</th><td>2026-11-10</td><td>Architecture tab, content hash <code>c1f557b183</code> (identifies what was approved, not what the page shows today)</td><td>“Architecture approved”</td></tr><tr><th scope="row">Automatic verification</th><td>2026-11-10</td><td>QA and grade ran after the build (QA: S1–S15 matched; grade: PASS)</td><td>Automatic by the skill; the user replied neither <code>no QA</code> nor <code>no grade</code></td></tr>
+</tbody></table></div></section>
+</div>
+</main>
+<footer>Single-file SDD review · no network dependencies · no live backend</footer>
+<script>
+'use strict';
+const tabs=Array.from(document.querySelectorAll('[role=tab]'));
+const panels=Array.from(document.querySelectorAll('.tabpanel'));
+function act(p,focus,keep){tabs.forEach(t=>{const on=t.dataset.p===p;t.setAttribute('aria-selected',on);t.tabIndex=on?0:-1;document.getElementById('p-'+t.dataset.p).hidden=!on;if(on&&focus)t.focus();});if(!keep){try{history.replaceState(null,'','#p-'+p)}catch(_){}}}
+tabs.forEach((t,i)=>{t.addEventListener('click',()=>act(t.dataset.p));t.addEventListener('keydown',ev=>{const k={ArrowRight:1,ArrowLeft:-1}[ev.key];if(ev.key==='Home'){ev.preventDefault();act(tabs[0].dataset.p,1)}else if(ev.key==='End'){ev.preventDefault();act(tabs[tabs.length-1].dataset.p,1)}else if(k){ev.preventDefault();act(tabs[(i+k+tabs.length)%tabs.length].dataset.p,1)}});});
+function fromHash(){const id=location.hash.slice(1);const el=id&&document.getElementById(id);const pan=el&&el.closest('.tabpanel');act(pan?pan.id.slice(2):(tabs.find(t=>t.getAttribute('aria-selected')==='true')||tabs[0]).dataset.p,false,!!pan);if(el&&pan){for(let d=el.closest('details');d;d=d.parentElement&&d.parentElement.closest('details'))d.open=true;el.scrollIntoView();}}
+fromHash();window.addEventListener('hashchange',fromHash);
+const S={
+list:['project_memory_pending {}\n→ {"items":[{"id":4,"kind":"conflict",…},{"id":5,"kind":"promote",…}],"total":2}','Read-only listing of queued items with the notes involved and an instruction.'],
+resolve:['project_memory_resolve {"id":4,"text":"As of 2026-11-10 deploys run from release/* branches; main only builds."}\n→ {"ok":true,"node_id":47}','One new dated note, linked to both originals, which are flagged merged_into 47. Item 4 closes as resolved. Nothing is deleted.'],
+dismiss:['project_memory_dismiss {"id":5}\n→ {"ok":true}','The item closes as dismissed. No note, no flag.'],
+f1:['project_memory_resolve {"id":99,"text":"…"}\n→ {"ok":false,"error":"no such pending synthesis"}','F1: unknown or already closed id. Nothing changes.'],
+f2:['project_memory_resolve {"id":4,"text":"Working on the deploy fix now."}\n→ {"ok":false,"error":"looks like work status (p=0.93) …"}','F2: the screens refuse the text. The item stays pending; reword or dismiss.'],
+f3:['project_memory_resolve {"id":4,"text":"As of 2026-11-10 …"}\n→ {"ok":false,"error":"decision provider unavailable; run agemem doctor"}','F3: the unscreened note is rolled back, the item stays pending, no flags. Retry after agemem doctor.'],
+cli:['$ agemem maintain --pending\n{"pending":[…],"total":2}\n(exit 0)','Same JSON as the pending tool; no decision provider starts and no hosted call is made.']};
+const sel=document.getElementById('path'),out=document.getElementById('outcome'),tr=document.getElementById('trace');
+const ctl=document.getElementById('controls');if(ctl&&sel&&out&&tr){ctl.hidden=false;const show=()=>{tr.textContent=S[sel.value][0];out.textContent=S[sel.value][1];};sel.addEventListener('change',show);show();}
+const details=Array.from(document.querySelectorAll('details'));let prior=[];
+window.addEventListener('beforeprint',()=>{panels.forEach(p=>{p.hidden=false;});prior=details.map(d=>d.open);details.forEach(d=>{d.open=true;});});
+window.addEventListener('afterprint',()=>{details.forEach((d,i)=>{d.open=prior[i]??true;});const s=tabs.find(t=>t.getAttribute('aria-selected')==='true');if(s)act(s.dataset.p);});
+</script>
+</body>
+</html>

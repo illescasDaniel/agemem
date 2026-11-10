@@ -1,6 +1,7 @@
 # Adapted from jev-mem 0.4.0; MIT, copyright 2026 Daniel Illescas Romero.
 # Full notice: LICENSE.jevmem in this package.
-"""Periodic consolidation (paper 3.2, App. B.3). Jev judges; nothing is deleted or generated.
+"""Periodic consolidation (paper 3.2, App. B.3). Jev judges; no existing note is deleted or generated
+(the one removal: a failed resolve() deletes only the note it just wrote).
 
 For each recently written note vs. a few older neighbours, one batched call asks order-neutral questions: same
 question with a different answer? one outdates the other? does either state every fact of the other? worth
@@ -147,17 +148,26 @@ class Consolidator:
             rep.links += 1
 
     # -- System Two hand-off ------------------------------------------------------
-    def pending(self) -> list[dict]:
+    def pending(self, limit: int | None = None) -> dict:
+        """{"items": the oldest `limit` open items (all if None), "total": every open item}. Items that name a
+        deleted note are closed when they are built; an over-limit item is counted without being built, so such an
+        item stays in `total` until it is listed (delete_node already voids them)."""
+        if limit is not None and limit < 1:
+            raise ValueError("limit must be at least 1")
         out = []
         for it in self.store.synth_items():
+            if limit is not None and len(out) >= limit:
+                out.append(None)            # counted in the total, not built
+                continue
             nodes = [self.store.get(i) for i in it["node_ids"]]
             if any(n is None for n in nodes):
                 self.store.synth_close(it["id"], "dismissed"); continue
             out.append({**it, "memories": [{"id": n.id, "content": n.content, "timestamp": iso(n.timestamp)}
                                            for n in nodes], "instruction": _INSTRUCTION[it["kind"]]})
-        return out
+        return {"items": [i for i in out if i is not None], "total": len(out)}
 
-    def resolve(self, synth_id: int, text: str, scope: str | None = None) -> dict:
+    def resolve(self, synth_id: int, text: str, scope: str | None = None, *, timestamp: float | str | None = None,
+                branch: str | None = None, commit: str | None = None) -> dict:
         item = self.store.synth_get(synth_id)
         if not item or item["status"] != "pending":
             return {"ok": False, "error": "no such pending synthesis"}
@@ -165,9 +175,13 @@ class Consolidator:
         scopes = {n.scope for n in srcs}
         entities = sorted({e for n in srcs for e in n.entities})
         res = self.writer.write(text, scope or (scopes.pop() if len(scopes) == 1 else "global"),
-                                entities, source=f"consolidation:{synth_id}", dedupe=False)
+                                entities, timestamp=timestamp, source=f"consolidation:{synth_id}", dedupe=False,
+                                branch=branch, commit=commit)
         if res.rejected:
             return {"ok": False, "error": res.reason}
+        if res.degraded:     # unscreened or unrelated: remove only the note this call just wrote; the item stays pending
+            self.store.delete_node(res.node_id)
+            return {"ok": False, "error": "decision provider unavailable; run agemem doctor"}
         for n in srcs:
             self.store.add_edge(res.node_id, n.id, "semantic", 1.0)
             if item["kind"] in ("merge", "conflict"):     # raw notes stay, but the summary now outranks them
@@ -185,14 +199,15 @@ class Consolidator:
 
 _INSTRUCTION = {
     "merge": ("First check that the notes really state the same fact; if they are distinct facts, call "
-              "memory_dismiss instead. Otherwise write ONE literal fact that combines these without losing any distinct "
-              "detail. Use absolute dates and explicit entity names."),
-    "promote": ("If these episodes do not really show one pattern, call memory_dismiss. Otherwise they suggest a stable "
-                "pattern: write ONE general, literal statement of that pattern; the episodes are kept as evidence."),
+              "project_memory_dismiss instead. Otherwise call project_memory_resolve with ONE literal fact that "
+              "combines these without losing any distinct detail. Use absolute dates and explicit entity names."),
+    "promote": ("If these episodes do not really show one pattern, call project_memory_dismiss. Otherwise they suggest "
+                "a stable pattern: call project_memory_resolve with ONE general, literal statement of that pattern; "
+                "the episodes are kept as evidence."),
     "conflict": ("These notes disagree and nothing says which is current. Check the code or docs, or ask the user. If "
-                 "one is right, memory_forget the other (or memory_resolve with one literal, dated statement of the "
-                 "current fact: both originals then rank lower). If both can be true (different contexts), call "
-                 "memory_dismiss."),
+                 "one is right, call project_memory_resolve with one literal, dated statement of the current fact: both "
+                 "originals then rank lower and nothing is deleted. If both can be true (different contexts), call "
+                 "project_memory_dismiss."),
 }
 
 _DATE = re.compile(r"\b(20\d\d-[01]\d-[0-3]\d)\b")

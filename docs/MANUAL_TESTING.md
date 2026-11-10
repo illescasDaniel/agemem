@@ -50,7 +50,7 @@ BM25 regardless of the main retrieval provider.
 ## MCP checklist
 
 - [ ] MCP connects from the registered local executable; inspect the command.
-- [ ] All five `project_memory_*` tools are listed.
+- [ ] All eight `project_memory_*` tools are listed.
 - [ ] Index a distinctive fact in tracked README/source; recall returns it with
       source IDs and the correct project and branch.
 - [ ] Capture original test evidence; remember a durable fact linked to its source.
