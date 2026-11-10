@@ -1,5 +1,12 @@
 # Changelog
 
+## [Unreleased]
+
+### Changed
+
+- The wrap-up skill moved from `docs/memory-wrapup/` to `skills/memory-wrapup/` so the Skills CLI finds it
+  (`npx skills add illescasDaniel/agemem`), and it now suggests running at a finished task or before a push.
+
 ## [0.3.0] - 2026-11-10
 
 ### Added

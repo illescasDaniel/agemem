@@ -1,13 +1,15 @@
 ---
 name: memory-wrapup
-description: End-of-session routine for agemem project memory. Use when finishing a task or session in a project with the agemem MCP server, or when the user says to wrap up, save what we learned or tidy the memory.
+description: Wrap-up routine for agemem project memory. Use after finishing a task or before a push in a project with the agemem MCP server, or when the user says to wrap up, save what we learned or tidy the memory. Suggest it and run it once the user agrees.
 ---
 
 # Memory wrap-up
 
-Run this once at the end of a session. Copy this folder into your agent's skills directory to use it; agemem does
-not install it. It uses only the project's agemem MCP tools and what you already know from the session, so it
-reads no transcript.
+Nothing signals the end of a session, so do not wait for one. When a task is finished, or before a push,
+suggest this routine in one line and run it once the user agrees (or when they ask for it directly). Run it once
+per task, not repeatedly. It uses only the project's agemem MCP tools and what you already know from the session,
+so it reads no transcript. agemem does not install this skill; install it with the Skills CLI or copy this folder
+into your agent's skills directory.
 
 1. Update the Markdown bank: `memory/activeContext.md` gets the intent and the exact next step; `memory/progress.md`
    gets what is done. Do not copy state you can re-read from git or the code.

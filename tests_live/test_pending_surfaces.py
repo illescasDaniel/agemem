@@ -93,7 +93,7 @@ class McpTests(unittest.IsolatedAsyncioTestCase):
 class DocsTests(unittest.TestCase):
     def test_s14_wrapup_routine_documented(self):
         guide = (ROOT / "docs/AGENT_INTEGRATION.md").read_text(encoding="utf-8")
-        skill = (ROOT / "docs/memory-wrapup/SKILL.md").read_text(encoding="utf-8")
+        skill = (ROOT / "skills/memory-wrapup/SKILL.md").read_text(encoding="utf-8")
         self.assertIn("End-of-session routine", guide)
         for text in (guide.split("End-of-session routine", 1)[1], skill):
             flat = " ".join(text.split())

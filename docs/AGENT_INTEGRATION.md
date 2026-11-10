@@ -86,9 +86,10 @@ For Codex, see the official guidance on
 
 ## End-of-session routine
 
-Consolidation queues conflicts and repeated patterns for the agent to settle. This routine works that queue at
-the end of a session. It is optional and the suggested project instructions above do not change; a copyable skill
-version is in [`memory-wrapup/SKILL.md`](memory-wrapup/SKILL.md). agemem does not install it.
+Consolidation queues conflicts and repeated patterns for the agent to settle. This routine works that queue when a task is finished
+or before a push (nothing signals the end of a session, so the agent suggests it and runs it once you agree). It is optional and the suggested project instructions above do not change; a copyable skill
+version is in [`skills/memory-wrapup/SKILL.md`](../skills/memory-wrapup/SKILL.md), installable with
+`npx skills add illescasDaniel/agemem`. agemem itself does not install it.
 
 1. Update the Markdown bank with the intent and the exact next step.
 2. Call `project_memory_capture` for original passages worth keeping, then `project_memory_remember` for each

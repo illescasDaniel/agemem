@@ -31,4 +31,4 @@ build-backend = "hatchling.build"
 packages = ["agemem"]
 
 [tool.hatch.build.targets.sdist]
-include = ["/agemem", "/pyproject.toml", "/README.md", "/THIRD_PARTY.md", "/LICENSE", "/CHANGELOG.md", "/docs", "/tests_live", "/scripts/release_notes.py", "/scripts/check_release.py", "/scripts/smoke_install.py"]
+include = ["/agemem", "/pyproject.toml", "/README.md", "/THIRD_PARTY.md", "/LICENSE", "/CHANGELOG.md", "/docs", "/skills", "/tests_live", "/scripts/release_notes.py", "/scripts/check_release.py", "/scripts/smoke_install.py"]
