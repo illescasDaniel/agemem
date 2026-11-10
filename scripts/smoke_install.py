@@ -60,7 +60,8 @@ async def mcp_roundtrip(project, environment):
             tools = await session.list_tools()
             assert {tool.name for tool in tools.tools} == {
                 "project_memory_recall", "project_memory_remember", "project_memory_capture",
-                "project_memory_index", "project_memory_maintain"}
+                "project_memory_index", "project_memory_maintain", "project_memory_pending",
+                "project_memory_resolve", "project_memory_dismiss"}
             result = await session.call_tool("project_memory_recall", {"query": "How does the smoke project deploy?"})
             assert not result.is_error
             assert "Ansible" in result.structured_content["context"]
