@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.2.3] - 2026-11-10
+
 ### Changed
 
 - The suggested project instructions in `docs/AGENT_INTEGRATION.md` were revised: what memory is

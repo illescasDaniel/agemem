@@ -109,11 +109,10 @@ class AgentGuidanceTests(unittest.TestCase):
 
 
 class ChangelogTests(unittest.TestCase):
-    def test_s11_unreleased_entry_tells_projects_to_recopy(self):
+    def test_s11_release_entry_tells_projects_to_recopy(self):
         text = CHANGELOG.read_text(encoding="utf-8")
-        self.assertIn("## [Unreleased]", text)
-        self.assertLess(text.index("## [Unreleased]"), text.index("## [0.2.2]"))
-        entry = normalize(text.split("## [Unreleased]", 1)[1].split("\n## [", 1)[0])
+        self.assertLess(text.index("## [0.2.3]"), text.index("## [0.2.2]"))
+        entry = normalize(text.split("## [0.2.3]", 1)[1].split("\n## [", 1)[0])
         self.assertIn("re-copy", entry)
 
 
