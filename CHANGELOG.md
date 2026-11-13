@@ -1,11 +1,23 @@
 # Changelog
 
-## [Unreleased]
+## [0.4.0] - 2026-11-13
 
-### Changed
+### Added
 
-- The wrap-up skill moved from `docs/memory-wrapup/` to `skills/memory-wrapup/` so the Skills CLI finds it
-  (`npx skills add illescasDaniel/agemem`), and it now suggests running at a finished task or before a push.
+- A summaries tier in every `project_memory_recall` packet: one line per `memory/**/*.md` file
+  (the file's first `>` blockquote, seeded by `agemem init`), so a session can scan all memory
+  topics in one cheap call. Files without an abstract are returned as `(no summary)` with
+  `missing_abstract: true` instead of failing recall.
+- An optional `path` argument on `project_memory_recall` and the recall engine: a project-relative
+  path under `memory/` that scopes the bank and source layers to that subtree while notes stay
+  global. A scope matching nothing returns an explicit empty result with a `scoped` block; a scope
+  escaping the project is rejected before anything is read. Measured against released 0.3.0,
+  scoped recall cuts packet cost 90–96% at equal relevance; see `docs/RECALL_COMPARISON.md`.
+- `docs/RECALL_COMPARISON.md`: the measured recall comparison (real repos, hybrid retrieval, the
+  QSIV decision backend, concurrency), produced during the feature's review.
+- The wrap-up skill moved from `docs/memory-wrapup/` to `skills/memory-wrapup/` so the Skills CLI
+  finds it (`npx skills add illescasDaniel/agemem`), and it now suggests running at a finished task
+  or before a push.
 
 ## [0.3.0] - 2026-11-10
 
