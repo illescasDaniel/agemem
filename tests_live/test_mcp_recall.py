@@ -29,6 +29,14 @@ class MCPRecallTests(unittest.IsolatedAsyncioTestCase):
                     self.assertIn("staging deployment", packet["context"])
                     self.assertEqual(packet["layers"]["bank"][0]["ids"], ["bank:activeContext.md"])
                     self.assertEqual(packet["decision_provider_usage"], {})
+                    self.assertIn("summaries", packet)   # S1: the summaries tier rides along over MCP too
+                    scoped = await session.call_tool("project_memory_recall", {"query": "blocker", "path": "memory"})
+                    self.assertFalse(scoped.is_error)
+                    self.assertEqual(scoped.structured_content["scoped"]["path"], "memory")   # S8: path reaches the engine
+                    escape = await session.call_tool("project_memory_recall", {"query": "blocker", "path": "../secrets"})
+                    self.assertTrue(escape.is_error)   # S3/F1 over MCP: rejected, nothing returned
+                    self.assertEqual(escape.content, [])
+                    self.assertEqual(escape.structured_content["error"]["type"], "ValueError")
                     error = await session.call_tool("project_memory_recall", {"query": ""})
                     self.assertTrue(error.is_error)
                     self.assertEqual(error.content, [])

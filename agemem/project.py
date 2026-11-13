@@ -14,10 +14,10 @@ DEFAULTS = {"schema_version": 1, "decision_backend": "jev", "retrieval": "hybrid
             "qsiv_directory": None, "qsiv_runtime": "fp8", "raw_rag_directory": None,
             "ollaya_url": OLLAYA_URL, "ollaya_model": OLLAYA_MODEL, "cascade_min_confidence": 0.9}
 BANK = {
-    "activeContext.md": "# Active context\n\n## Current focus\n\nDescribe the intent of the current task.\n\n## Blockers\n\nNone recorded.\n\n## Next steps\n\nRecord the exact next step when work stops. Do not copy state you can re-read from git or code.\n",
-    "progress.md": "# Progress\n\n## Open\n\n- [ ] Record the current task.\n\n## Done\n",
-    "decisions.md": "# Decisions\n\nAppend dated decisions with context, rationale and source references. Add a new entry when a decision is reversed.\n",
-    "archive.md": "# Archive\n\nMove completed history here; keep current focus and progress short.\n",
+    "activeContext.md": "> Current task, blockers, and the exact next step when work stops.\n\n# Active context\n\n## Current focus\n\nDescribe the intent of the current task.\n\n## Blockers\n\nNone recorded.\n\n## Next steps\n\nRecord the exact next step when work stops. Do not copy state you can re-read from git or code.\n",
+    "progress.md": "> Open work and completed history at a glance.\n\n# Progress\n\n## Open\n\n- [ ] Record the current task.\n\n## Done\n",
+    "decisions.md": "> Dated decisions with context, rationale and source references.\n\n# Decisions\n\nAppend dated decisions with context, rationale and source references. Add a new entry when a decision is reversed.\n",
+    "archive.md": "> Completed history moved out of the active files.\n\n# Archive\n\nMove completed history here; keep current focus and progress short.\n",
 }
 
 

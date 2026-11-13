@@ -48,6 +48,12 @@ Codex or `CLAUDE.md` for Claude Code. Preserve any existing guidance.
   hashes, file lists, test counts); it goes stale. Track open/completed work
   in `memory/progress.md`; record dated decisions and rationale in
   `memory/decisions.md`. Preserve existing useful content.
+- Start every `memory/*.md` file you create with a one-line `>` abstract of
+  what the file holds (for example `> Refund settlement: 3-day hold, then
+  Payout API.`); recall returns these one-liners so a session can pick the
+  right file without reading all of them. Pass `path` to
+  `project_memory_recall` (a file or directory under `memory/`) to recall
+  only that subtree; notes stay global.
 - In `decisions.md`, if two claims conflict, keep both and write
   `CONFLICT: <A, date, source> says ...; <B, date, source> says ...`; do not
   guess. If one is plainly the later correction, keep the current value and
